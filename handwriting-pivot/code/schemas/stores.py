@@ -139,15 +139,51 @@ GROUP_TO_SCHEMA = {s.whatsapp_group: s for s in ALL_SCHEMAS.values()}
 
 def resolve_store(*, group_name: str = None, header_text: str = None) -> StoreSchema | None:
     """
-    Try to resolve a store from either the WhatsApp group or the form header.
-    Header text takes precedence per the original brief — group can lie if
-    forms are shared cross-group.
+    Resolve a store using the required resolution order:
+
+    1. Group Mapping (authoritative) — exact WhatsApp group name match
+    2. Header Detection — read store name from form header via vision LLM
+    3. Template Signature Detection — match field IDs (RIM-XX, SO-XX, BAN-XX)
+    4. Manual Confirmation — return None; caller must ask user
+
+    Header text takes precedence over group when both present (header is
+    what the vision LLM actually saw on the paper).
     """
+    # Step 1: Group Mapping (authoritative)
+    if group_name:
+        group_result = GROUP_TO_SCHEMA.get(group_name)
+        if group_result is not None:
+            return group_result
+
+    # Step 2: Header Detection
     if header_text:
         upper = header_text.upper()
         if "BANDERA" in upper:    return BANDERA
         if "STONE OAK" in upper:  return STONE_OAK
         if "THE RIM" in upper or "RIM" in upper.split(): return RIM
-    if group_name:
-        return GROUP_TO_SCHEMA.get(group_name)
+
+    # Steps 3-4 are handled by the caller (template signature from extraction
+    # field IDs, or manual confirmation prompt). Return None to signal unresolved.
+    return None
+
+
+def resolve_store_from_field_ids(field_ids: list[str]) -> StoreSchema | None:
+    """
+    Step 3: Template Signature Detection.
+    If field IDs start with RIM-xx, SO-xx, or BAN-xx, resolve from that.
+    This is a last resort before asking for manual confirmation.
+    """
+    if not field_ids:
+        return None
+    sample_ids = [fid.upper() for fid in field_ids[:5]]
+    rim_count = sum(1 for fid in sample_ids if fid.startswith("RIM-"))
+    so_count = sum(1 for fid in sample_ids if fid.startswith("SO-"))
+    ban_count = sum(1 for fid in sample_ids if fid.startswith("BAN-"))
+    # Need at least 2 matching field IDs for confidence
+    if rim_count >= 2:
+        return RIM
+    if so_count >= 2:
+        return STONE_OAK
+    if ban_count >= 2:
+        return BANDERA
     return None

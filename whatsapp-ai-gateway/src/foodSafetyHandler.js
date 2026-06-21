@@ -269,8 +269,12 @@ function buildProofBlock(proof) {
         `handler selected: ${proof.handlerSelected || "N/A"}`,
         `pipeline selected: ${proof.pipelineSelected || "N/A"}`,
         `OCR provider: ${proof.ocrProvider || "none"}`,
-        `Vision provider: ${proof.visionProvider || "N/A"}`,
-        `GPT-4o Vision called: ${proof.gpt4oCalled ? "true" : "false"}`,
+        `vision_system: ${proof.visionSystem || "N/A"}`,
+        `primary_provider: ${proof.primaryProvider || "N/A"}`,
+        `fallback_provider: ${proof.fallbackProvider || "N/A"}`,
+        `provider_used: ${proof.providerUsed || "N/A"}`,
+        `fallback_used: ${proof.fallbackUsed ? "true" : "false"}`,
+        `decision_engine_final: ${proof.decisionEngineFinal ? "true" : "false"}`,
         `store resolver result: ${proof.storeResolverResult || "N/A"}`,
         `selected column: ${proof.selectedColumn || "N/A"}`,
         `final reply id: ${proof.finalReplyId || "N/A"}`,
@@ -619,10 +623,14 @@ async function processSubmissionBatch(images) {
             traceId: trace.trace_id,
             imageHash: image.hash,
             handlerSelected: "foodSafetyHandler.processSubmissionBatch",
-            pipelineSelected: "gpt4o_vision_primary",
+            pipelineSelected: "python_vision_llm_pipeline",
             ocrProvider: "none/skipped",
-            visionProvider: `${process.env.VISION_PROVIDER || "openai"}/${process.env.OPENAI_VISION_MODEL || "gpt-4o"}`,
-            gpt4oCalled: false,
+            visionSystem: "python_vision_llm_pipeline",
+            primaryProvider: "gemini-flash",
+            fallbackProvider: "claude-vision",
+            providerUsed: "gemini-flash",
+            fallbackUsed: false,
+            decisionEngineFinal: false,
             storeResolverResult: "unresolved",
             selectedColumn: "N/A",
             finalReplyId,
@@ -644,20 +652,22 @@ async function processSubmissionBatch(images) {
             output_summary: groupScope,
         });
 
-        const useGpt4o = String(process.env.USE_GPT4O_VISION_PIPELINE || "true").toLowerCase() !== "false" && !ocrProcessorForTests;
-        proof.pipelineSelected = useGpt4o ? "gpt4o_vision_primary" : "legacy_ocr_explicit";
-        proof.ocrProvider = useGpt4o ? "none/skipped" : (ocrProcessorForTests ? "test_ocr_processor" : "tesseract");
+        const useVisionPipeline = String(process.env.USE_VISION_LLM_PIPELINE || "true").toLowerCase() === "true" && !ocrProcessorForTests;
+        proof.pipelineSelected = useVisionPipeline ? "python_vision_llm_pipeline" : "legacy_ocr_explicit";
+        proof.ocrProvider = useVisionPipeline ? "none/skipped" : (ocrProcessorForTests ? "test_ocr_processor" : "tesseract");
 
         pipelineTrace.step(trace, "PIPELINE_SELECTED", "OK", {
             output_summary: {
                 pipeline: proof.pipelineSelected,
                 ocr_provider: proof.ocrProvider,
-                vision_provider: proof.visionProvider,
+                vision_system: proof.visionSystem,
+                primary_provider: proof.primaryProvider,
+                fallback_provider: proof.fallbackProvider,
             },
         });
 
         const ctx = { message, session, image, trace, proof, chatName };
-        return useGpt4o ? await processGpt4oPath(ctx) : await processLegacyOcrPath(ctx);
+        return useVisionPipeline ? await processGpt4oPath(ctx) : await processLegacyOcrPath(ctx);
     } catch (err) {
         logger.error("Error handling image", { phone, error: err.message });
         if (trace) {

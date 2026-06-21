@@ -27,7 +27,7 @@ import time
 import uuid
 
 from .providers.base import VisionProvider, FormExtraction
-from .schemas.stores import resolve_store, StoreSchema
+from .schemas.stores import resolve_store, resolve_store_from_field_ids, StoreSchema
 from .prompts import build_prompt, build_json_schema
 from .decision_engine import decide, FormDecision
 from .reply import build_confirmation_reply, build_alert_message
@@ -68,6 +68,8 @@ class PipelineResult:
     alert_text: Optional[str]
     total_latency_ms: int
     used_fallback: bool = False
+    provider_used: str = ""      # "gemini-flash" or "claude-vision"
+    fallback_provider: str = ""  # name of fallback provider, or "none"
 
 
 class FormPipeline:
@@ -158,30 +160,52 @@ class FormPipeline:
                 extraction = (self.fallback or self.primary).extract(image_bytes, prompt, json_schema)
                 tentative = False  # header resolved it
             elif verified_schema is None and tentative:
-                # Group didn't resolve AND header didn't match any known store.
-                # Do NOT proceed with the fallback Bandera schema — the field IDs
-                # and thresholds would be wrong. Return error instead.
-                self._emit_audit({
-                    "trace_id": trace_id,
-                    "event": "store_unresolved",
-                    "group": group_name,
-                    "header": extraction.store,
-                })
-                total_ms = int((time.perf_counter() - t_start) * 1000)
-                return PipelineResult(
-                    trace_id=trace_id,
-                    extraction=extraction,
-                    decision=None,
-                    reply_text=(
-                        f"⚠ Could not identify store from this form (trace {trace_id}).\n"
-                        f"Group: {group_name or '(none)'} | Header read: {extraction.store}\n\n"
-                        f"Please make sure the store name is visible at the top of the form, "
-                        f"or reply *MANUAL* to type in the values with the store name."
-                    ),
-                    alert_text=None,
-                    total_latency_ms=total_ms,
-                    used_fallback=used_fallback,
-                )
+                # Step 3: Template Signature Detection — try field ID patterns
+                field_ids = [r.field_id for r in extraction.readings if r.field_id]
+                field_schema = resolve_store_from_field_ids(field_ids)
+                if field_schema is not None:
+                    self._emit_audit({
+                        "trace_id": trace_id,
+                        "event": "store_resolved_from_field_ids",
+                        "group": group_name,
+                        "header": extraction.store,
+                        "resolved_to": field_schema.store_code,
+                    })
+                    store_schema = field_schema
+                    tentative = False
+                    # Re-extract with correct schema for accurate field IDs
+                    prompt = build_prompt(store_schema)
+                    json_schema = build_json_schema(store_schema)
+                    extraction = (self.fallback or self.primary).extract(image_bytes, prompt, json_schema)
+                else:
+                    # Step 4: Manual Confirmation — never silently fail, never discard.
+                    # Do NOT proceed with fallback schema — field IDs and thresholds
+                    # would be wrong. Ask user to confirm store instead.
+                    self._emit_audit({
+                        "trace_id": trace_id,
+                        "event": "store_unresolved_asking_confirmation",
+                        "group": group_name,
+                        "header": extraction.store,
+                        "field_ids_sample": field_ids[:5] if field_ids else [],
+                    })
+                    total_ms = int((time.perf_counter() - t_start) * 1000)
+                    return PipelineResult(
+                        trace_id=trace_id,
+                        extraction=extraction,
+                        decision=None,
+                        reply_text=(
+                            "Need store confirmation:\n"
+                            "1 = B1 / The Rim\n"
+                            "2 = B2 / Stone Oak\n"
+                            "3 = B3 / Bandera\n\n"
+                            f"(trace {trace_id})"
+                        ),
+                        alert_text=None,
+                        total_latency_ms=total_ms,
+                        used_fallback=used_fallback,
+                        provider_used=extraction.provider or (self.fallback.name if used_fallback and self.fallback else self.primary.name),
+                        fallback_provider=self.fallback.name if self.fallback else "none",
+                    )
             else:
                 tentative = False  # header confirmed or group was fine
 
@@ -250,6 +274,8 @@ class FormPipeline:
             alert_text=alert_text,
             total_latency_ms=total_ms,
             used_fallback=used_fallback,
+            provider_used=extraction.provider or (self.fallback.name if used_fallback and self.fallback else self.primary.name),
+            fallback_provider=self.fallback.name if self.fallback else "none",
         )
 
     def _build_error_reply(self, extraction: FormExtraction, trace_id: str) -> str:

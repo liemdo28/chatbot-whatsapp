@@ -66,6 +66,18 @@ class VisionHandler(BaseHTTPRequestHandler):
                 "elapsed_s": round(elapsed, 2),
                 "provider": result.extraction.provider,
                 "model": result.extraction.model,
+                # ─── Runtime proof fields (D5 Pilot) ───
+                "vision_system": "python_vision_llm_pipeline",
+                "primary_provider": "gemini-flash",
+                "fallback_provider": "claude-vision",
+                "provider_used": result.provider_used or result.extraction.provider or "unknown",
+                "fallback_used": result.used_fallback,
+                "decision_engine_final": result.decision is not None,
+                "store_resolution_source": (
+                    "group_mapping" if result.extraction.store and result.decision else
+                    "manual_confirmation_needed" if not result.decision and "Need store confirmation" in result.reply_text else
+                    "unresolved"
+                ),
                 "readings": [
                     {
                         "field_id": r.field_id,

@@ -254,11 +254,13 @@ class TestP03_NoBanderaFallback(unittest.TestCase):
         r = p.process(image_bytes=b"fake", group_name="Unknown Group")
         self.assertEqual(r.extraction.store, "Stone Oak")
 
-    def test_unknown_group_with_unknown_header_returns_error(self):
+    def test_unknown_group_with_unknown_header_asks_confirmation(self):
+        """When group + header both fail, pipeline MUST ask for manual confirmation
+        instead of silently failing. Never discard submission."""
         def unknown_header():
             return FormExtraction(store="Mystery Store", date="2026-06-20", shift="10AM",
                 employee_name="T", readings=[
-                    FieldReading("SO-01", 37, "37", 0.95),
+                    FieldReading("XX-01", 37, "37", 0.95),
                 ], provider="m", model="m", latency_ms=1000, overall_confidence=0.95)
         p = FormPipeline(primary=type("P", (), {
             "name": "m", "cost_per_form_usd": 0,
@@ -266,7 +268,11 @@ class TestP03_NoBanderaFallback(unittest.TestCase):
         })())
         r = p.process(image_bytes=b"fake", group_name="Unknown Group")
         self.assertIsNone(r.decision)
-        self.assertIn("Could not identify store", r.reply_text)
+        # P0 FIX: Must ask for manual confirmation, never silently fail
+        self.assertIn("Need store confirmation", r.reply_text)
+        self.assertIn("B1 / The Rim", r.reply_text)
+        self.assertIn("B2 / Stone Oak", r.reply_text)
+        self.assertIn("B3 / Bandera", r.reply_text)
 
     def test_auto_schema_code_not_bandera(self):
         """When group unknown, initial schema code must be AUTO, not BANDERA."""

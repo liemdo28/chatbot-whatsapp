@@ -175,6 +175,13 @@ function toParsedFormat(visionResult, storeInfo) {
         needsReview: false,
         tooManyMissingFields: false,
         _visionLlmResult: visionResult,
+        // ─── Runtime proof metadata (D5 Pilot) ───
+        _runtimeVisionSystem: visionResult.vision_system || "python_vision_llm_pipeline",
+        _runtimePrimaryProvider: visionResult.primary_provider || "gemini-flash",
+        _runtimeFallbackProvider: visionResult.fallback_provider || "claude-vision",
+        _runtimeProviderUsed: visionResult.provider_used || visionResult.provider || "unknown",
+        _runtimeFallbackUsed: visionResult.fallback_used || false,
+        _runtimeDecisionEngineFinal: visionResult.decision_engine_final || false,
     };
 }
 
