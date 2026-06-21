@@ -1,0 +1,126 @@
+{
+  "_comment": "QB Laptop 1 — copy this to local-config.json and fill in YOUR values",
+  "_laptop": "qb-laptop-01",
+
+  "features": {
+    "qb_write_sync_enabled": false,
+    "qb_read_only_activity_log_enabled": true,
+    "mi_core_reporting_enabled": true,
+    "multi_file_12h_sync_enabled": true
+  },
+
+  "toast_download": {
+    "enabled": true,
+    "automation_mode": "HYBRID_FALLBACK",
+    "download_dir": "C:\\ProgramData\\ToastPOSManager\\toast-reports",
+    "allowed_domains": [
+      "*.toasttab.com",
+      "*.toasttab.com/*"
+    ],
+    "browser_profile": {
+      "use_real_profile": true,
+      "browser": "chrome",
+      "profile_path": "",
+      "require_existing_login": true
+    },
+    "browser_use": {
+      "enabled": true,
+      "model_provider": "openai",
+      "model": "gpt-5.5",
+      "timeout_seconds": 180,
+      "max_steps": 40,
+      "headless": false,
+      "human_approval_required_for_login": true,
+      "never_store_password": true
+    }
+  },
+
+  "mi_core": {
+    "enabled": true,
+    "base_url": "http://100.118.102.113:4001",
+    "api_key_env": "MI_CORE_API_KEY",
+    "machine_id": "qb-laptop-01",
+    "app_version": "dev1-v2",
+    "poll_commands_seconds": 60,
+    "heartbeat_seconds": 60,
+    "timeout_seconds": 15
+  },
+
+  "machine": {
+    "machine_id": "qb-laptop-01",
+    "machine_name": "QB Laptop 1",
+    "store_code": "bandera",
+    "store_name": "Bakudan Bandera",
+    "location": "Bandera"
+  },
+
+  "quickbooks_files": {
+    "scan_enabled": true,
+    "scan_roots": [
+      "C:\\Users\\REPLACE_WITH_USERNAME\\Documents",
+      "C:\\Users\\REPLACE_WITH_USERNAME\\Desktop",
+      "D:\\",
+      "E:\\",
+      "F:\\"
+    ],
+    "company_files": [
+      {
+        "file_id": "bakudan-bandera",
+        "store_code": "bandera",
+        "company_file_path": "REPLACE_WITH_ACTUAL_PATH\\Bandera.qbw",
+        "expected_company_name": "Bakudan Bandera",
+        "enabled": true,
+        "last_status": "",
+        "last_error": ""
+      }
+    ]
+  },
+
+  "sync_schedule": {
+    "enabled": true,
+    "interval_hours": 12,
+    "run_on_startup": true,
+    "jitter_minutes": 10
+  },
+
+  "qb_activity_log": {
+    "enabled": true,
+    "run_on_app_start": false,
+    "daily_time": "09:15",
+    "output_dir": "logs/qb-activity",
+    "stores": [
+      {
+        "code": "bandera",
+        "name": "Bakudan Bandera",
+        "class_name": "Bandera",
+        "customer_name": "Toast Sales - Bandera",
+        "bank_accounts": ["Chase Checking - Bandera"]
+      }
+    ]
+  },
+
+  "qb_activity_timeline": {
+    "enabled": true,
+    "run_on_app_start": false,
+    "daily_time": "09:20",
+    "output_dir": "logs/qb-activity"
+  },
+
+  "google_sheet_reporting": {
+    "mode": "centralized",
+    "write_from": "mi-core",
+    "enabled_on_qb_agent": false
+  },
+
+  "background_agent": {
+    "enabled": true,
+    "start_with_windows": true,
+    "heartbeat_seconds": 60,
+    "restart_on_crash": true
+  },
+
+  "delete_policy": {
+    "allow_live_delete": false,
+    "approver": "Accounting lead"
+  }
+}

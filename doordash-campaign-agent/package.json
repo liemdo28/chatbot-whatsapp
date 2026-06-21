@@ -1,0 +1,36 @@
+{
+    "name": "doordash-campaign-agent",
+    "version": "1.0.0",
+    "description": "DoorDash Campaign Agent - Multi-account campaign management, optimization, and browser automation",
+    "main": "dist/server/index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/server/index.js",
+        "dev": "tsx watch src/server/index.ts",
+        "client": "cd client && npm run dev",
+        "dev:all": "concurrently \"npm run dev\" \"npm run client\"",
+        "setup": "npx playwright install chromium",
+        "db:init": "tsx src/server/db/init.ts",
+        "postinstall": "npx playwright install chromium"
+    },
+    "dependencies": {
+        "better-sqlite3": "^11.0.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.0",
+        "express": "^4.18.0",
+        "playwright": "^1.40.0",
+        "uuid": "^9.0.0",
+        "node-cron": "^3.0.3"
+    },
+    "devDependencies": {
+        "@types/better-sqlite3": "^7.6.0",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.11.0",
+        "@types/uuid": "^9.0.7",
+        "@types/node-cron": "^3.0.11",
+        "concurrently": "^8.2.0",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.0"
+    }
+}

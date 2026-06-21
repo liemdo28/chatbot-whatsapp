@@ -1,0 +1,89 @@
+{
+  "verdict": "CONNECTED_PIPELINE_FAIL",
+  "audit_date": "2026-06-20",
+  "reason": "A new real inbound WhatsApp image in LD Agent-Logtest could not be produced from this workspace. The gateway is connected and LD Agent-Logtest is visible, but the live pipeline trace table is empty and existing trace artifacts do not record canonical pipeline execution.",
+  "live_gateway_status": {
+    "checked_url": "http://127.0.0.1:3211/api/whatsapp/session",
+    "status": "CONNECTED",
+    "dbStatus": "CONNECTED",
+    "checked_at": "2026-06-20T13:01:20.348Z"
+  },
+  "ld_agent_logtest_group": {
+    "id": "120363426386364543@g.us",
+    "name": "LD Agent-Logtest",
+    "found_via": "http://127.0.0.1:3211/api/whatsapp/groups"
+  },
+  "pipeline_trace_api": {
+    "checked_url": "http://127.0.0.1:3211/api/food-safety/pipeline-trace?limit=50",
+    "rows_returned": 0
+  },
+  "existing_trace_artifacts": [
+    {
+      "file": "TRACE_SUBMISSION_40.json",
+      "trace_id": "TRACE_SUBMISSION_40_B3",
+      "pipeline_trace_recorded": false,
+      "accepted_as_e2e_proof": false
+    },
+    {
+      "file": "TRACE_SUBMISSION_44.json",
+      "trace_id": "TRACE_SUBMISSION_44_B2",
+      "pipeline_trace_recorded": false,
+      "accepted_as_e2e_proof": false
+    }
+  ],
+  "canonical_steps_required": [
+    "IMAGE_RECEIVED",
+    "ROUTER_STARTED",
+    "GROUP_RESOLVED",
+    "FORM_CLASSIFIED",
+    "STORE_RESOLVED",
+    "QUALITY_GATE_DONE",
+    "OCR_DONE",
+    "MEMORY_DONE",
+    "WRITER_PROFILE_DONE",
+    "STORE_KNOWLEDGE_DONE",
+    "VISION_REVIEW_DONE",
+    "DECISION_ENGINE_DONE",
+    "ALERT_COMPOSER_DONE",
+    "REPLY_BUILDER_DONE",
+    "DB_WRITE_DONE",
+    "SHEET_SYNC_DONE",
+    "WHATSAPP_REPLY_SENT",
+    "PILOT_METRIC_RECORDED"
+  ],
+  "canonical_steps_observed_from_live_image": [],
+  "no_legacy_path_used": null,
+  "only_one_user_reply_sent": null,
+  "decision_engine_produced_final_values": null,
+  "vision_reviewer_executed_or_skipped_with_reason": null,
+  "pilot_metrics_recorded": null,
+  "tests_run": [
+    {
+      "command": "npm test",
+      "result": "PASS",
+      "summary": "12/12 passed"
+    },
+    {
+      "command": "node tests/testDecisionEngine.js",
+      "result": "PASS",
+      "summary": "22 passed, 0 failed"
+    },
+    {
+      "command": "node tests/testRoutingV2.js",
+      "result": "PASS",
+      "summary": "62 passed, 0 failed"
+    },
+    {
+      "command": "node tests/testHybridVision.js",
+      "result": "PASS",
+      "summary": "all tests passed"
+    },
+    {
+      "command": "node tests/testZeroRetake.js",
+      "result": "PASS",
+      "summary": "24/24 passed"
+    }
+  ],
+  "note": "Tests prove local behavior only. They do not satisfy the CTO acceptance criterion for one real live WhatsApp image."
+}
+

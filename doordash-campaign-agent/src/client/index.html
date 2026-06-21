@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoorDash Campaign Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1e293b;
+            padding: 20px 30px;
+            border-bottom: 2px solid #334155;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #f8fafc;
+        }
+
+        .header p {
+            color: #94a3b8;
+            margin-top: 4px;
+            font-size: 13px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+            padding: 12px 30px;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            flex-wrap: wrap;
+        }
+
+        .nav button {
+            padding: 8px 16px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            background: #1f2937;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .nav button:hover,
+        .nav button.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .content {
+            padding: 24px 30px;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            color: #f8fafc;
+            margin-bottom: 12px;
+        }
+
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .store-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .store-card h3 {
+            font-size: 14px;
+            color: #7dd3fc;
+            margin-bottom: 8px;
+        }
+
+        .store-card .status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .status-connected {
+            background: #065f46;
+            color: #34d399;
+        }
+
+        .status-disconnected {
+            background: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        .status-pending {
+            background: #78350f;
+            color: #fbbf24;
+        }
+
+        .store-card .actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background: #1f2937;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn:hover {
+            background: #374151;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            border-color: #16a34a;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .log {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .log-entry.success {
+            color: #34d399;
+        }
+
+        .log-entry.error {
+            color: #fca5a5;
+        }
+
+        .log-entry.info {
+            color: #94a3b8;
+        }
+
+        .metric {
+            font-size: 28px;
+            font-weight: bold;
+            color: #f8fafc;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .approval-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 8px;
+        }
+
+        .approval-card h4 {
+            color: #fbbf24;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .approval-card .detail {
+            font-size: 12px;
+            color: #94a3b8;
+            margin: 2px 0;
+        }
+
+        .approval-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        #status-bar {
+            padding: 8px 30px;
+            background: #0f172a;
+            border-top: 1px solid #334155;
+            font-size: 12px;
+            color: #64748b;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🍔 DoorDash Campaign Agent</h1>
+        <p>Multi-account campaign management, optimization, and browser automation for 4 stores</p>
+    </div>
+    <div class="nav">
+        <button class="active" onclick="showPage('connection')">DoorDash Connection</button>
+        <button onclick="showPage('credentials')">Store Credentials</button>
+        <button onclick="showPage('campaigns')">Campaign Overview</button>
+        <button onclick="showPage('recommendations')">Recommendations</button>
+        <button onclick="showPage('approvals')">CEO Approvals</button>
+        <button onclick="showPage('execution-logs')">Execution Logs</button>
+        <button onclick="showPage('weekly-loop')">Weekly Auto Loop</button>
+        <button onclick="showPage('automation-health')">Automation Health</button>
+        <button onclick="showPage('mi-core')">MI-CORE Sync</button>
+    </div>
+    <div class="content">
+        <!-- DoorDash Connection Page -->
+        <div id="page-connection" class="page">
+            <div class="metrics">
+                <div class="card">
+                    <div class="metric" id="connected-count">0</div>
+                    <div class="metric-label">Connected Accounts</div>
+                </div>
+                <div class="card">
+                    <div class="metric" id="active-sessions">0</div>
+                    <div class="metric-label">Active Sessions</div>
+                </div>
+                <div class="card">
+                    <div class="metric" id="pending-approvals">0</div>
+                    <div class="metric-label">Pending Approvals</div>
+                </div>
+                <div class="card">
+                    <div class="metric" id="campaigns-today">0</div>
+                    <div class="metric-label">Campaigns Read Today</div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Store Accounts</h2>
+                <div class="store-grid" id="stores-grid"></div>
+            </div>
+            <div class="card">
+                <h2>Activity Log</h2>
+                <div class="log" id="activity-log"></div>
+            </div>
+        </div>
+        <!-- Store Credentials Page -->
+        <div id="page-credentials" class="page hidden">
+            <div class="card">
+                <h2>Encrypted Credential Vault</h2>
+                <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">Passwords are encrypted with AES-256-GCM.
+                    Raw passwords are never stored.</p>
+                <div id="credentials-list"></div>
+            </div>
+        </div>
+        <!-- Campaign Overview Page -->
+        <div id="page-campaigns" class="page hidden">
+            <div class="card">
+                <h2>Campaign Data</h2>
+                <button class="btn btn-primary" onclick="readAllCampaigns()">Refresh All Stores</button>
+                <div id="campaigns-list" style="margin-top:12px;"></div>
+            </div>
+        </div>
+        <!-- Recommendations Page -->
+        <div id="page-recommendations" class="page hidden">
+            <div class="card">
+                <h2>AI Recommendations</h2>
+                <button class="btn btn-primary" onclick="analyzeAll()">Analyze All Stores</button>
+                <div id="recommendations-list" style="margin-top:12px;"></div>
+            </div>
+        </div>
+        <!-- CEO Approvals Page -->
+        <div id="page-approvals" class="page hidden">
+            <div class="card">
+                <h2>Pending Approvals</h2>
+                <div id="approvals-list"></div>
+            </div>
+        </div>
+        <!-- Execution Logs Page -->
+        <div id="page-execution-logs" class="page hidden">
+            <div class="card">
+                <h2>Execution History</h2>
+                <div id="execution-logs-list"></div>
+            </div>
+        </div>
+        <!-- Weekly Auto Loop Page -->
+        <div id="page-weekly-loop" class="page hidden">
+            <div class="card">
+                <h2>Weekly Optimization Loop</h2>
+                <button class="btn btn-primary" onclick="triggerLoop()">Trigger Now</button>
+                <div id="loop-status" style="margin-top:12px;"></div>
+            </div>
+        </div>
+        <!-- Automation Health Page -->
+        <div id="page-automation-health" class="page hidden">
+            <div class="card">
+                <h2>System Health</h2>
+                <div id="health-status"></div>
+            </div>
+        </div>
+        <!-- MI-CORE Sync Page -->
+        <div id="page-mi-core" class="page hidden">
+            <div class="card">
+                <h2>MI-CORE Synchronization</h2>
+                <button class="btn btn-primary" onclick="syncMiCore()">Sync Now</button>
+                <div id="mi-core-status" style="margin-top:12px;"></div>
+            </div>
+        </div>
+    </div>
+    <div id="status-bar">DoorDash Campaign Agent v1.0.0 — Connecting...</div>
+
+    <script>
+        const API = 'http://localhost:3001';
+        const STORES = ['bakudan-the-rim', 'bakudan-stone-oak', 'bakudan-bandera', 'raw-sushi-bar'];
+        const STORE_NAMES = { 'bakudan-the-rim': 'Bakudan The Rim', 'bakudan-stone-oak': 'Bakudan Stone Oak', 'bakudan-bandera': 'Bakudan Bandera', 'raw-sushi-bar': 'Raw Sushi Bar' };
+
+        function showPage(name) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-' + name).classList.remove('hidden');
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            loadPageData(name);
+        }
+
+        function log(msg, type = 'info') {
+            const el = document.getElementById('activity-log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+            el.prepend(entry);
+        }
+
+        async function api(path, opts = {}) {
+            try {
+                const res = await fetch(API + path, { headers: { 'Content-Type': 'application/json' }, ...opts });
+                return await res.json();
+            } catch (e) { return { ok: false, error: e.message }; }
+        }
+
+        async function loadConnectionPage() {
+            const sessions = await api('/api/sessions');
+            if (sessions.ok) {
+                const grid = document.getElementById('stores-grid');
+                grid.innerHTML = '';
+                let connected = 0, active = 0;
+                for (const s of sessions.sessions) {
+                    connected += (s.sessionStatus === 'active') ? 1 : 0;
+                    active += s.browserConnected ? 1 : 0;
+                    grid.innerHTML += '<div class="store-card"><h3>' + (STORE_NAMES[s.storeId] || s.storeId) + '</h3>'
+                        + '<span class="status status-' + (s.sessionStatus === 'active' ? 'connected' : s.sessionStatus === 'none' ? 'disconnected' : 'pending') + '">' + s.sessionStatus + '</span>'
+                        + '<div style="font-size:11px;color:#64748b;margin:4px 0;">2FA: ' + s.twoFaStatus + ' | Browser: ' + (s.browserConnected ? 'Connected' : 'Offline') + '</div>'
+                        + '<div class="actions">'
+                        + '<button class="btn btn-primary" onclick="loginStore(\'' + s.storeId + '\')">Login</button>'
+                        + '<button class="btn btn-success" onclick="testConnection(\'' + s.storeId + '\')">Test</button>'
+                        + '<button class="btn btn-danger" onclick="logoutStore(\'' + s.storeId + '\')">Logout</button>'
+                        + '</div></div>';
+                }
+                document.getElementById('connected-count').textContent = connected;
+                document.getElementById('active-sessions').textContent = active;
+            }
+            const approvals = await api('/api/approvals/pending');
+            if (approvals.ok) document.getElementById('pending-approvals').textContent = approvals.approvals.length;
+        }
+
+        async function loginStore(storeId) {
+            log('Logging in ' + STORE_NAMES[storeId] + '...', 'info');
+            const result = await api('/api/login/' + storeId, { method: 'POST' });
+            log(STORE_NAMES[storeId] + ': ' + result.message, result.success ? 'success' : 'error');
+            loadConnectionPage();
+        }
+
+        async function logoutStore(storeId) {
+            log('Logging out ' + STORE_NAMES[storeId] + '...', 'info');
+            const result = await api('/api/logout/' + storeId, { method: 'POST' });
+            log(STORE_NAMES[storeId] + ': ' + result.message, result.success ? 'success' : 'error');
+            loadConnectionPage();
+        }
+
+        async function testConnection(storeId) {
+            log('Testing connection for ' + STORE_NAMES[storeId] + '...', 'info');
+            const result = await api('/api/test-connection/' + storeId, { method: 'POST' });
+            log(STORE_NAMES[storeId] + ': ' + result.message, result.connected ? 'success' : 'error');
+        }
+
+        async function readAllCampaigns() {
+            log('Reading campaigns for all stores...', 'info');
+            const result = await api('/api/campaigns/read-all', { method: 'POST' });
+            log('Campaign read: ' + JSON.stringify(result).substring(0, 200), 'info');
+            loadPageData('campaigns');
+        }
+
+        async function analyzeAll() {
+            log('Analyzing campaigns for all stores...', 'info');
+            for (const s of STORES) {
+                const result = await api('/api/analyze/' + s, { method: 'POST' });
+                if (result.ok) log(STORE_NAMES[s] + ': ' + result.recommendations.length + ' recommendations', 'success');
+            }
+            loadPageData('recommendations');
+        }
+
+        async function approveAction(id) {
+            const result = await api('/api/approvals/' + id + '/approve', { method: 'POST', body: JSON.stringify({ approvedBy: 'CEO' }) });
+            log('Approval: ' + result.message, result.ok ? 'success' : 'error');
+            loadPageData('approvals');
+        }
+
+        async function rejectAction(id) {
+            const result = await api('/api/approvals/' + id + '/reject', { method: 'POST', body: JSON.stringify({ reason: 'Rejected by CEO' }) });
+            log('Rejection: ' + result.message, result.ok ? 'success' : 'error');
+            loadPageData('approvals');
+        }
+
+        async function triggerLoop() {
+            log('Triggering manual weekly loop...', 'info');
+            const result = await api('/api/weekly-loop/trigger', { method: 'POST' });
+            log('Loop: ' + (result.summary || result.message || 'Done'), result.success ? 'success' : 'error');
+            loadPageData('weekly-loop');
+        }
+
+        async function syncMiCore() {
+            log('Syncing with MI-CORE...', 'info');
+            const result = await api('/api/mi-core/sync', { method: 'POST' });
+            log('MI-CORE: ' + result.message, result.success ? 'success' : 'error');
+            loadPageData('mi-core');
+        }
+
+        async function loadPageData(name) {
+            switch (name) {
+                case 'connection': await loadConnectionPage(); break;
+                case 'campaigns': {
+                    const el = document.getElementById('campaigns-list'); el.innerHTML = '';
+                    for (const s of STORES) {
+                        const data = await api('/api/campaigns/' + s);
+                        if (data.ok && data.campaigns.length > 0) {
+                            el.innerHTML += '<h3 style="color:#7dd3fc;margin:12px 0 6px;">' + STORE_NAMES[s] + '</h3>';
+                            for (const c of data.campaigns) {
+                                el.innerHTML += '<div class="store-card" style="margin-bottom:6px;"><b>' + c.campaignName + '</b> — ' + c.status
+                                    + ' | Budget: $' + (c.budget || 0) + ' | Spend: $' + (c.spend || 0) + ' | Sales: $' + (c.sales || 0)
+                                    + ' | ROAS: ' + (c.roas || 0).toFixed(1) + 'x</div>';
+                            }
+                        }
+                    }
+                    break;
+                }
+                case 'recommendations': {
+                    const data = await api('/api/recommendations');
+                    const el = document.getElementById('recommendations-list'); el.innerHTML = '';
+                    if (data.ok) for (const r of data.recommendations) {
+                        el.innerHTML += '<div class="store-card"><b>' + r.recommendation_type + '</b> — ' + (STORE_NAMES[r.store_id] || r.store_id)
+                            + '<div style="font-size:12px;color:#94a3b8;margin:4px 0;">' + r.reason + '</div>'
+                            + '<div style="font-size:11px;">Confidence: ' + (r.confidence * 100).toFixed(0) + '% | Risk: ' + r.risk + '</div></div>';
+                    }
+                    break;
+                }
+                case 'approvals': {
+                    const data = await api('/api/approvals/pending');
+                    const el = document.getElementById('approvals-list'); el.innerHTML = '';
+                    if (data.ok) for (const a of data.approvals) {
+                        el.innerHTML += '<div class="approval-card"><h4>' + a.action_type + ' — ' + (STORE_NAMES[a.store_id] || a.store_id) + '</h4>'
+                            + '<div class="detail">Proposed: ' + (a.proposed_value || 'N/A') + '</div>'
+                            + '<div class="detail">Status: ' + a.status + '</div>'
+                            + '<div class="approval-actions"><button class="btn btn-success" onclick="approveAction(\'' + a.id + '\')">Approve</button>'
+                            + '<button class="btn btn-danger" onclick="rejectAction(\'' + a.id + '\')">Reject</button></div></div>';
+                    }
+                    if (el.innerHTML === '') el.innerHTML = '<p style="color:#94a3b8;">No pending approvals.</p>';
+                    break;
+                }
+                case 'weekly-loop': {
+                    const data = await api('/api/weekly-loop/last');
+                    const el = document.getElementById('loop-status'); el.innerHTML = '';
+                    if (data.ok && data.lastRun) {
+                        el.innerHTML = '<div class="store-card"><b>Status:</b> ' + data.lastRun.status + '<br><b>Started:</b> ' + (data.lastRun.started_at || 'N/A') + '<br><b>Completed:</b> ' + (data.lastRun.completed_at || 'N/A') + '<br><b>Summary:</b> ' + (data.lastRun.summary || 'N/A') + '</div>';
+                    } else { el.innerHTML = '<p style="color:#94a3b8;">No loop runs yet.</p>'; }
+                    break;
+                }
+                case 'automation-health': {
+                    const data = await api('/api/health');
+                    const el = document.getElementById('health-status'); el.innerHTML = '<div class="store-card"><pre style="font-size:12px;color:#94a3b8;">' + JSON.stringify(data, null, 2) + '</pre></div>';
+                    break;
+                }
+                case 'mi-core': {
+                    const data = await api('/api/mi-core/status');
+                    const el = document.getElementById('mi-core-status');
+                    if (data.ok) el.innerHTML = '<div class="store-card"><b>Connected:</b> ' + data.connected + '<br><b>MI Version:</b> ' + (data.miVersion || 'N/A') + '<br><b>Policy Version:</b> ' + (data.policyVersion || 'N/A') + '<br><b>Playbook Version:</b> ' + (data.playbookVersion || 'N/A') + '<br><b>Last Sync:</b> ' + (data.lastSync || 'N/A') + '<br><b>Status:</b> ' + data.syncStatus + '</div>';
+                    else el.innerHTML = '<p style="color:#94a3b8;">Unable to fetch MI-CORE status.</p>';
+                    break;
+                }
+            }
+        }
+
+        // Initial load
+        loadConnectionPage();
+        document.getElementById('status-bar').textContent = 'DoorDash Campaign Agent v1.0.0 — Connected to http://localhost:3001';
+    </script>
+</body>
+
+</html>

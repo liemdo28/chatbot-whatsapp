@@ -1,0 +1,60 @@
+$outFile = "C:\Ld-project\final-check.txt"
+$projDir = "C:\Users\hoang\Downloads\source\setup-all\Bakudan\review-automation-system"
+
+"=== Final Verification ===" | Out-File $outFile
+"Time: $(Get-Date)" | Out-File $outFile -Append
+
+# 1. Health check
+"[1] Health Check:" | Out-File $outFile -Append
+try {
+    $health = Invoke-WebRequest -Uri "http://localhost:8000/health" -UseBasicParsing -TimeoutSec 10 -ErrorAction Stop
+    "Status: $($health.StatusCode)" | Out-File $outFile -Append
+    "Body: $($health.Content)" | Out-File $outFile -Append
+} catch {
+    "FAILED: $($_.Exception.Message)" | Out-File $outFile -Append
+}
+
+# 2. Port checks
+"" | Out-File $outFile -Append
+"[2] Ports:" | Out-File $outFile -Append
+foreach ($port in @(5432, 6379, 8000)) {
+    $conn = Test-NetConnection -ComputerName localhost -Port $port -WarningAction SilentlyContinue
+    "Port ${port}: $($conn.TcpTestSucceeded)" | Out-File $outFile -Append
+}
+
+# 3. Docker containers
+"" | Out-File $outFile -Append
+"[3] Docker Containers:" | Out-File $outFile -Append
+& docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>&1 | Out-File $outFile -Append
+
+# 4. Python processes
+"" | Out-File $outFile -Append
+"[4] Python Processes:" | Out-File $outFile -Append
+Get-Process python -ErrorAction SilentlyContinue | Select ProcessName, Id, StartTime | Out-File $outFile -Append
+
+# 5. Run alembic with full path
+"" | Out-File $outFile -Append
+"[5] Alembic Migration:" | Out-File $outFile -Append
+Push-Location $projDir
+$alembicPath = "C:\Users\hoang\AppData\Roaming\Python\Python314\Scripts\alembic.exe"
+if (Test-Path $alembicPath) {
+    & $alembicPath upgrade head 2>&1 | Out-File $outFile -Append
+} else {
+    "Alembic not found at expected path" | Out-File $outFile -Append
+    # Try python -m alembic
+    python -m alembic upgrade head 2>&1 | Out-File $outFile -Append
+}
+Pop-Location
+
+# 6. API endpoint check
+"" | Out-File $outFile -Append
+"[6] API Endpoints:" | Out-File $outFile -Append
+try {
+    $docs = Invoke-WebRequest -Uri "http://localhost:8000/docs" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+    "Swagger UI: $($docs.StatusCode)" | Out-File $outFile -Append
+} catch {
+    "Swagger UI: FAILED" | Out-File $outFile -Append
+}
+
+"" | Out-File $outFile -Append
+"=== ALL CHECKS COMPLETE ===" | Out-File $outFile -Append

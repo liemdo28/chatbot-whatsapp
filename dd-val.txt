@@ -1,0 +1,6 @@
+VALIDATION 
+{"ok":true,"app":"DoorDash Campaign Agent","version":"1.0.0","status":"running","routes":["/api/stores","/health","/api/status"]} 
+{"ok":true,"status":"healthy"} 
+{"ok":true,"app":"DoorDash Campaign Agent","status":"running","port":3001} 
+{"ok":true,"stores":[{"id":"bakudan-the-rim","name":"Bakudan The Rim","email":"bakudan.rim@example.com","doorDashAccountId":null,"active":1,"created_at":"2026-06-16 10:00:06","updated_at":"2026-06-16 10:00:06"},{"id":"bakudan-stone-oak","name":"Bakudan Stone Oak","email":"bakudan.stoneoak@example.com","doorDashAccountId":null,"active":1,"created_at":"2026-06-16 10:00:06","updated_at":"2026-06-16 10:00:06"},{"id":"bakudan-bandera","name":"Bakudan Bandera","email":"bakudan.bandera@example.com","doorDashAccountId":null,"active":1,"created_at":"2026-06-16 10:00:06","updated_at":"2026-06-16 10:00:06"},{"id":"raw-sushi-bar","name":"Raw Sushi Bar","email":"raw.sushi@example.com","doorDashAccountId":null,"active":1,"created_at":"2026-06-16 10:00:06","updated_at":"2026-06-16 10:00:06"}]} 
+DONE 

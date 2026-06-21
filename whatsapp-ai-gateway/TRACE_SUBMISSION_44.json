@@ -1,0 +1,830 @@
+{
+  "trace_id": "TRACE_SUBMISSION_44_B2",
+  "submission_id": 44,
+  "store_code": "B2",
+  "store_name": "Stone Oak",
+  "template_id": "unknown",
+  "created_at": "2026-06-20 03:59:36",
+  "ocr_confidence_overall": 45,
+  "status": "PENDING",
+  "vision_enabled_runtime": false,
+  "vision_provider_runtime": "disabled",
+  "vision_review_log_exists": false,
+  "pipeline_trace_recorded": false,
+  "pipeline_steps": [],
+  "field_count": 19,
+  "fields": [
+    {
+      "field": "SO-01",
+      "label": "Walk-In Cooler (Produce)",
+      "ground_truth": 40,
+      "range": [
+        30,
+        45
+      ],
+      "critical": false,
+      "ocr": "8",
+      "ocr_confidence": 91,
+      "memory": 40,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-45",
+        "critical": false,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36,
+          37,
+          38
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          138
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 40,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 40,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-02",
+      "label": "Walk-In Freezer",
+      "ground_truth": 1,
+      "range": [
+        -20,
+        5
+      ],
+      "critical": false,
+      "ocr": "0",
+      "ocr_confidence": 91,
+      "memory": 1,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "-20-5",
+        "critical": false,
+        "typical_values": [
+          -5,
+          -2,
+          0,
+          1,
+          2,
+          -10
+        ],
+        "common_bad_ocr": [
+          200,
+          300,
+          400
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 0,
+      "decision_engine_source": "OCR_HIGH_CONFIDENCE",
+      "decision_engine_status": "CONFIDENT",
+      "decision_engine_alert_allowed": true,
+      "decision_engine_block_reason": null,
+      "final_reply_value": 0,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-03",
+      "label": "Prep Area Cooler",
+      "ground_truth": 40,
+      "range": [
+        30,
+        45
+      ],
+      "critical": false,
+      "ocr": "0",
+      "ocr_confidence": 91,
+      "memory": 40,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-45",
+        "critical": false,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36,
+          37
+        ],
+        "common_bad_ocr": [
+          1,
+          7
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 40,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 40,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-04",
+      "label": "Bowl Warmer",
+      "ground_truth": 102,
+      "range": [
+        100,
+        125
+      ],
+      "critical": false,
+      "ocr": "1",
+      "ocr_confidence": 91,
+      "memory": 34,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "100-125",
+        "critical": false,
+        "typical_values": [
+          105,
+          108,
+          110,
+          112,
+          115
+        ],
+        "common_bad_ocr": [
+          1,
+          7
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 1,
+      "decision_engine_source": "HUMAN_REQUIRED",
+      "decision_engine_status": "MANAGER_REVIEW",
+      "decision_engine_alert_allowed": true,
+      "decision_engine_block_reason": null,
+      "final_reply_value": 1,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-05",
+      "label": "Ramen Reach-In Top",
+      "ground_truth": 36,
+      "range": [
+        30,
+        45
+      ],
+      "critical": false,
+      "ocr": "40",
+      "ocr_confidence": 91,
+      "memory": 36,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-45",
+        "critical": false,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36,
+          37
+        ],
+        "common_bad_ocr": [
+          1,
+          7
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 40,
+      "decision_engine_source": "OCR_HIGH_CONFIDENCE",
+      "decision_engine_status": "CONFIDENT",
+      "decision_engine_alert_allowed": true,
+      "decision_engine_block_reason": null,
+      "final_reply_value": 40,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-06",
+      "label": "Ramen Reach-In Below",
+      "ground_truth": 38,
+      "range": [
+        30,
+        45
+      ],
+      "critical": false,
+      "ocr": "20",
+      "ocr_confidence": 91,
+      "memory": 38,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-45",
+        "critical": false,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36,
+          37
+        ],
+        "common_bad_ocr": [
+          1,
+          7
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 38,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 38,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-07",
+      "label": "Line Freezer",
+      "ground_truth": 0,
+      "range": [
+        -20,
+        0
+      ],
+      "critical": false,
+      "ocr": "4",
+      "ocr_confidence": 91,
+      "memory": 0,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "-20-0",
+        "critical": false,
+        "typical_values": [
+          -5,
+          -2,
+          -8,
+          -10,
+          0
+        ],
+        "common_bad_ocr": [
+          200,
+          300
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 0,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 0,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-08",
+      "label": "Seasoned Eggs",
+      "ground_truth": 100,
+      "range": [
+        95,
+        105
+      ],
+      "critical": true,
+      "ocr": "10",
+      "ocr_confidence": 91,
+      "memory": 36,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "95-105",
+        "critical": true,
+        "typical_values": [
+          97,
+          98,
+          100,
+          101,
+          102
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          18
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": null,
+      "decision_engine_source": "HUMAN_REQUIRED",
+      "decision_engine_status": "MANUAL_REQUIRED",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "HOT_FIELD_LOW_OCR_BLOCKED",
+      "final_reply_value": null,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-09",
+      "label": "Sliced Pork Hot",
+      "ground_truth": 101,
+      "range": [
+        95,
+        105
+      ],
+      "critical": true,
+      "ocr": "50",
+      "ocr_confidence": 91,
+      "memory": 37,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "95-105",
+        "critical": true,
+        "typical_values": [
+          97,
+          98,
+          100,
+          101,
+          102
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          18
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 50,
+      "decision_engine_source": "HUMAN_REQUIRED",
+      "decision_engine_status": "MANAGER_REVIEW",
+      "decision_engine_alert_allowed": true,
+      "decision_engine_block_reason": null,
+      "final_reply_value": 50,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-10",
+      "label": "Diced Pork Hot",
+      "ground_truth": 103,
+      "range": [
+        95,
+        105
+      ],
+      "critical": true,
+      "ocr": "-1",
+      "ocr_confidence": 91,
+      "memory": 37,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "95-105",
+        "critical": true,
+        "typical_values": [
+          97,
+          98,
+          100,
+          101,
+          102
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          18
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": null,
+      "decision_engine_source": "HUMAN_REQUIRED",
+      "decision_engine_status": "MANUAL_REQUIRED",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "HOT_FIELD_LOW_OCR_BLOCKED",
+      "final_reply_value": null,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-11",
+      "label": "Tapas Reach-In Top",
+      "ground_truth": 33,
+      "range": [
+        30,
+        45
+      ],
+      "critical": false,
+      "ocr": "30",
+      "ocr_confidence": 91,
+      "memory": 33,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-45",
+        "critical": false,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36
+        ],
+        "common_bad_ocr": [
+          1,
+          7
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 30,
+      "decision_engine_source": "OCR_HIGH_CONFIDENCE",
+      "decision_engine_status": "CONFIDENT",
+      "decision_engine_alert_allowed": true,
+      "decision_engine_block_reason": null,
+      "final_reply_value": 30,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-12",
+      "label": "Chicken Cold",
+      "ground_truth": 33,
+      "range": [
+        30,
+        40
+      ],
+      "critical": true,
+      "ocr": "3",
+      "ocr_confidence": 91,
+      "memory": 33,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-40",
+        "critical": true,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          138
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 33,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 33,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-13",
+      "label": "Pork Cold",
+      "ground_truth": 38,
+      "range": [
+        30,
+        40
+      ],
+      "critical": true,
+      "ocr": "1",
+      "ocr_confidence": 91,
+      "memory": 38,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-40",
+        "critical": true,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          138
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 38,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 38,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-14",
+      "label": "Tapas Reach-In Below",
+      "ground_truth": 38,
+      "range": [
+        30,
+        45
+      ],
+      "critical": false,
+      "ocr": "50",
+      "ocr_confidence": 91,
+      "memory": 38,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-45",
+        "critical": false,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36
+        ],
+        "common_bad_ocr": [
+          1,
+          7
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 38,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 38,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-15",
+      "label": "Walk-In Produce Recheck",
+      "ground_truth": 39,
+      "range": [
+        30,
+        45
+      ],
+      "critical": false,
+      "ocr": "-3",
+      "ocr_confidence": 91,
+      "memory": 39,
+      "memory_confidence": 0.30000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "30-45",
+        "critical": false,
+        "typical_values": [
+          33,
+          34,
+          35,
+          36
+        ],
+        "common_bad_ocr": [
+          1,
+          7
+        ],
+        "requires_vision_review": false
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 39,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 39,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-16",
+      "label": "Fryer Left",
+      "ground_truth": 360,
+      "range": [
+        350,
+        360
+      ],
+      "critical": true,
+      "ocr": "20.08",
+      "ocr_confidence": 91,
+      "memory": 200,
+      "memory_confidence": 0.29000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "350-360",
+        "critical": true,
+        "typical_values": [
+          350,
+          352,
+          355,
+          358,
+          360
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          138,
+          300,
+          56
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": null,
+      "decision_engine_source": "HUMAN_REQUIRED",
+      "decision_engine_status": "MANUAL_REQUIRED",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "FRYER_LOW_OCR_BLOCKED",
+      "final_reply_value": null,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-17",
+      "label": "Fryer Right",
+      "ground_truth": 350,
+      "range": [
+        350,
+        360
+      ],
+      "critical": true,
+      "ocr": "300",
+      "ocr_confidence": 91,
+      "memory": 200,
+      "memory_confidence": 0.29000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "350-360",
+        "critical": true,
+        "typical_values": [
+          350,
+          352,
+          355,
+          358,
+          360
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          138,
+          300,
+          56
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 300,
+      "decision_engine_source": "HUMAN_REQUIRED",
+      "decision_engine_status": "MANAGER_REVIEW",
+      "decision_engine_alert_allowed": true,
+      "decision_engine_block_reason": null,
+      "final_reply_value": 300,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-18",
+      "label": "Pasta Boiler Left",
+      "ground_truth": 215,
+      "range": [
+        200,
+        220
+      ],
+      "critical": true,
+      "ocr": "50.08",
+      "ocr_confidence": 91,
+      "memory": 200,
+      "memory_confidence": 0.29000000000000004,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "200-220",
+        "critical": true,
+        "typical_values": [
+          200,
+          205,
+          210,
+          212,
+          215
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          20,
+          22
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 200,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 200,
+      "reply_source": "decision_engine"
+    },
+    {
+      "field": "SO-19",
+      "label": "Pasta Boiler Right",
+      "ground_truth": 210,
+      "range": [
+        200,
+        220
+      ],
+      "critical": true,
+      "ocr": "307",
+      "ocr_confidence": 91,
+      "memory": 210,
+      "memory_confidence": 0.28,
+      "writer_profile": null,
+      "store_knowledge": {
+        "expected_range": "200-220",
+        "critical": true,
+        "typical_values": [
+          200,
+          205,
+          210,
+          212,
+          215
+        ],
+        "common_bad_ocr": [
+          1,
+          7,
+          20,
+          22
+        ],
+        "requires_vision_review": true
+      },
+      "vision": null,
+      "vision_confidence": null,
+      "vision_override": null,
+      "vision_skipped_reason": "VISION_REVIEW_DISABLED",
+      "decision_engine_value": 210,
+      "decision_engine_source": "MEMORY_ASSISTED",
+      "decision_engine_status": "PREDICTED_NEEDS_CONFIRMATION",
+      "decision_engine_alert_allowed": false,
+      "decision_engine_block_reason": "low_confidence_or_memory_conflict",
+      "final_reply_value": 210,
+      "reply_source": "decision_engine"
+    }
+  ]
+}

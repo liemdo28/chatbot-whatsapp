@@ -1,0 +1,408 @@
+{
+  "submission_id": 44,
+  "store_code": "B2",
+  "image_path": "C:\\Ld-project\\whatsapp-ai-gateway\\data\\evidence\\evidence_1781927883937_936f42a9.jpg",
+  "created_at": "2026-06-20 03:59:36",
+  "vision_latency_ms": 71042,
+  "fields": [
+    {
+      "field_id": "SO-01",
+      "ocr_value": 8,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 40,
+      "final_value": 40,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 40
+    },
+    {
+      "field_id": "SO-02",
+      "ocr_value": 0,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        -20,
+        5
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 0,
+      "final_value": 0,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 1
+    },
+    {
+      "field_id": "SO-03",
+      "ocr_value": 0,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 40,
+      "final_value": 40,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 40
+    },
+    {
+      "field_id": "SO-04",
+      "ocr_value": 1,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        100,
+        125
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 102,
+      "final_value": 102,
+      "final_source": "MEMORY_ASSISTED",
+      "ground_truth": 102
+    },
+    {
+      "field_id": "SO-05",
+      "ocr_value": 40,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 40,
+      "final_value": 40,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 36
+    },
+    {
+      "field_id": "SO-06",
+      "ocr_value": 20,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 38,
+      "final_value": 38,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 38
+    },
+    {
+      "field_id": "SO-07",
+      "ocr_value": 4,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        -20,
+        0
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "CEO_CONFIRMED",
+      "ground_truth": 0
+    },
+    {
+      "field_id": "SO-08",
+      "ocr_value": 10,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        95,
+        105
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 100,
+      "vision_confidence": 0.95,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 100
+    },
+    {
+      "field_id": "SO-09",
+      "ocr_value": 50,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        95,
+        105
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 100,
+      "vision_confidence": 0.92,
+      "decision_value": 101,
+      "final_value": 101,
+      "final_source": "MEMORY_ASSISTED",
+      "ground_truth": 101
+    },
+    {
+      "field_id": "SO-10",
+      "ocr_value": -1,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        95,
+        105
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 101,
+      "vision_confidence": 0.92,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 103
+    },
+    {
+      "field_id": "SO-11",
+      "ocr_value": 30,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 30,
+      "final_value": 30,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 33
+    },
+    {
+      "field_id": "SO-12",
+      "ocr_value": 3,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        40
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 38,
+      "vision_confidence": 0.78,
+      "decision_value": 33,
+      "final_value": 33,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 33
+    },
+    {
+      "field_id": "SO-13",
+      "ocr_value": 1,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        40
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 40,
+      "vision_confidence": 0.85,
+      "decision_value": 38,
+      "final_value": 38,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 38
+    },
+    {
+      "field_id": "SO-14",
+      "ocr_value": 50,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 38,
+      "final_value": 38,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 38
+    },
+    {
+      "field_id": "SO-15",
+      "ocr_value": -3,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 39,
+      "final_value": 39,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 39
+    },
+    {
+      "field_id": "SO-16",
+      "ocr_value": 20.08,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        350,
+        360
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 360,
+      "vision_confidence": 0.92,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 360
+    },
+    {
+      "field_id": "SO-17",
+      "ocr_value": 300,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        350,
+        360
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 350,
+      "final_value": 350,
+      "final_source": "MEMORY_ASSISTED",
+      "ground_truth": 350
+    },
+    {
+      "field_id": "SO-18",
+      "ocr_value": 50.08,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        200,
+        220
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 200,
+      "final_value": 200,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 215
+    },
+    {
+      "field_id": "SO-19",
+      "ocr_value": 307,
+      "ocr_confidence": 91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        200,
+        220
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 210,
+      "final_value": 210,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 210
+    }
+  ]
+}

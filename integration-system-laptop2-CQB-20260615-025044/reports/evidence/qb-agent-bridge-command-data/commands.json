@@ -1,0 +1,17 @@
+[
+  {
+    "command_id": "cmd-live-bridge-001",
+    "machine_id": "qb-laptop-command-01",
+    "command_type": "TEST_QB_CONNECTION",
+    "payload_json": {
+      "requested_by": "deep-check"
+    },
+    "status": "COMPLETED",
+    "created_at": "2026-06-05T13:09:32.875Z",
+    "acknowledged_at": "2026-06-05T13:09:32.928027+00:00",
+    "ack_machine_id": "qb-laptop-command-01",
+    "completed_at": "2026-06-05T13:09:32.949967+00:00",
+    "result_json": "{\"ok\": true, \"command_id\": \"cmd-live-bridge-001\", \"executed_by\": \"NoOpExecutor\"}",
+    "error_message": ""
+  }
+]

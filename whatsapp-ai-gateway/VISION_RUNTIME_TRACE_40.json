@@ -1,0 +1,408 @@
+{
+  "submission_id": 40,
+  "store_code": "B3",
+  "image_path": "C:\\Ld-project\\whatsapp-ai-gateway\\data\\evidence\\evidence_1781918501314_93b89c46.jpg",
+  "created_at": "2026-06-20 01:23:16",
+  "vision_latency_ms": 84697,
+  "fields": [
+    {
+      "field_id": "BAN-01",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 42
+    },
+    {
+      "field_id": "BAN-02",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        -20,
+        5
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": -7
+    },
+    {
+      "field_id": "BAN-03",
+      "ocr_value": 100,
+      "ocr_confidence": 0.91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "CEO_CONFIRMED",
+      "ground_truth": null
+    },
+    {
+      "field_id": "BAN-04",
+      "ocr_value": 4,
+      "ocr_confidence": 0.91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        100,
+        125
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 104,
+      "final_value": 104,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 100
+    },
+    {
+      "field_id": "BAN-05",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 43
+    },
+    {
+      "field_id": "BAN-06",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 42
+    },
+    {
+      "field_id": "BAN-07",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        -20,
+        0
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 12
+    },
+    {
+      "field_id": "BAN-08",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        95,
+        105
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 109,
+      "vision_confidence": 0.82,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 109
+    },
+    {
+      "field_id": "BAN-09",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        95,
+        105
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 103,
+      "vision_confidence": 0.92,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 101
+    },
+    {
+      "field_id": "BAN-10",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        95,
+        105
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 103,
+      "vision_confidence": 0.86,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 102
+    },
+    {
+      "field_id": "BAN-11",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 43
+    },
+    {
+      "field_id": "BAN-12",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        40
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 31,
+      "vision_confidence": 0.86,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 44
+    },
+    {
+      "field_id": "BAN-13",
+      "ocr_value": 0,
+      "ocr_confidence": 0.91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        40
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 40,
+      "vision_confidence": 0.88,
+      "decision_value": 40,
+      "final_value": 40,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 40
+    },
+    {
+      "field_id": "BAN-14",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 43
+    },
+    {
+      "field_id": "BAN-15",
+      "ocr_value": 4,
+      "ocr_confidence": 0.91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        30,
+        45
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 44,
+      "final_value": 44,
+      "final_source": "OCR_HIGH_CONFIDENCE",
+      "ground_truth": 37
+    },
+    {
+      "field_id": "BAN-16",
+      "ocr_value": 138,
+      "ocr_confidence": 0.91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        350,
+        360
+      ],
+      "vision_called": true,
+      "vision_provider": "openai",
+      "vision_model": "claude-opus-4-7",
+      "vision_value": 358,
+      "vision_confidence": 0.82,
+      "decision_value": 353,
+      "final_value": 353,
+      "final_source": "MEMORY_ASSISTED",
+      "ground_truth": 353
+    },
+    {
+      "field_id": "BAN-17",
+      "ocr_value": 138,
+      "ocr_confidence": 0.91,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        350,
+        360
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": 357,
+      "final_value": 357,
+      "final_source": "MEMORY_ASSISTED",
+      "ground_truth": 357
+    },
+    {
+      "field_id": "BAN-18",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        200,
+        220
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 210
+    },
+    {
+      "field_id": "BAN-19",
+      "ocr_value": null,
+      "ocr_confidence": 0,
+      "memory_value": null,
+      "memory_confidence": null,
+      "writer_value": null,
+      "store_knowledge_range": [
+        200,
+        220
+      ],
+      "vision_called": false,
+      "vision_provider": null,
+      "vision_model": null,
+      "vision_value": null,
+      "vision_confidence": null,
+      "decision_value": null,
+      "final_value": null,
+      "final_source": "MISSING_VALUE",
+      "ground_truth": 210
+    }
+  ]
+}

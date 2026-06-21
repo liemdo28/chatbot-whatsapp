@@ -1,0 +1,17 @@
+param()
+$out = "C:\Ld-project\doordash-validation.txt"
+"VALIDATION" | Out-File $out
+
+$r = Invoke-WebRequest "http://localhost:3001/" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue
+if ($r) { "GET / : $($r.StatusCode) $($r.Content)" | Out-File $out -Append } else { "GET / : FAILED" | Out-File $out -Append }
+
+$r = Invoke-WebRequest "http://localhost:3001/health" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue
+if ($r) { "GET /health : $($r.StatusCode) $($r.Content)" | Out-File $out -Append } else { "GET /health : FAILED" | Out-File $out -Append }
+
+$r = Invoke-WebRequest "http://localhost:3001/api/status" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue
+if ($r) { "GET /api/status : $($r.StatusCode) $($r.Content)" | Out-File $out -Append } else { "GET /api/status : FAILED" | Out-File $out -Append }
+
+$r = Invoke-WebRequest "http://localhost:3001/api/stores" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue
+if ($r) { "GET /api/stores : $($r.StatusCode) $($r.Content)" | Out-File $out -Append } else { "GET /api/stores : FAILED" | Out-File $out -Append }
+
+"DONE" | Out-File $out -Append

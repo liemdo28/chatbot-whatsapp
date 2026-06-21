@@ -1,0 +1,164 @@
+{
+  "$schema": "ceo-locked-ground-truth-v2",
+  "generated": "2026-06-21",
+  "locked_by": "Hoang (CEO) + Claude visual verification",
+  "version": 2,
+  "policy": "LOCKED. Any change requires RFC + CEO approval BEFORE re-running eval. No mid-eval modifications.",
+
+  "forms": {
+
+    "bandera_2026_06_19_BAN": {
+      "image": "eval/fixtures/bandera-2026-06-19-ban-form.jpg",
+      "format": "BAN-XX v3 (standardized)",
+      "store": "Bandera Road",
+      "date": "2026-06-19",
+      "shifts": ["10AM", "4PM"],
+      "header": {
+        "employee_10am": "May",
+        "employee_4pm": "May",
+        "manager_signature": "Miles"
+      },
+      "cells": {
+        "BAN-01": {"label": "Walk-In Cooler (Produce)", "target_min": 30, "target_max": 45,  "v_10am": 44,  "v_4pm": 42},
+        "BAN-02": {"label": "Walk-In Freezer",           "target_min": -20,"target_max": 5,   "v_10am": -7,  "v_4pm": -7},
+        "BAN-03": {"label": "Prep Area Cooler",          "target_min": 30, "target_max": 45,  "v_10am": null,"v_4pm": null, "note": "both empty"},
+        "BAN-04": {"label": "Bowl Warmer",               "target_min": 100,"target_max": 125, "v_10am": 98,  "v_4pm": 100,  "note": "10AM FAIL (98<100)"},
+        "BAN-05": {"label": "Ramen Reach-In (Top)",      "target_min": 30, "target_max": 45,  "v_10am": 43,  "v_4pm": 43},
+        "BAN-06": {"label": "Ramen Reach-In (Below)",    "target_min": 30, "target_max": 45,  "v_10am": 40,  "v_4pm": 42},
+        "BAN-07": {"label": "Line Freezer",              "target_min": -20,"target_max": 0,   "v_10am": 10,  "v_4pm": 12,   "note": "BROKEN SENSOR — both shifts FAIL by spec"},
+        "BAN-08": {"label": "Seasoned Eggs",             "target_min": 95, "target_max": 105, "v_10am": 104, "v_4pm": 104},
+        "BAN-09": {"label": "Sliced Pork (Hot)",         "target_min": 95, "target_max": 105, "v_10am": 103, "v_4pm": 101},
+        "BAN-10": {"label": "Diced Pork (Hot)",          "target_min": 95, "target_max": 105, "v_10am": 103, "v_4pm": 102},
+        "BAN-11": {"label": "Tapas Reach-In (Top)",      "target_min": 30, "target_max": 45,  "v_10am": 41,  "v_4pm": 43},
+        "BAN-12": {"label": "Chicken (Cold)",            "target_min": 30, "target_max": 40,  "v_10am": 31,  "v_4pm": 41,   "note": "4PM FAIL (41>40)"},
+        "BAN-13": {"label": "Pork (Cold)",               "target_min": 30, "target_max": 40,  "v_10am": 31,  "v_4pm": 40},
+        "BAN-14": {"label": "Tapas Reach-In (Below)",    "target_min": 30, "target_max": 45,  "v_10am": 42,  "v_4pm": 42},
+        "BAN-15": {"label": "Walk-In (Produce) Recheck", "target_min": 30, "target_max": 45,  "v_10am": 33,  "v_4pm": 34,   "note": "CEO corrected"},
+        "BAN-16": {"label": "Fryer (Left)",              "target_min": 350,"target_max": 360, "v_10am": 351, "v_4pm": 348,  "note": "4PM FAIL (348<350)"},
+        "BAN-17": {"label": "Fryer (Right)",             "target_min": 350,"target_max": 360, "v_10am": 357, "v_4pm": 350},
+        "BAN-18": {"label": "Pasta Boiler (Left)",       "target_min": 200,"target_max": 220, "v_10am": 210, "v_4pm": 210},
+        "BAN-19": {"label": "Pasta Boiler (Right)",      "target_min": 200,"target_max": 220, "v_10am": null,"v_4pm": null, "note": "both empty"}
+      },
+      "cell_count": 38
+    },
+
+    "stone_oak_2026_06_19_SO": {
+      "image": "eval/fixtures/stone-oak-2026-06-19-so-form.jpg",
+      "format": "SO-XX v3 (standardized)",
+      "store": "Stone Oak",
+      "date": "2026-06-19",
+      "shifts": ["10AM", "4PM"],
+      "header": {
+        "employee_10am": "Sol",
+        "employee_4pm": "Sol",
+        "manager_signature": "Edgar"
+      },
+      "cells": {
+        "SO-01": {"label": "Walk-In Cooler (Produce)", "target_min": 30, "target_max": 45,  "v_10am": 37,  "v_4pm": 40},
+        "SO-02": {"label": "Walk-In Freezer",          "target_min": -20,"target_max": 5,   "v_10am": 0,   "v_4pm": 10,  "note": "4PM FAIL (10>5)"},
+        "SO-03": {"label": "Prep Area Cooler",         "target_min": 30, "target_max": 45,  "v_10am": 41,  "v_4pm": 37},
+        "SO-04": {"label": "Bowl Warmer",              "target_min": 100,"target_max": 125, "v_10am": 104, "v_4pm": 102},
+        "SO-05": {"label": "Ramen Reach-In (Top)",     "target_min": 30, "target_max": 45,  "v_10am": 36,  "v_4pm": 36},
+        "SO-06": {"label": "Ramen Reach-In (Below)",   "target_min": 30, "target_max": 45,  "v_10am": 37,  "v_4pm": 38},
+        "SO-07": {"label": "Line Freezer",             "target_min": -20,"target_max": 0,   "v_10am": 0,   "v_4pm": 0},
+        "SO-08": {"label": "Seasoned Eggs",            "target_min": 95, "target_max": 105, "v_10am": 100, "v_4pm": 100},
+        "SO-09": {"label": "Sliced Pork (Hot)",        "target_min": 95, "target_max": 105, "v_10am": 100, "v_4pm": 101},
+        "SO-10": {"label": "Diced Pork (Hot)",         "target_min": 95, "target_max": 105, "v_10am": 101, "v_4pm": 103},
+        "SO-11": {"label": "Tapas Reach-In (Top)",     "target_min": 30, "target_max": 45,  "v_10am": 37,  "v_4pm": 33,  "note": "CEO confirmed; ambiguous handwriting"},
+        "SO-12": {"label": "Chicken (Cold)",           "target_min": 30, "target_max": 40,  "v_10am": 40,  "v_4pm": 38},
+        "SO-13": {"label": "Pork (Cold)",              "target_min": 30, "target_max": 40,  "v_10am": 40,  "v_4pm": 38},
+        "SO-14": {"label": "Tapas Reach-In (Below)",   "target_min": 30, "target_max": 45,  "v_10am": 40,  "v_4pm": 39},
+        "SO-15": {"label": "Walk-In (Produce) Recheck","target_min": 30, "target_max": 45,  "v_10am": 37,  "v_4pm": 40},
+        "SO-16": {"label": "Fryer (Left)",             "target_min": 350,"target_max": 360, "v_10am": 350, "v_4pm": 350, "note": "CEO confirmed 350 (not 360 as image appears)"},
+        "SO-17": {"label": "Fryer (Right)",            "target_min": 350,"target_max": 360, "v_10am": 350, "v_4pm": 350},
+        "SO-18": {"label": "Pasta Boiler (Left)",      "target_min": 200,"target_max": 220, "v_10am": 200, "v_4pm": 215},
+        "SO-19": {"label": "Pasta Boiler (Right)",     "target_min": 200,"target_max": 220, "v_10am": 210, "v_4pm": 210}
+      },
+      "cell_count": 38
+    },
+
+    "rim_2026_06_20_RIM": {
+      "image": "eval/fixtures/rim-2026-06-20-rim-form.jpg",
+      "format": "RIM-XX v3 (standardized, printed as IM-XX in left column due to crop)",
+      "store": "The Rim",
+      "date": "2026-06-20",
+      "shifts": ["10AM", "4PM"],
+      "header": {
+        "employee_10am": "Yenci / Omar",
+        "employee_4pm": "Omar",
+        "manager_signature": null
+      },
+      "cells": {
+        "RIM-01": {"label": "Walk-In Cooler (Produce)", "target_min": 30, "target_max": 45,  "v_10am": null, "v_4pm": 40,  "note": "10AM empty/dash"},
+        "RIM-02": {"label": "Walk-In Freezer",          "target_min": -20,"target_max": 5,   "v_10am": null, "v_4pm": 10,  "note": "10AM empty/dash; 4PM FAIL (10>5)"},
+        "RIM-03": {"label": "Prep Area Cooler",         "target_min": 30, "target_max": 45,  "v_10am": 44,   "v_4pm": 40},
+        "RIM-04": {"label": "Bowl Warmer",              "target_min": 100,"target_max": 125, "v_10am": 100,  "v_4pm": 100, "note": "10AM CEO confirmed 100 (digit 1 written tall)"},
+        "RIM-05": {"label": "Ramen Reach-In (Top)",     "target_min": 30, "target_max": 45,  "v_10am": 34,   "v_4pm": 38},
+        "RIM-06": {"label": "Ramen Reach-In (Below)",   "target_min": 30, "target_max": 45,  "v_10am": 38,   "v_4pm": 39},
+        "RIM-07": {"label": "Line Freezer",             "target_min": -20,"target_max": 0,   "v_10am": 8,    "v_4pm": 8,   "note": "BROKEN SENSOR pattern — both shifts FAIL"},
+        "RIM-08": {"label": "Seasoned Eggs",            "target_min": 95, "target_max": 105, "v_10am": 100,  "v_4pm": 105},
+        "RIM-09": {"label": "Sliced Pork (Hot)",        "target_min": 95, "target_max": 105, "v_10am": 140,  "v_4pm": 125, "note": "CEO confirmed; both above range but food-safe"},
+        "RIM-10": {"label": "Diced Pork (Hot)",         "target_min": 95, "target_max": 105, "v_10am": 140,  "v_4pm": 145, "note": "CEO confirmed; above range, food-safe"},
+        "RIM-11": {"label": "Tapas Reach-In (Top)",     "target_min": 30, "target_max": 45,  "v_10am": 42,   "v_4pm": 39},
+        "RIM-12": {"label": "Chicken (Cold)",           "target_min": 30, "target_max": 40,  "v_10am": 40,   "v_4pm": 38},
+        "RIM-13": {"label": "Pork (Cold)",              "target_min": 30, "target_max": 40,  "v_10am": 40,   "v_4pm": 38},
+        "RIM-14": {"label": "Tapas Reach-In (Below)",   "target_min": 30, "target_max": 45,  "v_10am": 40,   "v_4pm": 40},
+        "RIM-15": {"label": "Walk-In (Produce) Recheck","target_min": 30, "target_max": 45,  "v_10am": 40,   "v_4pm": 38},
+        "RIM-16": {"label": "Fryer (Left)",             "target_min": 350,"target_max": 360, "v_10am": 350,  "v_4pm": 350},
+        "RIM-17": {"label": "Fryer (Right)",            "target_min": 350,"target_max": 360, "v_10am": 360,  "v_4pm": 340, "note": "4PM FAIL (340<350)"},
+        "RIM-18": {"label": "Pasta Boiler (Left)",      "target_min": 200,"target_max": 220, "v_10am": 209,  "v_4pm": 210, "note": "CEO confirmed 209"},
+        "RIM-19": {"label": "Pasta Boiler (Right)",     "target_min": 200,"target_max": 220, "v_10am": 210,  "v_4pm": 210}
+      },
+      "cell_count": 38
+    },
+
+    "stone_oak_2026_05_27_OLD_format": {
+      "image": "eval/fixtures/stone-oak-2026-05-27-old-form.jpg",
+      "format": "Stone Oak legacy single-column (pre-SO-XX standardization)",
+      "store": "Stone Oak",
+      "date": "2026-05-27",
+      "shifts": ["11AM"],
+      "header": {
+        "employee": "Sol"
+      },
+      "cells": {
+        "row_01": {"label": "Walk-In Cooler",       "target": "<=40", "value": 40},
+        "row_02": {"label": "Walk-In Freezer",      "target": "<=0",  "value": 0},
+        "row_03": {"label": "Prep Area Refrig",     "target": "<=40", "value": 40},
+        "row_04": {"label": "Ramen Refrig Below",   "target": "<=40", "value": 34},
+        "row_05": {"label": "Ramen Refrig Top",     "target": "<=40", "value": 41, "note": "FAIL"},
+        "row_06": {"label": "Freezer Line",         "target": "<=0",  "value": 0},
+        "row_07": {"label": "Tapas Refrig Below",   "target": "<=40", "value": 35},
+        "row_08": {"label": "Tapas Refrig Top",     "target": "<=40", "value": 36},
+        "row_09": {"label": "Pork Chashu Top",      "target": "<=40", "value": 37},
+        "row_10": {"label": "Chicken Chashu Top",   "target": "<=40", "value": 37},
+        "row_11": {"label": "Fryer 1",              "target": ">=325","value": 334},
+        "row_12": {"label": "Fryer 2",              "target": ">=325","value": 336},
+        "row_13": {"label": "Pasta Boiler 1",       "target": ">=200","value": 205, "note": "borderline 200/205"},
+        "row_14": {"label": "Pasta Boiler 2",       "target": ">=200","value": 200},
+        "row_15": {"label": "Seasoned Eggs (Warm)", "target": ">=100","value": 100},
+        "row_16": {"label": "Pork Broth",           "target": ">=200","value": 200},
+        "row_17": {"label": "Chicken Broth",        "target": ">=200","value": 200},
+        "row_18": {"label": "Veggie Broth",         "target": ">=200","value": null, "note": "crossed out"}
+      },
+      "cell_count": 18,
+      "use_in_d2": "OPTIONAL — old format not matching new pipeline schema; include only if pipeline supports both formats"
+    }
+  },
+
+  "totals": {
+    "bandera_BAN_cells": 38,
+    "stone_oak_SO_cells": 38,
+    "rim_RIM_cells": 38,
+    "primary_d2_dataset_cells": 114,
+    "stone_oak_legacy_cells_optional": 18,
+    "all_cells_locked": 132
+  },
+
+  "d2_acceptance_now_possible": {
+    "min_required": 100,
+    "current_locked": 114,
+    "margin": 14,
+    "status": "UNBLOCKED for D2 evaluation on locked GT"
+  }
+}

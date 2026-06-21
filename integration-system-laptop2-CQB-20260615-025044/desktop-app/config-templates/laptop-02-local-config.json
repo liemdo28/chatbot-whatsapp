@@ -1,0 +1,156 @@
+{
+  "_comment": "QB Laptop 2 - Stone Oak config for QuickBooks files under C:\\QB",
+  "_laptop": "qb-laptop-02",
+
+  "features": {
+    "qb_write_sync_enabled": false,
+    "qb_read_only_activity_log_enabled": true,
+    "mi_core_reporting_enabled": true,
+    "multi_file_12h_sync_enabled": true
+  },
+
+  "toast_download": {
+    "enabled": true,
+    "automation_mode": "HYBRID_FALLBACK",
+    "download_dir": "C:\\ProgramData\\ToastPOSManager\\toast-reports",
+    "allowed_domains": [
+      "*.toasttab.com",
+      "*.toasttab.com/*"
+    ],
+    "browser_profile": {
+      "use_real_profile": true,
+      "browser": "chrome",
+      "profile_path": "",
+      "require_existing_login": true
+    },
+    "browser_use": {
+      "enabled": true,
+      "model_provider": "openai",
+      "model": "gpt-5.5",
+      "timeout_seconds": 180,
+      "max_steps": 40,
+      "headless": false,
+      "human_approval_required_for_login": true,
+      "never_store_password": true
+    }
+  },
+
+  "qbw_paths": {
+    "Stone Oak": "C:\\QB\\StoneOak.qbw",
+    "stone_oak": "C:\\QB\\StoneOak.qbw",
+    "Bakudan Stone Oak": "C:\\QB\\StoneOak.qbw"
+  },
+
+  "last_qbw_dir": "C:\\QB",
+
+  "quickbooks": {
+    "enabled": true,
+    "auto_open_on_app_start": true,
+    "auto_connect_company_file": true,
+    "allow_company_switch": false,
+    "startup_timeout_seconds": 120,
+    "exe_path": "",
+    "company_file": "C:\\QB\\StoneOak.qbw",
+    "expected_company_name": "Bakudan Stone Oak",
+    "password_key": "pass1"
+  },
+
+  "mi_core": {
+    "enabled": true,
+    "base_url": "http://100.118.102.113:4001",
+    "api_key_env": "MI_CORE_API_KEY",
+    "machine_id": "qb-laptop-02",
+    "app_version": "dev1-v2",
+    "poll_commands_seconds": 60,
+    "heartbeat_seconds": 60,
+    "timeout_seconds": 15
+  },
+
+  "machine": {
+    "machine_id": "qb-laptop-02",
+    "machine_name": "QB Laptop 2",
+    "store_code": "stone_oak",
+    "store_name": "Bakudan Stone Oak",
+    "location": "Stone Oak"
+  },
+
+  "quickbooks_files": {
+    "scan_enabled": true,
+    "scan_roots": [
+      "C:\\QB",
+      "C:\\Users\\REPLACE_WITH_USERNAME\\Documents",
+      "C:\\Users\\REPLACE_WITH_USERNAME\\Desktop",
+      "D:\\",
+      "E:\\",
+      "F:\\"
+    ],
+    "company_files": [
+      {
+        "file_id": "bakudan-stoneoak",
+        "store_code": "stone_oak",
+        "company_file_path": "C:\\QB\\StoneOak.qbw",
+        "expected_company_name": "Bakudan Stone Oak",
+        "enabled": true,
+        "last_status": "",
+        "last_error": ""
+      }
+    ]
+  },
+
+  "sync_schedule": {
+    "enabled": true,
+    "interval_hours": 12,
+    "run_on_startup": true,
+    "jitter_minutes": 10
+  },
+
+  "auto_sync": {
+    "enabled": false,
+    "report_time": "09:00",
+    "timezone": "America/Chicago",
+    "stores": ["Stone Oak"],
+    "sync_previous_business_day": true,
+    "require_preview_before_first_live_sync": true
+  },
+
+  "qb_activity_log": {
+    "enabled": true,
+    "run_on_app_start": false,
+    "daily_time": "09:15",
+    "output_dir": "logs/qb-activity",
+    "stores": [
+      {
+        "code": "stone_oak",
+        "name": "Bakudan Stone Oak",
+        "class_name": "Stone Oak",
+        "customer_name": "Toast Sales - Stone Oak",
+        "bank_accounts": ["Chase Checking - Stone Oak"]
+      }
+    ]
+  },
+
+  "qb_activity_timeline": {
+    "enabled": true,
+    "run_on_app_start": false,
+    "daily_time": "09:20",
+    "output_dir": "logs/qb-activity"
+  },
+
+  "google_sheet_reporting": {
+    "mode": "centralized",
+    "write_from": "mi-core",
+    "enabled_on_qb_agent": false
+  },
+
+  "background_agent": {
+    "enabled": true,
+    "start_with_windows": true,
+    "heartbeat_seconds": 60,
+    "restart_on_crash": true
+  },
+
+  "delete_policy": {
+    "allow_live_delete": false,
+    "approver": "Accounting lead"
+  }
+}

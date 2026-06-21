@@ -1,0 +1,210 @@
+{
+    "_status": "NEEDS CEO SIGN-OFF",
+    "_note": "Ground truth values below are from ground_truth_ceo.json (CEO visual reading). CEO must verify each cell before eval can be trusted. Do NOT modify during eval run.",
+    "images": {
+        "form_stone_oak": {
+            "source_file": "eval/form_stone_oak.png",
+            "store": "Stone Oak",
+            "group": "B2 Kitchen Log",
+            "shift": "4:00 PM",
+            "date": "06/19",
+            "readings": {
+                "SO-01": {
+                    "field_id": "WALK_IN_COOLER",
+                    "value": 40,
+                    "label": "Walk-In Cooler (Produce)"
+                },
+                "SO-02": {
+                    "field_id": "WALK_IN_FREEZER",
+                    "value": 0,
+                    "label": "Walk-In Freezer"
+                },
+                "SO-03": {
+                    "field_id": "PREP_AREA_COOLER",
+                    "value": 37,
+                    "label": "Prep Area Cooler"
+                },
+                "SO-04": {
+                    "field_id": "BOWL_WARMERS",
+                    "value": 102,
+                    "label": "Bowl Warmer"
+                },
+                "SO-05": {
+                    "field_id": "RAMEN_REACH_TOP",
+                    "value": 36,
+                    "label": "Ramen Reach-In (Top)"
+                },
+                "SO-06": {
+                    "field_id": "RAMEN_REACH_BELOW",
+                    "value": 38,
+                    "label": "Ramen Reach-In (Below)"
+                },
+                "SO-07": {
+                    "field_id": "LINE_FREEZER",
+                    "value": 0,
+                    "label": "Line Freezer"
+                },
+                "SO-08": {
+                    "field_id": "SEASONED_EGGS",
+                    "value": 100,
+                    "label": "Seasoned Eggs"
+                },
+                "SO-09": {
+                    "field_id": "PORK_CHASHU_HOT",
+                    "value": 101,
+                    "label": "Sliced Pork (Hot)"
+                },
+                "SO-10": {
+                    "field_id": "DICED_PORK_HOT",
+                    "value": 103,
+                    "label": "Diced Pork (Hot)"
+                },
+                "SO-11": {
+                    "field_id": "TAPAS_REACH_TOP",
+                    "value": 33,
+                    "label": "Tapas Reach-In (Top)"
+                },
+                "SO-12": {
+                    "field_id": "CHICKEN_CHASHU_COLD",
+                    "value": 38,
+                    "label": "Chicken (Cold)"
+                },
+                "SO-13": {
+                    "field_id": "PORK_CHASHU_COLD",
+                    "value": 38,
+                    "label": "Pork (Cold)"
+                },
+                "SO-14": {
+                    "field_id": "TAPAS_REACH_BELOW",
+                    "value": 39,
+                    "label": "Tapas Reach-In (Below)"
+                },
+                "SO-15": {
+                    "field_id": "WALK_IN_COOLER_RECHECK",
+                    "value": 40,
+                    "label": "Walk-In (Produce) Recheck"
+                },
+                "SO-16": {
+                    "field_id": "FRYER_1",
+                    "value": 300,
+                    "label": "Fryer (Left)",
+                    "note": "CEO flagged as needs_recheck - handwriting ambiguous"
+                },
+                "SO-17": {
+                    "field_id": "FRYER_2",
+                    "value": 350,
+                    "label": "Fryer (Right)"
+                },
+                "SO-18": {
+                    "field_id": "PASTA_BOILER_1",
+                    "value": 215,
+                    "label": "Pasta Boiler (Left)"
+                },
+                "SO-19": {
+                    "field_id": "PASTA_BOILER_2",
+                    "value": 210,
+                    "label": "Pasta Boiler (Right)"
+                }
+            }
+        },
+        "form_bandera": {
+            "source_file": "eval/form_bandera.png",
+            "store": "Bandera Road",
+            "group": "B3 Kitchen Log",
+            "_status": "NEEDS CEO VERIFICATION",
+            "_note": "CEO: please verify each value below against eval/form_bandera.png",
+            "readings": {
+                "BAN-01": {
+                    "field_id": "WALK_IN_COOLER",
+                    "value": 42,
+                    "label": "Walk-In Cooler"
+                },
+                "BAN-02": {
+                    "field_id": "WALK_IN_FREEZER",
+                    "value": -7,
+                    "label": "Walk-In Freezer"
+                },
+                "BAN-03": {
+                    "field_id": "BOWL_WARMERS",
+                    "value": 100,
+                    "label": "Bowl Warmers"
+                },
+                "BAN-04": {
+                    "field_id": "RAMEN_REACH_TOP",
+                    "value": 43,
+                    "label": "Ramen Reach-In Top"
+                },
+                "BAN-05": {
+                    "field_id": "RAMEN_REACH_BELOW",
+                    "value": 42,
+                    "label": "Ramen Reach-In Below"
+                },
+                "BAN-06": {
+                    "field_id": "LINE_FREEZER",
+                    "value": 12,
+                    "label": "Line Freezer"
+                },
+                "BAN-07": {
+                    "field_id": "PORK_CHASHU_COLD",
+                    "value": null,
+                    "label": "Pork Chashu (Cold)",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-08": {
+                    "field_id": "SEASONED_EGGS",
+                    "value": null,
+                    "label": "Seasoned Eggs",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-09": {
+                    "field_id": "TAPAS_REACH_TOP",
+                    "value": null,
+                    "label": "Tapas Reach-In Top",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-10": {
+                    "field_id": "TAPAS_REACH_BELOW",
+                    "value": null,
+                    "label": "Tapas Reach-In Below",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-11": {
+                    "field_id": "TAPAS_SIDE_FRIDGE",
+                    "value": null,
+                    "label": "Tapas Side Fridge",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-12": {
+                    "field_id": "FRYER_1",
+                    "value": null,
+                    "label": "Fryer 1",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-13": {
+                    "field_id": "FRYER_2",
+                    "value": null,
+                    "label": "Fryer 2",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-14": {
+                    "field_id": "PORK_BROTH",
+                    "value": null,
+                    "label": "Pork Broth",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-15": {
+                    "field_id": "CHICKEN_BROTH",
+                    "value": null,
+                    "label": "Chicken Broth",
+                    "note": "NEEDS CEO READ from image"
+                },
+                "BAN-16": {
+                    "field_id": "PASTA_BOILER_1",
+                    "value": null,
+                    "label": "Pasta Boiler 1",
+                    "note": "NEEDS CEO READ from image"
+                }
+            }
+        }
+    }
+}

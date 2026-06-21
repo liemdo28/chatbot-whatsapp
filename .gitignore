@@ -1,0 +1,72 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+*.key
+
+# Dependencies and virtual environments
+node_modules/
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Build and test outputs
+dist/
+build/
+coverage/
+.pytest_cache/
+test-results/
+*.log
+logs/
+
+# Browser/session/runtime state
+sessions/
+sessions-test/
+.wwebjs_cache/
+data/sessions/
+data/screenshots/
+**/data/screenshots/
+**/activity-logs/
+**/playwright-data/
+**/Cache/
+**/Code Cache/
+**/Service Worker/
+**/component_crx_cache/
+**/Default/Network/
+**/WasmTtsEngine/
+**/OnDeviceHeadSuggestModel/
+**/reporting-outbox/
+**/recovery-backups/
+**/fix_log*.txt
+**/paddleocr_stdout.txt
+**/paddleocr_stderr.txt
+
+# Local databases and generated evidence
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite3-*
+qb-runtime-evidence-*/
+qb-runtime-recovery-*/
+integration-system-laptop2-CQB-*.zip
+app-start-debug.txt
+docker-status.txt
+health-check.txt
+install-and-start.txt
+startup-output.txt
+status-output.txt
+extract_response.json
+extract_result.json
+test_extract_body.json
+
+# Editor and OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,37 @@
+$outFile = "C:\Ld-project\doordash-validation.txt"
+"=== DoorDash Campaign Agent Validation ===" | Out-File $outFile
+"Time: $(Get-Date)" | Out-File $outFile -Append
+
+# GET /
+try {
+    $r = Invoke-WebRequest -Uri "http://localhost:3001/" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+    "GET /: $($r.StatusCode) - $($r.Content)" | Out-File $outFile -Append
+} catch {
+    "GET /: FAILED - $($_.Exception.Message)" | Out-File $outFile -Append
+}
+
+# GET /health
+try {
+    $r = Invoke-WebRequest -Uri "http://localhost:3001/health" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+    "GET /health: $($r.StatusCode) - $($r.Content)" | Out-File $outFile -Append
+} catch {
+    "GET /health: FAILED - $($_.Exception.Message)" | Out-File $outFile -Append
+}
+
+# GET /api/status
+try {
+    $r = Invoke-WebRequest -Uri "http://localhost:3001/api/status" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+    "GET /api/status: $($r.StatusCode) - $($r.Content)" | Out-File $outFile -Append
+} catch {
+    "GET /api/status: FAILED - $($_.Exception.Message)" | Out-File $outFile -Append
+}
+
+# GET /api/stores
+try {
+    $r = Invoke-WebRequest -Uri "http://localhost:3001/api/stores" -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+    "GET /api/stores: $($r.StatusCode) - $($r.Content)" | Out-File $outFile -Append
+} catch {
+    "GET /api/stores: FAILED - $($_.Exception.Message)" | Out-File $outFile -Append
+}
+
+"=== DONE ===" | Out-File $outFile -Append

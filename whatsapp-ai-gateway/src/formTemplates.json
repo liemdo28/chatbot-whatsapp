@@ -1,0 +1,606 @@
+{
+  "templates": {
+    "stone_oak": {
+      "store_id": "stone_oak",
+      "store_name": "Stone Oak",
+      "display_name": "Stone Oak",
+      "template_id": "FoodSafety-StoneOak-v3",
+      "legacy_key": "StoneOak",
+      "field_prefixes": [
+        "SO"
+      ],
+      "group_aliases": [
+        "stone oak",
+        "stone-oak",
+        "bakudan stone oak",
+        "stone-oak-safety"
+      ],
+      "header_aliases": [
+        "stone oak",
+        "stone oak line check"
+      ],
+      "shift_columns": [
+        {
+          "id": "10:00",
+          "label": "10:00 AM",
+          "aliases": [
+            "10:00",
+            "10:00 AM",
+            "10 AM",
+            "10AM",
+            "11:00",
+            "11:00 AM",
+            "11 AM",
+            "11AM"
+          ]
+        },
+        {
+          "id": "16:00",
+          "label": "4:00 PM",
+          "aliases": [
+            "4:00",
+            "4:00 PM",
+            "4 PM",
+            "4PM",
+            "16:00"
+          ]
+        }
+      ],
+      "items": [
+        {
+          "id": "SO-01",
+          "label": "Walk-In Cooler (Produce)",
+          "safeRange": { "min": 30, "max": 45 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-02",
+          "label": "Walk-In Freezer",
+          "safeRange": { "min": -20, "max": 5 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-03",
+          "label": "Prep Area Cooler",
+          "safeRange": { "min": 30, "max": 45 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-04",
+          "label": "Bowl Warmer",
+          "safeRange": { "min": 100, "max": 125 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-05",
+          "label": "Ramen Reach-In Top",
+          "safeRange": { "min": 30, "max": 45 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-06",
+          "label": "Ramen Reach-In Below",
+          "safeRange": { "min": 30, "max": 45 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-07",
+          "label": "Line Freezer",
+          "safeRange": { "min": -20, "max": 0 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-08",
+          "label": "Seasoned Eggs",
+          "safeRange": { "min": 95, "max": 105 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-09",
+          "label": "Sliced Pork Hot",
+          "safeRange": { "min": 95, "max": 105 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-10",
+          "label": "Diced Pork Hot",
+          "safeRange": { "min": 95, "max": 105 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-11",
+          "label": "Tapas Reach-In Top",
+          "safeRange": { "min": 30, "max": 45 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-12",
+          "label": "Chicken Cold",
+          "safeRange": { "min": 30, "max": 40 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-13",
+          "label": "Pork Cold",
+          "safeRange": { "min": 30, "max": 40 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-14",
+          "label": "Tapas Reach-In Below",
+          "safeRange": { "min": 30, "max": 45 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-15",
+          "label": "Walk-In Produce Recheck",
+          "safeRange": { "min": 30, "max": 45 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-16",
+          "label": "Fryer Left",
+          "safeRange": { "min": 350, "max": 360 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-17",
+          "label": "Fryer Right",
+          "safeRange": { "min": 350, "max": 360 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-18",
+          "label": "Pasta Boiler Left",
+          "safeRange": { "min": 200, "max": 220 },
+          "unit": "F"
+        },
+        {
+          "id": "SO-19",
+          "label": "Pasta Boiler Right",
+          "safeRange": { "min": 200, "max": 220 },
+          "unit": "F"
+        }
+      ]
+    },
+    "rim": {
+      "store_id": "rim",
+      "store_name": "The Rim",
+      "display_name": "The Rim",
+      "template_id": "FoodSafety-Rim-v3",
+      "legacy_key": "Rim",
+      "field_prefixes": [
+        "RIM",
+        "IM"
+      ],
+      "group_aliases": [
+        "rim",
+        "the rim",
+        "bakudan the rim",
+        "rim-safety"
+      ],
+      "header_aliases": [
+        "food safety line check",
+        "the rim",
+        "rim",
+        "store: rim",
+        "the rim line check"
+      ],
+      "shift_columns": [
+        {
+          "id": "10:00",
+          "label": "10:00 AM",
+          "aliases": [
+            "10:00",
+            "10:00 AM",
+            "10 AM",
+            "10AM",
+            "11:00",
+            "11:00 AM",
+            "11 AM",
+            "11AM"
+          ]
+        },
+        {
+          "id": "16:00",
+          "label": "4:00 PM",
+          "aliases": [
+            "4:00",
+            "4:00 PM",
+            "4 PM",
+            "4PM",
+            "16:00"
+          ]
+        }
+      ],
+      "items": [
+        {
+          "id": "RIM-01",
+          "label": "Walk-In Cooler (Produce)",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-02",
+          "label": "Walk-In Freezer",
+          "safeRange": {
+            "min": -20,
+            "max": 5
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-03",
+          "label": "Prep Area Cooler",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-04",
+          "label": "Bowl Warmer",
+          "safeRange": {
+            "min": 100,
+            "max": 125
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-05",
+          "label": "Ramen Reach-In Top",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-06",
+          "label": "Ramen Reach-In Below",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-07",
+          "label": "Line Freezer",
+          "safeRange": {
+            "min": -20,
+            "max": 0
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-08",
+          "label": "Seasoned Eggs",
+          "safeRange": {
+            "min": 95,
+            "max": 105
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-09",
+          "label": "Sliced Pork Hot",
+          "safeRange": {
+            "min": 95,
+            "max": 105
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-10",
+          "label": "Diced Pork Hot",
+          "safeRange": {
+            "min": 95,
+            "max": 105
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-11",
+          "label": "Tapas Reach-In Top",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-12",
+          "label": "Chicken Cold",
+          "safeRange": {
+            "min": 30,
+            "max": 40
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-13",
+          "label": "Pork Cold",
+          "safeRange": {
+            "min": 30,
+            "max": 40
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-14",
+          "label": "Tapas Reach-In Below",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-15",
+          "label": "Walk-In Produce Recheck",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-16",
+          "label": "Fryer Left",
+          "safeRange": {
+            "min": 350,
+            "max": 360
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-17",
+          "label": "Fryer Right",
+          "safeRange": {
+            "min": 350,
+            "max": 360
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-18",
+          "label": "Pasta Boiler Left",
+          "safeRange": {
+            "min": 200,
+            "max": 220
+          },
+          "unit": "F"
+        },
+        {
+          "id": "RIM-19",
+          "label": "Pasta Boiler Right",
+          "safeRange": {
+            "min": 200,
+            "max": 220
+          },
+          "unit": "F"
+        }
+      ]
+    },
+    "bandera": {
+      "store_id": "bandera",
+      "store_name": "Bandera",
+      "display_name": "Bandera",
+      "template_id": "FoodSafety-Bandera-v3",
+      "legacy_key": "Bandera",
+      "field_prefixes": [
+        "BAN"
+      ],
+      "group_aliases": [
+        "bandera",
+        "bakudan bandera",
+        "bandera-safety"
+      ],
+      "header_aliases": [
+        "store: bandera",
+        "bandera"
+      ],
+      "shift_columns": [
+        {
+          "id": "10:00",
+          "label": "10:00 AM",
+          "aliases": [
+            "10:00",
+            "10:00 AM",
+            "10 AM",
+            "10AM"
+          ]
+        },
+        {
+          "id": "16:00",
+          "label": "4:00 PM",
+          "aliases": [
+            "4:00",
+            "4:00 PM",
+            "4 PM",
+            "4PM",
+            "16:00"
+          ]
+        }
+      ],
+      "items": [
+        {
+          "id": "BAN-01",
+          "label": "Walk-In Cooler (Produce)",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-02",
+          "label": "Walk-In Freezer",
+          "safeRange": {
+            "min": -20,
+            "max": 5
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-03",
+          "label": "Prep Area Cooler",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-04",
+          "label": "Bowl Warmer",
+          "safeRange": {
+            "min": 100,
+            "max": 125
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-05",
+          "label": "Ramen Reach-In Top",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-06",
+          "label": "Ramen Reach-In Below",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-07",
+          "label": "Line Freezer",
+          "safeRange": {
+            "min": -20,
+            "max": 0
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-08",
+          "label": "Seasoned Eggs",
+          "safeRange": {
+            "min": 95,
+            "max": 105
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-09",
+          "label": "Sliced Pork Hot",
+          "safeRange": {
+            "min": 95,
+            "max": 105
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-10",
+          "label": "Diced Pork Hot",
+          "safeRange": {
+            "min": 95,
+            "max": 105
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-11",
+          "label": "Tapas Reach-In Top",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-12",
+          "label": "Chicken Cold",
+          "safeRange": {
+            "min": 30,
+            "max": 40
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-13",
+          "label": "Pork Cold",
+          "safeRange": {
+            "min": 30,
+            "max": 40
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-14",
+          "label": "Tapas Reach-In Below",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-15",
+          "label": "Walk-In Produce Recheck",
+          "safeRange": {
+            "min": 30,
+            "max": 45
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-16",
+          "label": "Fryer Left",
+          "safeRange": {
+            "min": 350,
+            "max": 360
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-17",
+          "label": "Fryer Right",
+          "safeRange": {
+            "min": 350,
+            "max": 360
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-18",
+          "label": "Pasta Boiler Left",
+          "safeRange": {
+            "min": 200,
+            "max": 220
+          },
+          "unit": "F"
+        },
+        {
+          "id": "BAN-19",
+          "label": "Pasta Boiler Right",
+          "safeRange": {
+            "min": 200,
+            "max": 220
+          },
+          "unit": "F"
+        }
+      ]
+    }
+  }
+}

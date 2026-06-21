@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.egg-info/
+dist/
+build/
+
+# API keys
+.env*
+
+# Large files
+*.jpg
+*.jpeg
+*.png
+!eval/fixtures/
+
+# Results (generated, not source)
+eval/results.json
+eval/locked_eval_results.json
+eval/ceo_eval_results.json

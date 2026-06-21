@@ -1,0 +1,171 @@
+{
+  "features": {
+    "qb_write_sync_enabled": false,
+    "qb_read_only_activity_log_enabled": true,
+    "mi_core_reporting_enabled": true,
+    "multi_file_12h_sync_enabled": true
+  },
+  "toast_download": {
+    "enabled": true,
+    "automation_mode": "HYBRID_FALLBACK",
+    "download_dir": "C:\\ProgramData\\ToastPOSManager\\toast-reports",
+    "allowed_domains": [
+      "*.toasttab.com",
+      "*.toasttab.com/*"
+    ],
+    "browser_profile": {
+      "use_real_profile": true,
+      "browser": "chrome",
+      "profile_path": "",
+      "require_existing_login": true
+    },
+    "browser_use": {
+      "enabled": true,
+      "model_provider": "openai",
+      "model": "gpt-5.5",
+      "timeout_seconds": 180,
+      "max_steps": 40,
+      "headless": false,
+      "human_approval_required_for_login": true,
+      "never_store_password": true
+    }
+  },
+  "qbw_paths": {
+    "The Rim": "D:\\QB\\JHT Ventures.qbw",
+    "Stockton": "D:\\QB\\Raw\\RawStockton.qbw"
+  },
+  "marketplace_paths": {
+    "Stockton": {
+      "Uber": "C:\\Users\\YourName\\Downloads\\UberSale.csv",
+      "DoorDash": "C:\\Users\\YourName\\Downloads\\DoordashSale.csv",
+      "Grubhub": "C:\\Users\\YourName\\Downloads\\GrubhubSale.csv"
+    }
+  },
+  "last_qbw_dir": "D:\\QB",
+  "last_marketplace_dir": "C:\\Users\\YourName\\Downloads",
+  "delete_policy": {
+    "allow_live_delete": false,
+    "approver": "Accounting lead"
+  },
+  "google_drive": {
+    "root_folder_url": "https://drive.google.com/drive/folders/PUT_SHARED_FOLDER_ID_HERE",
+    "root_folder_id": "",
+    "brand_folder_name": "",
+    "use_date_subfolders": false
+  },
+  "agentai_sync": {
+    "enabled": false,
+    "api_url": "https://agentai.yourdomain.com",
+    "token": "set-this-to-the-same-value-as-AGENTAI_EDGE_TOKEN",
+    "project_id": "integration-full",
+    "source_type": "integration-full",
+    "app_version": "v2.2",
+    "machine_id": "stockton-frontdesk-01",
+    "machine_name": "Stockton Frontdesk"
+  },
+  "background_worker": {
+    "command_poll_seconds": 30,
+    "snapshot_interval_seconds": 120,
+    "headless_downloads": true
+  },
+  "quickbooks": {
+    "enabled": true,
+    "auto_open_on_app_start": true,
+    "auto_connect_company_file": true,
+    "allow_company_switch": false,
+    "startup_timeout_seconds": 120,
+    "exe_path": "",
+    "company_file": "",
+    "expected_company_name": "Bakudan Ramen",
+    "password_key": "pass1"
+  },
+  "background_agent": {
+    "enabled": true,
+    "start_with_windows": true,
+    "heartbeat_seconds": 60,
+    "restart_on_crash": true
+  },
+  "auto_sync": {
+    "enabled": false,
+    "report_time": "09:00",
+    "timezone": "America/Chicago",
+    "stores": [],
+    "sync_previous_business_day": true,
+    "require_preview_before_first_live_sync": true
+  },
+  "qb_activity_log": {
+    "enabled": true,
+    "run_on_app_start": true,
+    "daily_time": "09:15",
+    "output_dir": "logs/qb-activity",
+    "stores": [
+      {
+        "code": "bandera",
+        "name": "Bakudan Bandera",
+        "class_name": "Bandera",
+        "customer_name": "Toast Sales - Bandera",
+        "bank_accounts": ["Chase Checking - Bandera"]
+      },
+      {
+        "code": "stone_oak",
+        "name": "Bakudan Stone Oak",
+        "class_name": "Stone Oak",
+        "customer_name": "Toast Sales - Stone Oak",
+        "bank_accounts": ["Chase Checking - Stone Oak"]
+      }
+    ],
+    "include_transaction_types": [
+      "sales_receipt",
+      "invoice",
+      "payment",
+      "deposit",
+      "journal_entry",
+      "bill",
+      "bank_transaction",
+      "reconcile"
+    ]
+  },
+  "qb_activity_timeline": {
+    "enabled": true,
+    "run_on_app_start": true,
+    "daily_time": "09:20",
+    "output_dir": "logs/qb-activity",
+    "stores": [
+      {
+        "code": "bandera",
+        "name": "Bakudan Bandera",
+        "class_name": "Bandera",
+        "customer_name": "Toast Sales - Bandera",
+        "bank_accounts": ["Chase Checking - Bandera"]
+      },
+      {
+        "code": "stone_oak",
+        "name": "Bakudan Stone Oak",
+        "class_name": "Stone Oak",
+        "customer_name": "Toast Sales - Stone Oak",
+        "bank_accounts": ["Chase Checking - Stone Oak"]
+      }
+    ]
+  },
+  "machine": {
+    "machine_id": "qb-pc-bandera-01",
+    "machine_name": "Bandera QB PC",
+    "store_code": "bandera",
+    "store_name": "Bakudan Bandera",
+    "location": "Bandera"
+  },
+  "mi_core": {
+    "enabled": true,
+    "base_url": "http://<MI_CORE_TAILSCALE_IP>:4001",
+    "api_key_env": "MI_CORE_API_KEY",
+    "app_version": "dev1-v2",
+    "poll_commands_seconds": 60,
+    "heartbeat_seconds": 60,
+    "timeout_seconds": 15
+  },
+  "google_sheet_reporting": {
+    "mode": "centralized",
+    "write_from": "agent-coding",
+    "enabled_on_qb_agent": false
+  }
+}

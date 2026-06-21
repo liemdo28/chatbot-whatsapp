@@ -1,0 +1,4 @@
+# Optional ToastTab AI browser automation layer.
+# Do not install in the default one-click laptop setup until runtime is pinned
+# and validated on the target laptop.
+browser-use[core]==0.13.1

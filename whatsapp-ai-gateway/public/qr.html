@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Gateway - QR Code</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #111b21;
+            color: #e9edef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #00a884;
+        }
+
+        .subtitle {
+            color: #8696a0;
+            margin-bottom: 30px;
+        }
+
+        #qr-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: inline-block;
+            margin: 20px 0;
+            min-width: 280px;
+            min-height: 280px;
+        }
+
+        #qr-container img {
+            display: block;
+            max-width: 280px;
+        }
+
+        #status {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        #status.connected {
+            color: #00a884;
+        }
+
+        #status.qr {
+            color: #53bdeb;
+        }
+
+        #status.error {
+            color: #ea4335;
+        }
+
+        .spinner {
+            border: 4px solid #2a3942;
+            border-top: 4px solid #00a884;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn {
+            background: #00a884;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            background: #00c49a;
+        }
+
+        .btn.danger {
+            background: #ea4335;
+        }
+
+        .btn.danger:hover {
+            background: #ff5c5c;
+        }
+
+        .instructions {
+            color: #8696a0;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .info {
+            background: #202c33;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .info-item {
+            padding: 4px 0;
+        }
+
+        .info-label {
+            color: #8696a0;
+        }
+
+        .info-value {
+            color: #e9edef;
+            font-weight: 500;
+        }
+
+        .connected-badge {
+            background: #00a884;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📱 WhatsApp Food Safety Bot</h1>
+        <p class="subtitle">WhatsApp AI Gateway Connection</p>
+
+        <div id="status-area">
+            <div class="spinner" id="spinner"></div>
+            <p id="status">Connecting...</p>
+        </div>
+
+        <div id="qr-container" style="display:none;">
+            <img id="qr-image" src="" alt="QR Code">
+        </div>
+
+        <div id="connected-area" style="display:none;">
+            <span class="connected-badge">✅ CONNECTED</span>
+        </div>
+
+        <div class="instructions" id="instructions">
+            <p>Scan this QR code with your WhatsApp app:</p>
+            <ol style="text-align:left; margin-top:10px; padding-left:20px;">
+                <li>Open WhatsApp on your phone</li>
+                <li>Tap Menu ⋮ → Linked Devices</li>
+                <li>Tap "Link a Device"</li>
+                <li>Point camera at the QR code above</li>
+            </ol>
+        </div>
+
+        <div class="info" id="info-panel" style="display:none;">
+            <div class="info-item"><span class="info-label">Status: </span><span class="info-value"
+                    id="info-status">-</span></div>
+            <div class="info-item"><span class="info-label">Last Activity: </span><span class="info-value"
+                    id="info-activity">-</span></div>
+            <div class="info-item"><span class="info-label">Submissions: </span><span class="info-value"
+                    id="info-submissions">-</span></div>
+        </div>
+
+        <div style="margin-top:20px;">
+            <button class="btn" onclick="refreshStatus()">🔄 Refresh</button>
+            <button class="btn" onclick="openWhatsAppWeb()">🌐 Open WhatsApp Web</button>
+            <button class="btn danger" onclick="resetSession()">⚠️ Reset Session</button>
+        </div>
+    </div>
+
+    <script>
+        let pollInterval;
+
+        async function refreshStatus() {
+            try {
+                const res = await fetch('/api/whatsapp/session');
+                const data = await res.json();
+                updateUI(data);
+            } catch (e) {
+                document.getElementById('status').textContent = 'Error fetching status';
+                document.getElementById('status').className = 'error';
+            }
+        }
+
+        function updateUI(data) {
+            const statusEl = document.getElementById('status');
+            const qrContainer = document.getElementById('qr-container');
+            const spinner = document.getElementById('spinner');
+            const connectedArea = document.getElementById('connected-area');
+            const instructions = document.getElementById('instructions');
+            const infoPanel = document.getElementById('info-panel');
+
+            if (data.status === 'CONNECTED') {
+                statusEl.textContent = '✅ WhatsApp Connected';
+                statusEl.className = 'connected';
+                qrContainer.style.display = 'none';
+                spinner.style.display = 'none';
+                connectedArea.style.display = 'block';
+                instructions.style.display = 'none';
+                infoPanel.style.display = 'block';
+                document.getElementById('info-status').textContent = data.status;
+                document.getElementById('info-activity').textContent = data.timestamp;
+            } else if (data.status === 'QR_READY') {
+                statusEl.textContent = '📱 Scan QR Code';
+                statusEl.className = 'qr';
+                spinner.style.display = 'none';
+                connectedArea.style.display = 'none';
+                instructions.style.display = 'block';
+                infoPanel.style.display = 'block';
+                document.getElementById('info-status').textContent = data.status;
+                // Fetch QR image
+                fetchQR();
+            } else if (data.status === 'RECONNECTING') {
+                statusEl.textContent = '🔄 Reconnecting...';
+                statusEl.className = 'qr';
+                spinner.style.display = 'block';
+                qrContainer.style.display = 'none';
+                connectedArea.style.display = 'none';
+                instructions.style.display = 'none';
+            } else {
+                statusEl.textContent = '⏳ ' + data.status;
+                statusEl.className = 'error';
+                spinner.style.display = data.status === 'CONNECTING' ? 'block' : 'none';
+                qrContainer.style.display = 'none';
+                connectedArea.style.display = 'none';
+                instructions.style.display = 'none';
+            }
+        }
+
+        async function fetchQR() {
+            try {
+                const res = await fetch('/api/whatsapp/qr-image');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.dataUrl) {
+                        document.getElementById('qr-image').src = data.dataUrl;
+                        document.getElementById('qr-container').style.display = 'inline-block';
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to fetch QR', e);
+            }
+        }
+
+        function openWhatsAppWeb() {
+            window.open('https://web.whatsapp.com', '_blank');
+        }
+
+        async function resetSession() {
+            if (!confirm('This will disconnect the current session. Continue?')) return;
+            try {
+                await fetch('/api/whatsapp/reset', { method: 'POST' });
+                setTimeout(refreshStatus, 2000);
+            } catch (e) {
+                alert('Reset failed');
+            }
+        }
+
+        // Initial load + polling
+        refreshStatus();
+        pollInterval = setInterval(refreshStatus, 5000);
+    </script>
+</body>
+
+</html>

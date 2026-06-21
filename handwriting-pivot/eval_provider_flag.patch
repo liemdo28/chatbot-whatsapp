@@ -1,0 +1,104 @@
+diff --git a/eval/run_locked_eval.py b/eval/run_locked_eval.py
+index fd7cdbb..2ef0961 100644
+--- a/eval/run_locked_eval.py
++++ b/eval/run_locked_eval.py
+@@ -8,15 +8,25 @@ during eval. Any change requires RFC + CEO approval.
+ 
+ Usage:
+     cd handwriting-pivot
++
++    # Default -- Gemini Flash (free tier, fast)
+     set GEMINI_API_KEY=your-key
+     python eval/run_locked_eval.py
+ 
++    # Claude Vision via configured proxy
++    set CLAUDE_API_KEY=your-key
++    python eval/run_locked_eval.py --provider claude
++
++    # Compare both (run sequentially, output goes to suffixed files)
++    python eval/run_locked_eval.py --provider both
++
+ Output:
+     - Per-cell match table (stdout)
+-    - eval/locked_eval_results.json
++    - eval/locked_eval_results_{provider}.json
+     - Confidence calibration analysis
+     - Latency breakdown
+ """
++import argparse
+ import json
+ import os
+ import sys
+@@ -27,6 +37,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ 
+ from code.pipeline import FormPipeline
+ from code.providers.gemini_flash import GeminiFlashProvider
++from code.providers.claude_vision import ClaudeVisionProvider
+ 
+ # Path to CEO-locked ground truth
+ LOCKED_GT_PATH = Path(__file__).parent / "locked_ground_truth.json"
+@@ -247,17 +258,23 @@ def confidence_calibration(all_results):
+     }
+ 
+ 
+-def main():
++PROVIDER_FACTORY = {
++    "gemini": lambda: GeminiFlashProvider(),
++    "claude": lambda: ClaudeVisionProvider(),
++}
++
++
++def run_eval_with_provider(provider_name: str, gt: dict) -> None:
++    """Run the full eval for one provider. Writes locked_eval_results_{provider}.json."""
+     print("=" * 70)
+-    print("D2 LOCKED GROUND TRUTH EVALUATION")
++    print(f"D2 LOCKED GROUND TRUTH EVALUATION  ({provider_name.upper()})")
+     print(f"GT file: {LOCKED_GT_PATH}")
+     print(f"GT is LOCKED -- do not modify during eval run")
+     print("=" * 70)
+ 
+-    gt = load_locked_gt()
++    factory = PROVIDER_FACTORY[provider_name]
++    pipeline = FormPipeline(primary=factory())
+     forms = gt.get("forms", {})
+-
+-    pipeline = FormPipeline(primary=GeminiFlashProvider())
+     all_results = []
+ 
+     for form_key, form_gt in forms.items():
+@@ -340,7 +357,7 @@ def main():
+             "per_form": all_results,
+             "confidence_calibration": calibration,
+         }
+-        output_path = Path(__file__).parent / "locked_eval_results.json"
++        output_path = Path(__file__).parent / f"locked_eval_results_{provider_name}.json"
+         with open(output_path, "w") as f:
+             json.dump(output, f, indent=2)
+         print(f"\nResults saved to: {output_path}")
+@@ -348,5 +365,26 @@ def main():
+         print("\nNo forms evaluated. Check image paths in locked_ground_truth.json")
+ 
+ 
++def main():
++    parser = argparse.ArgumentParser(description="D2 locked ground truth evaluation")
++    parser.add_argument(
++        "--provider",
++        choices=["gemini", "claude", "both"],
++        default="gemini",
++        help="Which vision provider to evaluate. 'both' runs them sequentially "
++             "and writes separate result files for comparison."
++    )
++    args = parser.parse_args()
++
++    gt = load_locked_gt()
++
++    if args.provider == "both":
++        for p in ("gemini", "claude"):
++            print()  # blank line between runs
++            run_eval_with_provider(p, gt)
++    else:
++        run_eval_with_provider(args.provider, gt)
++
++
+ if __name__ == "__main__":
+     main()

@@ -1,0 +1,87 @@
+{
+    "stone_oak_0619_4pm": {
+        "store": "Stone Oak",
+        "date": "06/19",
+        "shift": "4:00 PM",
+        "source": "CEO visual reading",
+        "readings": {
+            "SO-01": {
+                "value": 40,
+                "label": "Walk-In Cooler (Produce)"
+            },
+            "SO-02": {
+                "value": 0,
+                "label": "Walk-In Freezer"
+            },
+            "SO-03": {
+                "value": 37,
+                "label": "Prep Area Cooler"
+            },
+            "SO-04": {
+                "value": 102,
+                "label": "Bowl Warmer"
+            },
+            "SO-05": {
+                "value": 36,
+                "label": "Ramen Reach-In (Top)"
+            },
+            "SO-06": {
+                "value": 38,
+                "label": "Ramen Reach-In (Below)"
+            },
+            "SO-07": {
+                "value": 0,
+                "label": "Line Freezer"
+            },
+            "SO-08": {
+                "value": 100,
+                "label": "Seasoned Eggs"
+            },
+            "SO-09": {
+                "value": 101,
+                "label": "Sliced Pork (Hot)"
+            },
+            "SO-10": {
+                "value": 103,
+                "label": "Diced Pork (Hot)"
+            },
+            "SO-11": {
+                "value": 33,
+                "label": "Tapas Reach-In (Top)"
+            },
+            "SO-12": {
+                "value": 38,
+                "label": "Chicken (Cold)"
+            },
+            "SO-13": {
+                "value": 38,
+                "label": "Pork (Cold)"
+            },
+            "SO-14": {
+                "value": 39,
+                "label": "Tapas Reach-In (Below)"
+            },
+            "SO-15": {
+                "value": 40,
+                "label": "Walk-In (Produce) Recheck"
+            },
+            "SO-16": {
+                "value": 300,
+                "label": "Fryer (Left)",
+                "note": "CEO says needs recheck"
+            },
+            "SO-17": {
+                "value": 350,
+                "label": "Fryer (Right)"
+            },
+            "SO-18": {
+                "value": 215,
+                "label": "Pasta Boiler (Left)"
+            },
+            "SO-19": {
+                "value": 210,
+                "label": "Pasta Boiler (Right)"
+            }
+        }
+    }
+}

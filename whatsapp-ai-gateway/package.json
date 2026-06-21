@@ -1,0 +1,30 @@
+{
+    "name": "whatsapp-ai-gateway",
+    "version": "1.0.0",
+    "description": "WhatsApp Web connection gateway for Food Safety Bot",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js",
+        "test": "node tests/test.js"
+    },
+    "dependencies": {
+        "whatsapp-web.js": "^1.26.0",
+        "puppeteer-core": "^22.0.0",
+        "express": "^4.18.2",
+        "cors": "^2.8.5",
+        "qrcode-terminal": "^0.12.0",
+        "qrcode": "^1.5.3",
+        "sql.js": "^1.10.3",
+        "tesseract.js": "^5.0.4",
+        "multer": "^1.4.5-lts.1",
+        "axios": "^1.6.5",
+        "winston": "^3.11.0",
+        "dotenv": "^16.3.1",
+        "uuid": "^9.0.0",
+        "sharp": "^0.33.0"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.2"
+    }
+}

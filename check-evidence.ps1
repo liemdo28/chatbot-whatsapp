@@ -1,0 +1,1 @@
+Get-ChildItem 'C:\Ld-project\whatsapp-ai-gateway\data\evidence' | Sort-Object LastWriteTime -Descending | Select-Object -First 20 | ForEach-Object { Write-Output $_.FullName + " | " + $_.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss") }

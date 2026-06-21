@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Food Safety Bot - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f1419;
+            color: #e9edef;
+        }
+
+        .header {
+            background: #1a2332;
+            border-bottom: 1px solid #2a3942;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            color: #00a884;
+        }
+
+        .header .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .badge-connected {
+            background: #00a884;
+            color: white;
+        }
+
+        .badge-disconnected {
+            background: #ea4335;
+            color: white;
+        }
+
+        .badge-connecting {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 16px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #1a2332;
+            border: 1px solid #2a3942;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            color: #8696a0;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #00a884;
+            margin: 12px 0 8px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-item {
+            background: #202c33;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #8696a0;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .info-value.green {
+            color: #00a884;
+        }
+
+        .info-value.red {
+            color: #ea4335;
+        }
+
+        .info-value.yellow {
+            color: #f59e0b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #2a3942;
+            font-size: 13px;
+        }
+
+        th {
+            color: #8696a0;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background: #202c33;
+        }
+
+        .status-pill {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .pill-pending {
+            background: #f59e0b33;
+            color: #f59e0b;
+        }
+
+        .pill-confirmed {
+            background: #00a88433;
+            color: #00a884;
+        }
+
+        .pill-unsafe {
+            background: #ea433533;
+            color: #ea4335;
+        }
+
+        .pill-manager {
+            background: #8b5cf633;
+            color: #8b5cf6;
+        }
+
+        .pill-cancelled {
+            background: #6b728033;
+            color: #6b7280;
+        }
+
+        .btn {
+            background: #00a884;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 4px;
+        }
+
+        .btn:hover {
+            background: #00c49a;
+        }
+
+        .btn.secondary {
+            background: #2a3942;
+        }
+
+        .btn.secondary:hover {
+            background: #3a4952;
+        }
+
+        .btn.danger {
+            background: #ea4335;
+        }
+
+        .actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .confidence-bar {
+            height: 6px;
+            background: #2a3942;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #8696a0;
+        }
+
+        #submissions-table tr {
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: #202c33;
+            color: #8696a0;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .tab:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+
+        .tab:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tab.active {
+            background: #00a884;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>📱 WhatsApp Food Safety Bot</h1>
+        <div>
+            <span id="connection-badge" class="status-badge badge-connecting">CONNECTING</span>
+            <button class="btn" onclick="connectWhatsApp()" style="margin-left:12px;">Connect</button>
+            <button class="btn secondary" onclick="openQRPage()">QR Page</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- WhatsApp Status Card -->
+        <div class="card">
+            <h2>WhatsApp Status</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Connection</div>
+                    <div class="info-value" id="wa-status">Loading...</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Last Error</div>
+                    <div class="info-value" id="wa-error" style="font-size:13px;">None</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Reconnects</div>
+                    <div class="info-value" id="wa-reconnects">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Server Uptime</div>
+                    <div class="info-value" id="uptime">-</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn" onclick="connectWhatsApp()">🔄 Connect</button>
+                <button class="btn secondary" onclick="reconnectWhatsApp()">🔗 Reconnect</button>
+                <button class="btn danger" onclick="resetSession()">⚠️ Reset Session</button>
+            </div>
+        </div>
+
+        <!-- Google Sheets Status -->
+        <div class="card">
+            <h2>Sync Status</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Google Sheets</div>
+                    <div class="info-value" id="gsheets-status">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Submissions</div>
+                    <div class="info-value" id="total-submissions">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Pending</div>
+                    <div class="info-value yellow" id="pending-count">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Confirmed</div>
+                    <div class="info-value green" id="confirmed-count">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="card full-width">
+            <h2>Food Safety Submissions</h2>
+            <div class="tabs">
+                <button class="tab active" onclick="filterSubmissions('all', this)">All</button>
+                <button class="tab" onclick="filterSubmissions('PENDING', this)">Pending</button>
+                <button class="tab" onclick="filterSubmissions('NEEDS_REVIEW', this)">Needs Review</button>
+                <button class="tab" onclick="filterSubmissions('CONFIRMED', this)">Confirmed</button>
+                <button class="tab" onclick="filterSubmissions('MANAGER_REVIEW', this)">Manager Review</button>
+            </div>
+            <div id="submissions-table">
+                <div class="empty-state">Loading submissions...</div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card full-width">
+            <h2>System Info</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Database</div>
+                    <div class="info-value green" style="font-size:13px;">SQLite (WAL mode)</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">OCR Engine</div>
+                    <div class="info-value" style="font-size:13px;">Tesseract.js v5</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Default Language</div>
+                    <div class="info-value" style="font-size:13px;">Spanish (ES)</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Store</div>
+                    <div class="info-value" style="font-size:13px;">Stone Oak / Rim / Bandera</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFilter = 'all';
+
+        async function refreshAll() {
+            await Promise.all([refreshStatus(), refreshSubmissions(), refreshSyncStatus()]);
+        }
+
+        async function refreshStatus() {
+            try {
+                const res = await fetch('/api/whatsapp/session');
+                const data = await res.json();
+                const badge = document.getElementById('connection-badge');
+                badge.textContent = data.status;
+                badge.className = 'status-badge ' + (data.status === 'CONNECTED' ? 'badge-connected' : data.status === 'CONNECTING' || data.status === 'QR_READY' ? 'badge-connecting' : 'badge-disconnected');
+                document.getElementById('wa-status').textContent = data.status;
+                document.getElementById('wa-status').className = 'info-value ' + (data.status === 'CONNECTED' ? 'green' : data.status === 'FAILED' ? 'red' : 'yellow');
+                document.getElementById('wa-error').textContent = data.lastError || 'None';
+                document.getElementById('wa-reconnects').textContent = data.reconnectAttempts || 0;
+            } catch (e) { console.error(e); }
+
+            try {
+                const res = await fetch('/health');
+                const data = await res.json();
+                document.getElementById('uptime').textContent = Math.round(data.uptime) + 's';
+            } catch (e) { }
+        }
+
+        async function refreshSyncStatus() {
+            try {
+                const res = await fetch('/api/food-safety/sync-status');
+                const data = await res.json();
+                document.getElementById('gsheets-status').textContent = data.googleSheetsConfigured ? '✅ Configured' : '⏳ Pending (safe mode)';
+                document.getElementById('gsheets-status').className = 'info-value ' + (data.googleSheetsConfigured ? 'green' : 'yellow');
+            } catch (e) { }
+        }
+
+        async function refreshSubmissions() {
+            try {
+                const res = await fetch('/api/food-safety/submissions?limit=50');
+                const subs = await res.json();
+                document.getElementById('total-submissions').textContent = subs.length;
+                document.getElementById('pending-count').textContent = subs.filter(s => s.status === 'PENDING').length;
+                document.getElementById('confirmed-count').textContent = subs.filter(s => s.status === 'CONFIRMED').length;
+
+                const filtered = currentFilter === 'all' ? subs : subs.filter(s => s.status === currentFilter);
+                renderTable(filtered);
+            } catch (e) {
+                document.getElementById('submissions-table').innerHTML = '<div class="empty-state">Error loading submissions</div>';
+            }
+        }
+
+        function renderTable(subs) {
+            if (subs.length === 0) {
+                document.getElementById('submissions-table').innerHTML = '<div class="empty-state">No submissions yet</div>';
+                return;
+            }
+            let html = '<table><thead><tr><th>ID</th><th>Store</th><th>Phone</th><th>Confidence</th><th>Status</th><th>Language</th><th>Google Sheet</th><th>Date</th></tr></thead><tbody>';
+            for (const s of subs) {
+                const pill = s.status === 'CONFIRMED' ? 'pill-confirmed' : s.status === 'PENDING' ? 'pill-pending' : s.status === 'MANAGER_REVIEW' ? 'pill-manager' : s.status === 'CANCELLED' ? 'pill-cancelled' : s.status === 'NEEDS_REVIEW' || s.status === 'NEEDS_COLUMN' ? 'pill-unsafe' : 'pill-pending';
+                const conf = s.ocr_confidence ? Math.round(s.ocr_confidence) : 0;
+                const confColor = conf > 70 ? '#00a884' : conf > 40 ? '#f59e0b' : '#ea4335';
+                html += `<tr onclick="showDetail(${s.id})">
+                    <td>#${s.id}</td>
+                    <td>${s.store_name}</td>
+                    <td>${s.phone_number || '-'}</td>
+                    <td><span style="color:${confColor}">${conf}%</span><div class="confidence-bar"><div class="confidence-fill" style="width:${conf}%;background:${confColor}"></div></div></td>
+                    <td><span class="status-pill ${pill}">${s.status}</span></td>
+                    <td>${s.language || 'ES'}</td>
+                    <td>${s.google_sheet_synced ? '✅' : s.google_sheet_sync_error ? '❌' : '⏳'}</td>
+                    <td>${s.created_at ? new Date(s.created_at).toLocaleDateString() : '-'}</td>
+                </tr>`;
+            }
+            html += '</tbody></table>';
+            document.getElementById('submissions-table').innerHTML = html;
+        }
+
+        function filterSubmissions(filter, el) {
+            currentFilter = filter;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            if (el) el.classList.add('active');
+            refreshSubmissions();
+        }
+
+        async function showDetail(id) {
+            try {
+                const res = await fetch(`/api/food-safety/submissions/${id}`);
+                const sub = await res.json();
+                let detail = `Submission #${sub.id}\nStatus: ${sub.status}\nStore: ${sub.store_name}\nLanguage: ${sub.language}\nConfidence: ${sub.ocr_confidence}%\n`;
+                if (sub.ocr_json) {
+                    const ocr = JSON.parse(sub.ocr_json);
+                    detail += `\nDetected Items:\n`;
+                    for (const item of ocr.items) {
+                        const emoji = item.status === 'SAFE' ? '✅' : item.status === 'UNSAFE' ? '🚨' : '❓';
+                        detail += `${emoji} ${item.id} ${item.label}: ${item.detectedValue !== null ? item.detectedValue + item.unit : 'N/A'}\n`;
+                    }
+                }
+                if (sub.image_path) detail += `\nImage: ${sub.image_path}`;
+                alert(detail);
+            } catch (e) { alert('Error loading detail'); }
+        }
+
+        async function connectWhatsApp() {
+            try {
+                await fetch('/api/whatsapp/connect', { method: 'POST' });
+                setTimeout(refreshStatus, 2000);
+            } catch (e) { alert('Connect failed'); }
+        }
+
+        async function reconnectWhatsApp() {
+            try {
+                await fetch('/api/whatsapp/reconnect', { method: 'POST' });
+                setTimeout(refreshStatus, 3000);
+            } catch (e) { alert('Reconnect failed'); }
+        }
+
+        async function resetSession() {
+            if (!confirm('Reset WhatsApp session? This will disconnect.')) return;
+            try {
+                await fetch('/api/whatsapp/reset', { method: 'POST' });
+                setTimeout(refreshStatus, 2000);
+            } catch (e) { alert('Reset failed'); }
+        }
+
+        function openQRPage() { window.open('/qr', '_blank'); }
+
+        // Initial load + polling
+        refreshAll();
+        setInterval(refreshAll, 10000);
+    </script>
+</body>
+
+</html>

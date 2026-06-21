@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "spreadsheet_id": "11eSF0DcAzdYnei1m9lQxHvVd3I0L0S3T0AHKquQsUug",
+  "spreadsheet_url": "https://docs.google.com/spreadsheets/d/11eSF0DcAzdYnei1m9lQxHvVd3I0L0S3T0AHKquQsUug/edit",
+  "sheet_title": "Bakudan QB Remote Ops Report",
+  "created_tab": "Validation",
+  "created_sheet_id": 311888188,
+  "append_updates": {
+    "spreadsheetId": "11eSF0DcAzdYnei1m9lQxHvVd3I0L0S3T0AHKquQsUug",
+    "updatedRange": "Validation!A1:C2",
+    "updatedRows": 2,
+    "updatedColumns": 3,
+    "updatedCells": 6
+  },
+  "update_result": {
+    "spreadsheetId": "11eSF0DcAzdYnei1m9lQxHvVd3I0L0S3T0AHKquQsUug",
+    "updatedRange": "Validation!A2:C2",
+    "updatedRows": 1,
+    "updatedColumns": 3,
+    "updatedCells": 3
+  },
+  "add_tab_result": {
+    "spreadsheetId": "11eSF0DcAzdYnei1m9lQxHvVd3I0L0S3T0AHKquQsUug",
+    "replies": [
+      {
+        "addSheet": {
+          "properties": {
+            "sheetId": 1919054131,
+            "title": "ReconnectCheck",
+            "index": 1,
+            "sheetType": "GRID",
+            "gridProperties": {
+              "rowCount": 1000,
+              "columnCount": 26
+            }
+          }
+        }
+      }
+    ]
+  },
+  "reconnect_read_back": {
+    "range": "Validation!A1:C2",
+    "majorDimension": "ROWS",
+    "values": [
+      [
+        "created_at",
+        "status",
+        "note"
+      ],
+      [
+        "2026-06-05 09:32:21 UTC",
+        "UPDATED",
+        "row updated successfully"
+      ]
+    ]
+  },
+  "validated_at": "2026-06-05T09:32:26.536206+00:00"
+}

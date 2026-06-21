@@ -1,0 +1,29 @@
+{
+  "qb-laptop-live-bridge-01": {
+    "machine_id": "qb-laptop-live-bridge-01",
+    "machine_name": "QB Laptop Live Bridge",
+    "store_code": "bandera",
+    "store_name": "Bakudan Bandera",
+    "location": "Bandera",
+    "app_version": "unknown",
+    "os_version": "Windows 11",
+    "hostname": "liemdo-PC",
+    "base_url": "http://127.0.0.1:3462",
+    "capabilities": [
+      "heartbeat",
+      "event",
+      "activity_log_result",
+      "timeline_result",
+      "sync_result",
+      "error",
+      "command_ack",
+      "command_result"
+    ],
+    "registered_at": "2026-06-05T13:09:05.539362+00:00",
+    "status": "registered",
+    "updated_at": "2026-06-05T13:09:05.573Z",
+    "qb_status": "QB_READY",
+    "agent_status": "running",
+    "last_heartbeat_at": "2026-06-05T13:09:05.571706+00:00"
+  }
+}
