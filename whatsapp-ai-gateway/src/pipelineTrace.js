@@ -4,12 +4,15 @@ const db = require("./database");
 
 const REQUIRED_STEPS = [
     "IMAGE_RECEIVED",
+    "HANDLER_SELECTED",
     "ROUTER_STARTED",
     "GROUP_RESOLVED",
     "FORM_CLASSIFIED",
     "STORE_RESOLVED",
     "QUALITY_GATE_DONE",
+    "PIPELINE_SELECTED",
     "OCR_DONE",
+    "GPT4O_VISION_CALLED",
     "MEMORY_DONE",
     "WRITER_PROFILE_DONE",
     "STORE_KNOWLEDGE_DONE",
@@ -57,9 +60,10 @@ function createTraceId(now = new Date()) {
 }
 
 function isEnabledFor({ chatId, chatName } = {}) {
-    if (String(process.env.HYBRID_TRACE_ENABLED || "").toLowerCase() !== "true") return false;
+    if (String(process.env.HYBRID_TRACE_ENABLED || "true").toLowerCase() === "false") return false;
+    if (String(process.env.HYBRID_TRACE_GROUPS_STRICT || "false").toLowerCase() !== "true") return true;
     const allowed = envList("HYBRID_TRACE_GROUPS");
-    if (allowed.length === 0) return false;
+    if (allowed.length === 0) return true;
     const id = String(chatId || "");
     const name = normalize(chatName);
     return allowed.some((entry) => entry === id || normalize(entry) === name);

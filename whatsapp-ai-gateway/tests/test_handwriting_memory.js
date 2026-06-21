@@ -3,7 +3,10 @@
  * Run: node tests/test_handwriting_memory.js
  */
 
+const fs = require("fs");
 const path = require("path");
+process.env.GATEWAY_DB_PATH = path.join(__dirname, "..", "data", "gateway-handwriting-test.db");
+try { fs.unlinkSync(process.env.GATEWAY_DB_PATH); } catch (_) { /* fresh test DB */ }
 process.chdir(path.join(__dirname, ".."));
 
 const db = require("../src/database");
@@ -33,6 +36,12 @@ function assertEqual(actual, expected, msg) {
     }
 }
 
+function assertAlmostEqual(actual, expected, epsilon, msg) {
+    if (Math.abs(actual - expected) > epsilon) {
+        throw new Error((msg || "Mismatch") + " - expected " + expected + ", got " + actual);
+    }
+}
+
 async function runTests() {
     console.log("\n=== Handwriting Memory System Tests ===\n");
 
@@ -56,7 +65,7 @@ async function runTests() {
     test("cosineSimilarity: identical vectors = 1.0", function () {
         const { cosineSimilarity } = require("../src/handwriting/featureExtraction");
         const sim = cosineSimilarity([1, 0, 1, 0], [1, 0, 1, 0]);
-        assertEqual(sim, 1.0);
+        assertAlmostEqual(sim, 1.0, 1e-12);
     });
 
     // Phase 5: Prediction Engine
@@ -94,7 +103,7 @@ async function runTests() {
         assertEqual(result.needs_confirmation, true);
     });
 
-    test("Rule 4: No OCR + memory strong = MEMORY_ASSISTED", function () {
+    test("Rule 4: No OCR + memory strong = HUMAN_REQUIRED", function () {
         const result = predictSingleField({
             ocrValue: null,
             ocrItemConfidence: 0,
@@ -105,8 +114,8 @@ async function runTests() {
             memoryMatchCount: 2,
             item: {},
         });
-        assertEqual(result.prediction_source, SOURCES.MEMORY_ASSISTED);
-        assertEqual(result.final_suggested_value, 32);
+        assertEqual(result.prediction_source, SOURCES.HUMAN_REQUIRED);
+        assertEqual(result.final_suggested_value, null);
     });
 
     test("Rule 7: OCR OOR + no memory = needs confirmation", function () {

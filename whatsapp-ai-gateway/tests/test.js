@@ -1,10 +1,15 @@
 const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
 
 process.env.LOG_LEVEL = "error";
+process.env.GATEWAY_DB_PATH = path.join(__dirname, "..", "data", "gateway-test.db");
 process.env.SESSION_DATA_PATH = "./sessions-test";
 process.env.FOOD_SAFETY_SUBMISSION_WINDOW_MS = "5";
 process.env.FOOD_SAFETY_CONFIRM_REMINDER_MS = "600000";
 process.env.FOOD_SAFETY_AUTO_CONFIRM_MS = "600000";
+
+try { fs.unlinkSync(process.env.GATEWAY_DB_PATH); } catch (_) { /* fresh test DB */ }
 
 let passed = 0;
 let failed = 0;

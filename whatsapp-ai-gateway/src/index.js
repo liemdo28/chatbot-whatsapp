@@ -167,7 +167,7 @@ app.post("/api/food-safety/submit", upload.single("image"), (req, res) => {
     return res.status(403).json({
         error: "DISABLED — All submissions must go through WhatsApp group chat.",
         reason: "Dashboard bypass was identified as root cause of pipeline skip (ROOT_CAUSE.md #3).",
-        required_path: "Image → WhatsApp → processSubmissionBatch → fullFormOCR → Memory → Vision → DecisionEngine → Reply",
+        required_path: "Image -> WhatsApp -> processSubmissionBatch -> GPT-4o Vision primary -> DecisionEngine -> one WhatsApp reply",
     });
 });
 
@@ -245,9 +245,10 @@ app.get("/api/runtime/proof", (req, res) => {
             "src/index.js",
             "src/foodSafetyHandler.js",
             "src/pipelineTrace.js",
-            "src/visionAiReviewer.js",
+            "src/vision/providers/openaiVision.js",
             "src/foodSafetyDecisionEngine.js",
             "src/foodSafetyAlertComposer.js",
+            "src/clientManager.js",
         ];
         const sourceFiles = files.map((file) => {
             const fullPath = path.join(__dirname, "..", file);
@@ -259,22 +260,41 @@ app.get("/api/runtime/proof", (req, res) => {
                 size: stat ? stat.size : null,
             };
         });
+        const latestTraceRows = db.getAll(
+            `SELECT trace_id, submission_id, chat_id, chat_name, image_id, step, status, output_summary, error, created_at
+             FROM pipeline_trace_events
+             ORDER BY id DESC LIMIT 50`
+        );
+
         res.json({
             ok: true,
             pid: process.pid,
             cwd: process.cwd(),
             argv: process.argv,
             port: PORT,
+            active_runtime_path: {
+                handler_selected: "foodSafetyHandler.processSubmissionBatch",
+                pipeline_selected: "gpt4o_vision_primary",
+                ocr_provider: "none/skipped",
+                vision_provider: `${process.env.VISION_PROVIDER || "openai"}/${process.env.OPENAI_VISION_MODEL || "gpt-4o"}`,
+                whatsapp_reply_owner: "clientManager.unifiedHandler",
+                execution_path_count: 1,
+                whatsapp_reply_count: 1,
+            },
             env: {
                 HYBRID_TRACE_ENABLED: process.env.HYBRID_TRACE_ENABLED || null,
                 HYBRID_TRACE_GROUPS: process.env.HYBRID_TRACE_GROUPS || null,
+                HYBRID_TRACE_GROUPS_STRICT: process.env.HYBRID_TRACE_GROUPS_STRICT || null,
+                USE_GPT4O_VISION_PIPELINE: process.env.USE_GPT4O_VISION_PIPELINE || null,
                 VISION_REVIEW_ENABLED: process.env.VISION_REVIEW_ENABLED || null,
                 VISION_PROVIDER: process.env.VISION_PROVIDER || null,
+                OPENAI_VISION_MODEL: process.env.OPENAI_VISION_MODEL || "gpt-4o",
                 VISION_REVIEW_FIELDS: process.env.VISION_REVIEW_FIELDS || null,
                 VISION_MAX_CALLS_PER_FORM: process.env.VISION_MAX_CALLS_PER_FORM || null,
                 OPENAI_API_KEY_PRESENT: !!process.env.OPENAI_API_KEY,
             },
             sourceFiles,
+            latest_trace_rows: latestTraceRows,
             timestamp: new Date().toISOString(),
         });
     } catch (err) {

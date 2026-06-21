@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const logger = require("./logger");
 
-const DB_PATH = path.join(__dirname, "..", "data", "gateway.db");
+const DB_PATH = process.env.GATEWAY_DB_PATH || path.join(__dirname, "..", "data", "gateway.db");
 
 let db = null;
 let dbReady = null;
@@ -17,14 +17,33 @@ async function getDb() {
     const dir = path.dirname(DB_PATH);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
+    const createFreshDb = (reason) => {
+      if (fs.existsSync(DB_PATH)) {
+        const backupPath = `${DB_PATH}.corrupt-${Date.now()}`;
+        fs.renameSync(DB_PATH, backupPath);
+        logger.warn("Invalid database moved aside; creating fresh database", { path: DB_PATH, backupPath, reason });
+      }
+      db = new SQL.Database();
+    };
+
     if (fs.existsSync(DB_PATH)) {
-      const buffer = fs.readFileSync(DB_PATH);
-      db = new SQL.Database(buffer);
+      try {
+        const buffer = fs.readFileSync(DB_PATH);
+        db = new SQL.Database(buffer);
+        db.run("PRAGMA schema_version");
+      } catch (err) {
+        createFreshDb(err.message);
+      }
     } else {
       db = new SQL.Database();
     }
 
-    initTables();
+    try {
+      initTables();
+    } catch (err) {
+      createFreshDb(err.message);
+      initTables();
+    }
     saveDb();
     logger.info("Database initialized", { path: DB_PATH });
     return db;
@@ -448,7 +467,7 @@ function getSubmissions(opts = {}) {
   if (opts.created_after) { sql += " AND created_at >= ?"; params.push(opts.created_after); }
   if (opts.created_before) { sql += " AND created_at <= ?"; params.push(opts.created_before); }
   if (opts.message_id) { sql += " AND message_id = ?"; params.push(opts.message_id); }
-  sql += " ORDER BY created_at DESC";
+  sql += " ORDER BY created_at DESC, id DESC";
   if (opts.limit) { sql += " LIMIT ?"; params.push(opts.limit); }
   return getAll(sql, params);
 }

@@ -6,6 +6,7 @@ const logger = require("./logger");
 const db = require("./database");
 const { handleImageMessage, handleTextMessage } = require("./foodSafetyHandler");
 const { getGroupScope, logRouterDecision } = require("./formImageRouter");
+const pipelineTrace = require("./pipelineTrace");
 
 require("dotenv").config();
 
@@ -87,6 +88,12 @@ function logDuplicate(msg, chatName, image_hash = "") {
     });
 }
 
+function whatsappMessageId(sentMessage) {
+    return sentMessage && sentMessage.id && sentMessage.id._serialized
+        ? sentMessage.id._serialized
+        : String(sentMessage && sentMessage.id ? sentMessage.id : "");
+}
+
 async function unifiedHandler(msg) {
     const msgId = msg.id && msg.id._serialized ? msg.id._serialized : String(msg.id || "");
     try {
@@ -153,10 +160,27 @@ async function unifiedHandler(msg) {
         msg._chatName = chatName || "";
 
         if (msg.hasMedia && msg.type === "image") {
-            const reply = await handleImageMessage(msg, client);
+            const result = await handleImageMessage(msg, client);
+            const reply = typeof result === "string" ? result : (result && result.text);
             if (reply) {
-                await msg.reply(reply);
-                logger.info("Reply sent", { to: msg.from, chatName, replyLength: reply.length });
+                const sent = await msg.reply(reply);
+                const waReplyId = whatsappMessageId(sent);
+                if (msg._pipelineTrace) {
+                    pipelineTrace.step(msg._pipelineTrace, "WHATSAPP_REPLY_SENT", "OK", {
+                        output_summary: {
+                            final_reply_id: msg._finalReplyId || null,
+                            whatsapp_reply_message_id: waReplyId || null,
+                            reply_count: 1,
+                        },
+                    });
+                }
+                logger.info("Reply sent", {
+                    to: msg.from,
+                    chatName,
+                    replyLength: reply.length,
+                    finalReplyId: msg._finalReplyId || null,
+                    whatsappReplyMessageId: waReplyId || null,
+                });
             }
         } else if (msg.body && msg.body.trim()) {
             const reply = await handleTextMessage(msg, client);
@@ -357,4 +381,5 @@ module.exports = {
     sendMessage,
     getClient,
     resetDedupForTests,
+    _unifiedHandlerForTests: unifiedHandler,
 };
