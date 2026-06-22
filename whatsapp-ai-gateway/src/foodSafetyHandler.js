@@ -13,6 +13,8 @@ const {
     resolveStoreFromContext,
     validateStoreGroupMatch,
     logRouterDecision,
+    detectStoreFromText,
+    storeNameToConfig,
 } = require("./formImageRouter");
 const pipelineTrace = require("./pipelineTrace");
 const storeKnowledge = require("./storeKnowledge");
@@ -30,7 +32,8 @@ function getSession(phoneNumber) {
         sessions[phoneNumber] = {
             language: "ES",
             pendingSubmission: null,
-            waitingFor: null, // 'action', 'image'
+            pendingStoreConfirmation: null,
+            waitingFor: null, // 'action', 'image', 'store_confirmation'
             lastImageHash: null,
         };
     }
@@ -268,7 +271,7 @@ function buildProofBlock(proof) {
         `image_hash: ${proof.imageHash || "N/A"}`,
         `handler selected: ${proof.handlerSelected || "N/A"}`,
         `pipeline selected: ${proof.pipelineSelected || "N/A"}`,
-        `OCR provider: ${proof.ocrProvider || "none"}`,
+        `Vision confidence provider: ${proof.ocrProvider || "none"}`,
         `vision_system: ${proof.visionSystem || "N/A"}`,
         `primary_provider: ${proof.primaryProvider || "N/A"}`,
         `fallback_provider: ${proof.fallbackProvider || "N/A"}`,
@@ -411,8 +414,24 @@ async function processLegacyOcrPath(ctx) {
     return finalReply;
 }
 
+/**
+ * Attempt store resolution from vision result fields.
+ * The vision model sees the header and may return a store name.
+ */
+function resolveStoreFromVisionResult(visionResult) {
+    const visionStore = visionResult.store || visionResult.store_name || "";
+    if (visionStore) {
+        const config = storeNameToConfig(visionStore);
+        if (config) return { ...config, routingSource: "vision_header" };
+    }
+    return null;
+}
+
 async function processGpt4oPath(ctx) {
     const { message, session, image, trace, proof, chatName } = ctx;
+
+    // ── Store Resolution ──
+    const scope = getGroupScope({ chatId: message.from, chatName });
     let storeInfo = resolveStoreFromContext(chatName, "", message.from);
     proof.storeResolverResult = storeInfo
         ? `${storeInfo.storeCode} ${storeInfo.storeName} via ${storeInfo.routingSource || "group_context"}`
@@ -422,31 +441,6 @@ async function processGpt4oPath(ctx) {
         output_summary: { store: proof.storeResolverResult },
     });
 
-    if (!storeInfo) {
-        const reply = appendProof(
-            "Food Safety runtime blocked this image because the store could not be resolved. No values were saved.",
-            proof
-        );
-        pipelineTrace.step(trace, "REPLY_BUILDER_DONE", "OK", {
-            output_summary: { final_reply_id: proof.finalReplyId, blocked_reason: "store_unresolved" },
-        });
-        db.logMessage(message.from, "out", reply, "text");
-        return reply;
-    }
-
-    const validation = validateStoreGroupMatch(chatName, storeInfo, message.from);
-    if (!validation.valid) {
-        const reply = appendProof(validation.message, proof);
-        pipelineTrace.step(trace, "FORM_CLASSIFIED", "FAIL", {
-            output_summary: { reason: "store_group_mismatch", expected: validation.expected, actual: validation.actual },
-        });
-        pipelineTrace.step(trace, "REPLY_BUILDER_DONE", "OK", {
-            output_summary: { final_reply_id: proof.finalReplyId, blocked_reason: "store_group_mismatch" },
-        });
-        db.logMessage(message.from, "out", reply, "text");
-        return reply;
-    }
-
     pipelineTrace.step(trace, "QUALITY_GATE_DONE", "OK", {
         output_summary: { saved_image_path: image.imagePath },
     });
@@ -454,13 +448,15 @@ async function processGpt4oPath(ctx) {
         output_summary: { provider: "none", reason: "gpt4o_vision_primary" },
     });
 
+    // ── Call Vision LLM (always — even if store unresolved) ──
+    const tempStoreInfo = storeInfo || { ...STORE_CONFIG.B2, storeCode: "??", templateId: "unknown" };
     const visionResult = await openaiVision.extractForm({
         imagePath: image.imagePath,
-        storeInfo,
+        storeInfo: tempStoreInfo,
         traceId: trace.trace_id,
         imageHash: image.hash,
         chatName,
-        fields: fieldsForStore(storeInfo),
+        fields: storeInfo ? fieldsForStore(storeInfo) : [],
     });
 
     proof.gpt4oCalled = visionResult.called === true;
@@ -479,20 +475,110 @@ async function processGpt4oPath(ctx) {
 
     if (!visionResult.available) {
         const reply = appendProof(
-            `Food Safety runtime blocked this image because GPT-4o Vision did not complete: ${visionResult.reason || "unavailable"}. No OCR fallback was used and no values were saved.`,
+            `Food Safety runtime blocked this image because Vision did not complete: ${visionResult.reason || "unavailable"}. No OCR fallback was used and no values were saved.`,
             proof
         );
         pipelineTrace.step(trace, "REPLY_BUILDER_DONE", "OK", {
-            output_summary: { final_reply_id: proof.finalReplyId, blocked_reason: "gpt4o_unavailable" },
+            output_summary: { final_reply_id: proof.finalReplyId, blocked_reason: "vision_unavailable" },
         });
         db.logMessage(message.from, "out", reply, "text");
         return reply;
     }
 
-    const parsed = parsedFromGpt4o(visionResult, storeInfo);
+    // Post-vision store resolution
+    if (!storeInfo) {
+        const visionStore = resolveStoreFromVisionResult(visionResult);
+        if (visionStore) {
+            storeInfo = visionStore;
+            proof.storeResolverResult = `${storeInfo.storeCode} ${storeInfo.storeName} via ${storeInfo.routingSource}`;
+            pipelineTrace.step(trace, "STORE_RESOLVED", "OK", {
+                output_summary: { store: proof.storeResolverResult },
+            });
+        }
+    }
+
+    // If STILL unresolved — ask for confirmation (NEVER discard)
+    if (!storeInfo) {
+        session.pendingStoreConfirmation = {
+            visionResult,
+            imagePath: image.imagePath,
+            traceId: trace.trace_id,
+            imageHash: image.hash,
+            chatName,
+            proof: { ...proof },
+        };
+        session.waitingFor = "store_confirmation";
+
+        const isES = session.language !== "EN";
+        const confirmationMsg = [
+            isES ? "\u{1F3EA} Necesito confirmaci\u00F3n de tienda:" : "\u{1F3EA} Need store confirmation:",
+            "",
+            "1 = B1 / The Rim",
+            "2 = B2 / Stone Oak",
+            "3 = B3 / Bandera",
+            "",
+            isES ? "Responda 1, 2, o 3 para continuar." : "Reply 1, 2, or 3 to continue.",
+            isES ? "No se guardar\u00E1 hasta que confirme la tienda." : "Values will not be saved until store is confirmed.",
+        ].join("\n");
+
+        pipelineTrace.step(trace, "STORE_CONFIRMATION_SENT", "OK", {
+            output_summary: { reason: "store_unresolved_logtest" },
+        });
+        db.logMessage(message.from, "in", "[image]", "image");
+        db.logMessage(message.from, "out", confirmationMsg, "text");
+        return confirmationMsg;
+    }
+
+    // Store validated — check group match
+    const validation = validateStoreGroupMatch(chatName, storeInfo, message.from);
+    if (!validation.valid) {
+        const reply = appendProof(validation.message, proof);
+        pipelineTrace.step(trace, "FORM_CLASSIFIED", "FAIL", {
+            output_summary: { reason: "store_group_mismatch", expected: validation.expected, actual: validation.actual },
+        });
+        pipelineTrace.step(trace, "REPLY_BUILDER_DONE", "OK", {
+            output_summary: { final_reply_id: proof.finalReplyId, blocked_reason: "store_group_mismatch" },
+        });
+        db.logMessage(message.from, "out", reply, "text");
+        return reply;
+    }
+
+    // Re-extract with correct store fields if needed
+    let parsed;
+    if (tempStoreInfo.storeCode !== storeInfo.storeCode) {
+        const correctedVisionResult = await openaiVision.extractForm({
+            imagePath: image.imagePath,
+            storeInfo,
+            traceId: trace.trace_id,
+            imageHash: image.hash,
+            chatName,
+            fields: fieldsForStore(storeInfo),
+        });
+        parsed = parsedFromGpt4o(
+            correctedVisionResult.available ? correctedVisionResult : visionResult,
+            storeInfo
+        );
+    } else {
+        parsed = parsedFromGpt4o(visionResult, storeInfo);
+    }
+
+    // Deterministic Column Selection
+    const visionReadings = visionResult.readings || [];
+    const tenAmHasValues = visionReadings.some((r) => r && r.value_10am !== undefined && r.value_10am !== null && String(r.value_10am).trim() !== "");
+    const fourPmHasValues = visionReadings.some((r) => r && r.value_4pm !== undefined && r.value_4pm !== null && String(r.value_4pm).trim() !== "");
+
+    if (tenAmHasValues && !fourPmHasValues) {
+        parsed.selected_column = "10:00";
+    } else if (!tenAmHasValues && fourPmHasValues) {
+        parsed.selected_column = "16:00";
+    } else if (tenAmHasValues && fourPmHasValues) {
+        parsed.selected_column = "16:00";
+    }
+
     proof.selectedColumn = displayColumn(parsed.selected_column);
+
     pipelineTrace.step(trace, "FORM_CLASSIFIED", parsed.isForm ? "OK" : "FAIL", {
-        output_summary: { is_food_safety_form: parsed.isForm, readings: (visionResult.readings || []).length },
+        output_summary: { is_food_safety_form: parsed.isForm, readings: visionReadings.length },
     });
 
     if (!parsed.isForm) {
@@ -519,18 +605,10 @@ async function processGpt4oPath(ctx) {
         },
     });
 
-    const decision = decideFormValues(
-        parsed.items,
-        storeInfo.storeCode,
-        null,
-        parsed.selected_column,
-        parsed.confidence || 0
-    );
+    const decision = decideFormValues(parsed.items, storeInfo.storeCode, null, parsed.selected_column, parsed.confidence || 0);
     parsed.items = decision.items;
     parsed.issues = issuesForItems(parsed.items);
-    pipelineTrace.step(trace, "DECISION_ENGINE_DONE", "OK", {
-        output_summary: decision.summary,
-    });
+    pipelineTrace.step(trace, "DECISION_ENGINE_DONE", "OK", { output_summary: decision.summary });
 
     const ocrJson = JSON.stringify({
         trace_id: trace.trace_id,
@@ -671,9 +749,7 @@ async function processSubmissionBatch(images) {
     } catch (err) {
         logger.error("Error handling image", { phone, error: err.message });
         if (trace) {
-            pipelineTrace.step(trace, "REPLY_BUILDER_DONE", "FAIL", {
-                error: err.message,
-            });
+            pipelineTrace.step(trace, "REPLY_BUILDER_DONE", "FAIL", { error: err.message });
         }
         return t(session.language, "ocr_failed");
     }
@@ -689,17 +765,16 @@ async function handleTextMessage(message, client) {
     const session = getSession(phone);
     const upperBody = body.toUpperCase().trim();
 
-    // Log incoming message
     db.logMessage(phone, "in", body, "text");
 
-    // === Mi rejection ===
+    // Mi rejection
     if (upperBody.startsWith("/MI") || upperBody === "MI") {
         const reply = t(session.language, "mi_disabled");
         db.logMessage(phone, "out", reply, "text");
         return reply;
     }
 
-    // === Team support commands ===
+    // Team support commands
     if (upperBody === "/HELP" || upperBody === "/H") {
         const reply = t(session.language, "team_help");
         db.logMessage(phone, "out", reply, "text");
@@ -719,17 +794,17 @@ async function handleTextMessage(message, client) {
 
     if (upperBody === "/TEMPLATE") {
         const reply = session.language === "EN"
-            ? "Stone Oak Food Safety Form Template:\n\nSO-01: Walk-In Cooler (30-45°F)\nSO-02: Walk-In Freezer (-10-0°F)\nSO-03: Prep Cooler (30-45°F)\nSO-04: Reach-In Cooler (30-45°F)\nSO-05: Reach-In Freezer (-10-0°F)\nSO-06: Hot Holding (135-200°F)\nSO-07: Cooking Temp (165-200°F)\nSO-08: Cooling Step 1 (0-70°F)\nSO-09: Cooling Step 2 (0-41°F)\nSO-10: Dishwasher Sanitizer (150-180°F)"
-            : "Plantilla de Food Safety - Stone Oak:\n\nSO-01: Walk-In Cooler (30-45°F)\nSO-02: Walk-In Freezer (-10-0°F)\nSO-03: Prep Cooler (30-45°F)\nSO-04: Reach-In Cooler (30-45°F)\nSO-05: Reach-In Freezer (-10-0°F)\nSO-06: Hot Holding (135-200°F)\nSO-07: Cooking Temp (165-200°F)\nSO-08: Cooling Step 1 (0-70°F)\nSO-09: Cooling Step 2 (0-41°F)\nSO-10: Dishwasher Sanitizer (150-180°F)";
+            ? "Stone Oak Food Safety Form Template:\n\nSO-01: Walk-In Cooler (30-45F)\nSO-02: Walk-In Freezer (-10-0F)\nSO-03: Prep Cooler (30-45F)\nSO-04: Reach-In Cooler (30-45F)\nSO-05: Reach-In Freezer (-10-0F)\nSO-06: Hot Holding (135-200F)\nSO-07: Cooking Temp (165-200F)\nSO-08: Cooling Step 1 (0-70F)\nSO-09: Cooling Step 2 (0-41F)\nSO-10: Dishwasher Sanitizer (150-180F)"
+            : "Plantilla de Food Safety - Stone Oak:\n\nSO-01: Walk-In Cooler (30-45F)\nSO-02: Walk-In Freezer (-10-0F)\nSO-03: Prep Cooler (30-45F)\nSO-04: Reach-In Cooler (30-45F)\nSO-05: Reach-In Freezer (-10-0F)\nSO-06: Hot Holding (135-200F)\nSO-07: Cooking Temp (165-200F)\nSO-08: Cooling Step 1 (0-70F)\nSO-09: Cooling Step 2 (0-41F)\nSO-10: Dishwasher Sanitizer (150-180F)";
         db.logMessage(phone, "out", reply, "text");
         return reply;
     }
 
     if (upperBody === "/LOG") {
         const subs = db.getSubmissions({ limit: 5 });
-        let reply = session.language === "EN" ? "Recent submissions:\n" : "Envíos recientes:\n";
+        let reply = session.language === "EN" ? "Recent submissions:\n" : "Env\u00EDos recientes:\n";
         if (subs.length === 0) {
-            reply += session.language === "EN" ? "No submissions yet." : "Sin envíos aún.";
+            reply += session.language === "EN" ? "No submissions yet." : "Sin env\u00EDos a\u00FAn.";
         } else {
             for (const s of subs) {
                 reply += `#${s.id} - ${s.store_name} - ${s.status} - ${s.created_at}\n`;
@@ -739,16 +814,15 @@ async function handleTextMessage(message, client) {
         return reply;
     }
 
-    // Legacy /agent - admin only (simplified)
     if (upperBody.startsWith("/AGENT")) {
         const reply = session.language === "EN"
             ? "Agent mode is admin-only. Use the dashboard for admin functions."
-            : "El modo agente es solo para admins. Use el panel de administración.";
+            : "El modo agente es solo para admins. Use el panel de administraci\u00F3n.";
         db.logMessage(phone, "out", reply, "text");
         return reply;
     }
 
-    // Check for language switch first
+    // Language switch
     const newLang = normalizeLanguage(body);
     if (newLang) {
         session.language = newLang;
@@ -757,11 +831,106 @@ async function handleTextMessage(message, client) {
         return reply;
     }
 
-    // HELP
     if (upperBody === "HELP" || upperBody === "AYUDA") {
         const reply = t(session.language, "help_text");
         db.logMessage(phone, "out", reply, "text");
         return reply;
+    }
+
+    // === Store Confirmation Flow (1/2/3 reply) ===
+    if (session.waitingFor === "store_confirmation" && session.pendingStoreConfirmation) {
+        const storeChoice = upperBody.trim();
+        const storeMap = { "1": "B1", "2": "B2", "3": "B3" };
+        const chosenCode = storeMap[storeChoice];
+
+        if (chosenCode) {
+            const storeInfo = { ...STORE_CONFIG[chosenCode], routingSource: "manual_confirmation" };
+            const pending = session.pendingStoreConfirmation;
+            session.pendingStoreConfirmation = null;
+            session.waitingFor = null;
+
+            // Continue processing with confirmed store
+            const visionResult = pending.visionResult;
+            const parsed = parsedFromGpt4o(visionResult, storeInfo);
+
+            // Deterministic Column Selection
+            const visionReadings = visionResult.readings || [];
+            const tenAmHasValues = visionReadings.some((r) => r && r.value_10am !== undefined && r.value_10am !== null && String(r.value_10am).trim() !== "");
+            const fourPmHasValues = visionReadings.some((r) => r && r.value_4pm !== undefined && r.value_4pm !== null && String(r.value_4pm).trim() !== "");
+
+            if (tenAmHasValues && !fourPmHasValues) {
+                parsed.selected_column = "10:00";
+            } else if (!tenAmHasValues && fourPmHasValues) {
+                parsed.selected_column = "16:00";
+            } else if (tenAmHasValues && fourPmHasValues) {
+                parsed.selected_column = "16:00";
+            }
+
+            const decision = decideFormValues(parsed.items, storeInfo.storeCode, null, parsed.selected_column, parsed.confidence || 0);
+            parsed.items = decision.items;
+            parsed.issues = issuesForItems(parsed.items);
+
+            const ocrJson = JSON.stringify({
+                trace_id: pending.traceId,
+                image_hash: pending.imageHash,
+                runtime_pipeline: "gpt4o_vision_primary",
+                ocr_provider: "none",
+                vision_provider: "openai/gpt-4o",
+                gpt4o_called: true,
+                vision_result: visionResult,
+                parsed,
+            });
+
+            const submissionId = db.insertSubmission({
+                store_name: storeInfo.storeName,
+                phone_number: phone,
+                employee_name: null,
+                message_id: "",
+                trace_id: pending.traceId,
+                image_path: pending.imagePath,
+                ocr_raw_text: "",
+                ocr_json: ocrJson,
+                ocr_confidence: 0,
+                detected_items: JSON.stringify(parsed.items),
+                status: "PENDING",
+                language: session.language,
+            });
+
+            session.pendingSubmission = {
+                id: submissionId,
+                parsed,
+                imagePath: pending.imagePath,
+                rawText: "",
+                ocrJson,
+                storeName: storeInfo.storeName,
+                storeCode: storeInfo.storeCode,
+                traceId: pending.traceId,
+            };
+            session.waitingFor = "action";
+
+            const replyResult = zeroRetakeReply.buildSmartConfirmationMessage({
+                items: parsed.items,
+                storeInfo,
+                selectedColumn: parsed.selected_column,
+                language: session.language,
+                ocrConfidence: 0,
+                predictionResult: decision,
+            });
+
+            db.logMessage(phone, "out", replyResult.message, "text");
+            return replyResult.message;
+        }
+
+        // Invalid choice — re-prompt
+        const isES = session.language !== "EN";
+        const rePrompt = [
+            isES ? "Por favor responda 1, 2, o 3:" : "Please reply 1, 2, or 3:",
+            "1 = B1 / The Rim",
+            "2 = B2 / Stone Oak",
+            "3 = B3 / Bandera",
+        ].join("\n");
+        db.logMessage(phone, "out", rePrompt, "text");
+        return rePrompt;
     }
 
     if (upperBody.startsWith("MANUAL")) {
@@ -819,12 +988,7 @@ async function handleTextMessage(message, client) {
             ocrConfidence: 100,
             predictionResult: {
                 items: parsed.items,
-                summary: {
-                    total: parsed.items.length,
-                    high_confidence: parsed.items.length,
-                    alert_blocked: 0,
-                    manual_required: 0,
-                },
+                summary: { total: parsed.items.length, high_confidence: parsed.items.length, alert_blocked: 0, manual_required: 0 },
             },
         });
         db.logMessage(phone, "out", replyResult.message, "text");
@@ -843,7 +1007,7 @@ async function handleTextMessage(message, client) {
             db.logMessage(phone, "out", reply, "text");
             return reply;
         }
-        return null; // Don't reply to random messages
+        return null;
     }
 
     const sub = session.pendingSubmission;
@@ -853,18 +1017,11 @@ async function handleTextMessage(message, client) {
         try {
             db.updateSubmissionStatus(sub.id, "CONFIRMED");
             const now = new Date().toISOString();
-            const reply = t(session.language, "saved_success", {
-                id: sub.id,
-                store: sub.storeName,
-                date: now,
-            });
+            const reply = t(session.language, "saved_success", { id: sub.id, store: sub.storeName, date: now });
             db.logMessage(phone, "out", reply, "text");
-
-            // Attempt Google Sheet sync (non-blocking)
             gsheet.syncSubmission(sub.id, sub).catch((sheetErr) => {
                 logger.warn("Google Sheet sync failed (non-blocking)", { error: sheetErr.message });
             });
-
             session.pendingSubmission = null;
             session.waitingFor = null;
             return reply;
@@ -913,31 +1070,21 @@ async function handleTextMessage(message, client) {
         }
     }
 
-    // EDIT <index> <value> or EDIT <id> <value>
+    // EDIT
     if (upperBody.startsWith("EDIT")) {
         const parts = body.substring(4).trim().split(/\s+/);
         if (parts.length < 2) {
-            const reply = t(session.language, "edit_applied", {
-                field: "N/A",
-                old: "N/A",
-                new: "N/A — formato incorrecto. Use: EDIT 3 38 o EDIT SO-03 38",
-            });
+            const reply = t(session.language, "edit_applied", { field: "N/A", old: "N/A", new: "N/A \u2014 formato incorrecto. Use: EDIT 3 38 o EDIT SO-03 38" });
             db.logMessage(phone, "out", reply, "text");
             return reply;
         }
 
         let indexOrId = parts[0];
         const newValue = parseFloat(parts[1]);
-
         if (isNaN(newValue)) {
-            return t(session.language, "edit_applied", {
-                field: "N/A",
-                old: "N/A",
-                new: "N/A — valor no válido",
-            });
+            return t(session.language, "edit_applied", { field: "N/A", old: "N/A", new: "N/A \u2014 valor no v\u00E1lido" });
         }
 
-        // Find the item by index or ID
         let itemIndex = -1;
         const numIndex = parseInt(indexOrId);
         if (!isNaN(numIndex) && numIndex >= 1 && numIndex <= sub.parsed.items.length) {
@@ -947,11 +1094,7 @@ async function handleTextMessage(message, client) {
         }
 
         if (itemIndex < 0) {
-            return t(session.language, "edit_applied", {
-                field: indexOrId,
-                old: "N/A",
-                new: "N/A — artículo no encontrado",
-            });
+            return t(session.language, "edit_applied", { field: indexOrId, old: "N/A", new: "N/A \u2014 art\u00EDculo no encontrado" });
         }
 
         const item = sub.parsed.items[itemIndex];
@@ -960,7 +1103,6 @@ async function handleTextMessage(message, client) {
         item.status = newValue >= item.safeRange.min && newValue <= item.safeRange.max ? "SAFE" : "UNSAFE";
         item.isSafe = item.status === "SAFE";
 
-        // Log the edit
         db.insertEdit({
             submission_id: sub.id,
             edit_command: body,
@@ -978,7 +1120,6 @@ async function handleTextMessage(message, client) {
         return reply;
     }
 
-    // Unknown command
     return null;
 }
 

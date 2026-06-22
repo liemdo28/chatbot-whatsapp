@@ -143,7 +143,7 @@ function composeAlertPayload(submissionContext) {
         }
 
         if (lowConfidenceItems.length > 0) {
-            lines.push(isES ? "Valores con baja confianza OCR:" : "Values with low OCR confidence:");
+            lines.push(isES ? "Valores con baja vision confidence:" : "Values with low vision confidence:");
             for (const item of lowConfidenceItems) {
                 const val = item.value !== null ? `${item.value}F` : "N/A";
                 lines.push(`  - ${item.fieldId}: ${val} [${item.reason}]`);

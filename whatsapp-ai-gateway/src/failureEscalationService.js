@@ -176,8 +176,8 @@ async function escalateLowConfidence(confidence, storeName, submissionId, lang =
     const normalized = normalizeConfidence(confidence);
     const pct = Math.round(normalized * 100);
 
-    const messageEs = `ALERTA FOOD SAFETY - ${storeName}\n\nLectura OCR de baja confianza: ${pct}%\n\nAlgunos valores pueden no ser exactos.\nPor favor revisa el formulario #${submissionId} y confirma los valores.`;
-    const messageEn = `FOOD SAFETY ALERT - ${storeName}\n\nLow OCR confidence: ${pct}%\n\nSome values may be inaccurate.\nPlease review form #${submissionId} and confirm values.`;
+    const messageEs = `ALERTA FOOD SAFETY - ${storeName}\n\nVision confidence baja: ${pct}%\n\nAlgunos valores pueden no ser exactos.\nPor favor revisa el formulario #${submissionId} y confirma los valores.`;
+    const messageEn = `FOOD SAFETY ALERT - ${storeName}\n\nLow vision confidence: ${pct}%\n\nSome values may be inaccurate.\nPlease review form #${submissionId} and confirm values.`;
 
     logger.warn("[Escalation] Low confidence OCR alert", {
         storeGroup,

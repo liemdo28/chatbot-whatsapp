@@ -249,29 +249,76 @@ function detectStoreFromText(rawText) {
 }
 
 function storeNameToConfig(storeName) {
-    const key = String(storeName || "").toUpperCase();
+    const key = String(storeName || "").toUpperCase().trim();
     if (key === "THE RIM" || key === "RIM") return { ...STORE_CONFIG.B1 };
     if (key === "STONE OAK") return { ...STORE_CONFIG.B2 };
     if (key === "BANDERA") return { ...STORE_CONFIG.B3 };
+    // Fuzzy fallback for common OCR variations
+    if (/\bRIM\b/.test(key) && !/\bPRIM/.test(key)) return { ...STORE_CONFIG.B1 };
+    if (/\bSTONE\s*OAK\b/.test(key)) return { ...STORE_CONFIG.B2 };
+    if (/\bBANDERA\b/.test(key)) return { ...STORE_CONFIG.B3 };
+    return null;
+}
+
+/**
+ * Detect store from template field signature in raw text.
+ * Looks for field ID patterns (RIM-xx, SO-xx, BAN-xx) to identify the store.
+ */
+function detectStoreFromTemplateSignature(rawText) {
+    if (!rawText) return null;
+    const upper = String(rawText).toUpperCase();
+
+    // Strong signal: 3+ RIM-xx field IDs → The Rim
+    const rimMatches = upper.match(/\bRIM\s*-?\s*\d{1,2}\b/g);
+    if (rimMatches && rimMatches.length >= 3) return { ...STORE_CONFIG.B1 };
+
+    // Strong signal: 3+ SO-xx field IDs → Stone Oak
+    const soMatches = upper.match(/\bSO\s*-?\s*\d{1,2}\b/g);
+    if (soMatches && soMatches.length >= 3) return { ...STORE_CONFIG.B2 };
+
+    // Strong signal: 3+ BAN-xx field IDs → Bandera
+    const banMatches = upper.match(/\bBAN\s*-?\s*\d{1,2}\b/g);
+    if (banMatches && banMatches.length >= 3) return { ...STORE_CONFIG.B3 };
+
+    // Weak signal: any RIM-xx (at least 1, no competing signals)
+    if (rimMatches && rimMatches.length >= 1 && !soMatches && !banMatches) {
+        return { ...STORE_CONFIG.B1 };
+    }
+    if (soMatches && soMatches.length >= 1 && !rimMatches && !banMatches) {
+        return { ...STORE_CONFIG.B2 };
+    }
+    if (banMatches && banMatches.length >= 1 && !rimMatches && !soMatches) {
+        return { ...STORE_CONFIG.B3 };
+    }
+
     return null;
 }
 
 function resolveStoreFromContext(chatName, rawText, chatId) {
     const scope = getGroupScope({ chatId, chatName });
 
+    // Production groups are authoritative — always resolve immediately
     if (scope.role === "production_log" && scope.storeInfo) {
         return { ...scope.storeInfo, routingSource: "production_group" };
     }
 
+    // Priority 1: Header detection from form image text (works for any group)
     const textStore = detectStoreFromText(rawText);
     const textInfo = storeNameToConfig(textStore);
     if (textInfo) return { ...textInfo, routingSource: "form_header" };
 
+    // Priority 2: Template signature — detect field prefix in raw text
+    const templateStore = detectStoreFromTemplateSignature(rawText);
+    if (templateStore) return { ...templateStore, routingSource: "template_signature" };
+
+    // Priority 3: Group name detection (production groups only — logtest needs header/signature)
     const groupStore = detectStoreFromGroupName(chatName);
     if (groupStore && scope.role !== "logtest") {
         return { ...groupStore, routingSource: "group_name" };
     }
 
+    // Logtest group with no header/signature match — return unresolved
+    // (caller must ask for confirmation, never discard silently)
     return null;
 }
 
@@ -328,6 +375,8 @@ module.exports = {
     isFormLikely,
     detectStoreFromText,
     detectStoreFromGroupName,
+    detectStoreFromTemplateSignature,
+    storeNameToConfig,
     resolveStoreFromContext,
     validateStoreGroupMatch,
     logRouterDecision,
