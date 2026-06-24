@@ -9,6 +9,7 @@ $ErrorActionPreference = "Continue"
 $GatewayDir = "C:\Users\hoang\Downloads\antigravity-gateway\antigravity-gateway"
 $LogDir = "C:\ProgramData\AntigravityGateway\logs"
 $MarkerFile = "C:\ProgramData\AntigravityGateway\gateway.pid"
+$BlockMarker = "C:\ProgramData\AntigravityGateway\.port-blocked"
 
 # Ensure directories
 if (!(Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir -Force | Out-Null }
@@ -21,6 +22,12 @@ if (!(Test-Path $Pm2)) { $Pm2 = "pm2" }
 function Log($msg) {
     $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [START] $msg"
     Add-Content -Path $LogFile -Value $line -ErrorAction SilentlyContinue
+}
+
+# Honor port-block marker set by gateway-port-block.ps1 -Force
+if (Test-Path $BlockMarker) {
+    Log "ABORT: Block marker exists at $BlockMarker (dev build in progress). Skipping gateway start."
+    exit 0
 }
 
 Log "=== Gateway Start Initiated ==="

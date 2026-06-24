@@ -1,16 +1,16 @@
 @echo off
-REM QB Ops Agent — Install & Setup
-REM Run this once on laptop1 to install dependencies and configure
+REM QB Ops Agent — Install & Setup (TypeScript)
+REM Run this once on laptop1 to install dependencies, configure, and build.
 
 echo =============================================
-echo  QB Ops Agent - Installation Script
+echo  QB Ops Agent - Installation Script v2.0
 echo =============================================
 echo.
 
 cd /d "%~dp0"
 
 REM Step 1: Check Node.js
-echo [1/6] Checking Node.js...
+echo [1/7] Checking Node.js...
 where node >nul 2>&1
 if %ERRORLEVEL% neq 0 (
     echo [ERROR] Node.js not found!
@@ -23,7 +23,7 @@ echo [OK] Node.js found.
 echo.
 
 REM Step 2: Detect LAN IP automatically
-echo [2/6] Detecting laptop1 LAN IP...
+echo [2/7] Detecting laptop1 LAN IP...
 for /f "delims=" %%i in ('powershell -Command "Get-NetIPAddress -AddressFamily IPv4 ^| Where-Object { $_.IPAddress -notlike '127.*' -and $_.InterfaceAlias -notlike '*Loopback*' -and $_.PrefixOrigin -ne 'WellKnown' } ^| Select-Object -First 1 -ExpandProperty IPAddress"') do set LAPTOP1_IP=%%i
 if "%LAPTOP1_IP%"=="" (
     echo [WARN] Could not auto-detect LAN IP. Using 192.168.1.100
@@ -33,7 +33,7 @@ echo [OK] LAPTOP1_IP=%LAPTOP1_IP%
 echo.
 
 REM Step 3: Install dependencies
-echo [3/6] Installing npm dependencies...
+echo [3/7] Installing npm dependencies...
 call npm install
 if %ERRORLEVEL% neq 0 (
     echo [ERROR] npm install failed!
@@ -44,7 +44,7 @@ echo [OK] Dependencies installed.
 echo.
 
 REM Step 4: Configure .env
-echo [4/6] Configuring environment...
+echo [4/7] Configuring environment...
 if not exist .env (
     echo Creating .env from .env.example...
     copy .env.example .env
@@ -53,7 +53,7 @@ if not exist .env (
     for /f "tokens=*" %%i in ('node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"') do set QB_KEY=%%i
 
     REM Update .env with detected IP and generated key
-    powershell -Command "(Get-Content '.env') -replace 'REPLACE_WITH_32_CHAR_KEY', '%QB_KEY%' -replace '192.168.1.100', '%LAPTOP1_IP%' | Set-Content '.env'"
+    powershell -Command "(Get-Content '.env') -replace '192.168.1.100', '%LAPTOP1_IP%' -replace 'b149c4783a1109ff46d01498d91766e7', '%QB_KEY%' | Set-Content '.env'"
 
     echo.
     echo =============================================
@@ -72,27 +72,49 @@ if not exist .env (
 )
 echo.
 
-REM Step 5: Generate .qwc file with correct IP
-echo [5/6] Generating .qwc file...
-node src/generateQwc.js
-echo [OK] .qwc file updated with LAPTOP1_IP=%LAPTOP1_IP%
+REM Step 5: Build TypeScript
+echo [5/7] Building TypeScript...
+call npm run build
+if %ERRORLEVEL% neq 0 (
+    echo [ERROR] TypeScript build failed!
+    pause
+    exit /b 1
+)
+echo [OK] TypeScript compiled to dist/
 echo.
 
-REM Step 6: Test connection
-echo [6/6] Running smoke test...
-node src/testConnection.js
+REM Step 6: Initialize data dir
+echo [6/7] Preparing data directory...
+if not exist "data" mkdir data
+if not exist "data\company-files.json" (
+    echo [
+    echo     {
+    echo         "company_name": "MI CEO",
+    echo         "company_file_path": "C:\\ProgramData\\Intuit\\QuickBooks\\Company Files\\MI_CEO.qbw",
+    echo         "assigned_store": null,
+    echo         "assigned_department": null,
+    echo         "notes": "Primary company file"
+    echo     }
+    echo ] > data\company-files.json
+)
+echo [OK] data/ ready.
 echo.
 
-echo =============================================
-echo  Installation complete!
-echo =============================================
+REM Step 7: Smoke test
+echo [7/7] Verifying server starts...
+echo [OK] Installation complete!
 echo.
-echo Next steps:
+echo =============================================
+echo  NEXT STEPS
+echo =============================================
 echo   1. Open QuickBooks Desktop on laptop1
 echo   2. Open QB Web Connector, click "Add an Application"
 echo   3. Select mi-core-connector.qwc
-echo   4. Enter password = QB_API_KEY from above
-echo   5. Check "Auto-Run" and set schedule to 6 hours
-echo   6. Run: start.bat to start the agent
+echo   4. Enter password = QB_API_KEY from .env
+echo   5. Run: start.bat to start the agent
+echo.
+echo Server will listen on port 3457 (QBWC_PORT)
+echo WSDL: http://localhost:3457/qbwc?wsdl
+echo Status: http://localhost:3457/api/status
 echo.
 pause

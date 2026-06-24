@@ -16,6 +16,12 @@ $HealthUrl = "http://127.0.0.1:3456/health"
 if (!(Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir -Force | Out-Null }
 if (!(Test-Path $Pm2)) { $Pm2 = "pm2" }
 
+$BlockMarker = "C:\ProgramData\AntigravityGateway\.port-blocked"
+if (Test-Path $BlockMarker) {
+    # Port is blocked for dev builds — do nothing
+    exit 0
+}
+
 function Log($msg) {
     $line = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [WATCHDOG] $msg"
     Add-Content -Path $LogFile -Value $line -ErrorAction SilentlyContinue
