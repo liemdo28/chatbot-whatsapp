@@ -93,7 +93,7 @@ function displayColumn(column) {
 function classifyFieldRange(rangeMin, rangeMax) {
     if (rangeMin >= 300 && rangeMax <= 370) return "FRYER";
     if (rangeMin >= 180 && rangeMax <= 230) return "BOILER";
-    if (rangeMin >= 95 && rangeMax <= 110) return "HOT_FOOD";
+    if (rangeMin >= 95 && rangeMax <= 130) return "HOT_FOOD";
     if (rangeMin >= 130 && rangeMax <= 170) return "HOT_FOOD2";
     if (rangeMin >= 30 && rangeMax <= 50) return "COOLER";
     if (rangeMax <= 10) return "FREEZER";

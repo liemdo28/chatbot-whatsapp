@@ -1,0 +1,95 @@
+[2026-06-24 03:43:34] === QBWC REAL RUNTIME VALIDATION START ===
+[2026-06-24 03:43:34] --- Step 1: QBWC Installation ---
+[2026-06-24 03:43:34] --- Step 2: Kill stale process on port 3456 ---
+[2026-06-24 03:43:36] Killing PID 18992 (node) on port 3456
+[2026-06-24 03:43:37] SUCCESS: Port 3456 freed
+[2026-06-24 03:43:37] --- Step 3: Port 3457 check ---
+[2026-06-24 03:43:38] Port 3457 is free - ready for agent
+[2026-06-24 03:43:38] --- Step 4: npm install ---
+[2026-06-24 03:43:38] node_modules exists, skipping install
+[2026-06-24 03:43:38] --- Step 5: QWCLog locations ---
+[2026-06-24 03:43:55]   QWCLog found: C:\Users\hoang\AppData\Roaming\Microsoft\Windows\Recent\QWCLog.lnk (Size: 1068 bytes)
+[2026-06-24 03:43:55] --- Step 6: Starting qb-ops-agent on port 3457 ---
+[2026-06-24 03:43:58] --- Step 7: Verify agent is listening ---
+[2026-06-24 03:43:59] SUCCESS: Agent listening on port 3457 (PID 24604)
+[2026-06-24 03:43:59] --- Step 8: QBWC SOAP Sequence ---
+[2026-06-24 03:43:59] == STEP 1/4: authenticate ==
+[2026-06-24 03:47:19] AUTH HTTP: 200
+[2026-06-24 03:47:19] AUTH Body: <?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soap:Body><authenticateResponse xmlns="http://developer.intuit.com/">
+      <authenticateResult>
+        <string>C:\ProgramData\Intuit\QuickBooks\Company Files\MI_CEO.qbw</string>
+        <string></string>
+      </authenticateResult>
+    </authenticateResponse></soap:Body></soap:Envelope>
+[2026-06-24 03:47:19] AUTH parsed: True
+[2026-06-24 03:47:19] == STEP 2/4: sendRequestXML ==
+[2026-06-24 03:47:21] SEND HTTP: 200
+[2026-06-24 03:47:21] SEND Body: <?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soap:Body><sendRequestXMLResponse xmlns="http://developer.intuit.com/">
+      <sendRequestXMLResult><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<?qbxml version="13.0"?>
+<QBXML>
+  <QBXMLMsgsRq onError="continueOnError">
+    <!-- P&L Report Query -->
+    <GeneralSummaryReportQueryRq requestID="1">
+      <GeneralSummaryReportType>ProfitAndLossStandard</GeneralSummaryReportType>
+      <DateRangeMacro>ThisMonthToDate</DateRangeMacro>
+    </GeneralSummaryReportQueryRq>
+    <!-- Tax Summary Query -->
+    <SalesTaxReportQueryRq requestID="2">
+      <DateRangeFilter>
+        <FromReportDate>2026-06-24</FromReportDate>
+        <ToReportDate>2026-06-24</ToReportDate>
+      </DateRangeFilter>
+    </SalesTaxReportQueryRq>
+    <!-- Payroll Summary Query -->
+    <PayrollSummaryReportQueryRq requestID="3">
+      <PayrollSummaryReportType>Standard</PayrollSummaryReportType>
+      <DateRangeFilter>
+        <FromReportDate>2026-06-24</FromReportDate>
+        <ToReportDate>2026-06-24</ToReportDate>
+      </DateRangeFilter>
+    </PayrollSummaryReportQueryRq>
+    <!-- Customer Balance Query for AR aging -->
+    <ARStatementQueryRq requestID="4">
+    </ARStatementQueryRq>
+    <!-- Vendor Balance Query for AP aging -->
+    <APStatementQueryRq requestID="5">
+    </APStatementQueryRq>
+  </QBXMLMsgsRq>
+</QBXML>]]></sendRequestXMLResult>
+    </sendRequestXMLResponse></soap:Body></soap:Envelope>
+[2026-06-24 03:47:21] SEND parsed: True
+[2026-06-24 03:47:21] == STEP 3/4: receiveResponseXML ==
+[2026-06-24 03:47:21] RECV HTTP: 200
+[2026-06-24 03:47:21] RECV Body: <?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soap:Body><receiveResponseXMLResponse xmlns="http://developer.intuit.com/">
+        <receiveResponseXMLResult>0</receiveResponseXMLResult>
+      </receiveResponseXMLResponse></soap:Body></soap:Envelope>
+[2026-06-24 03:47:21] RECV parsed: True
+[2026-06-24 03:47:21] == STEP 4/4: closeConnection ==
+[2026-06-24 03:47:21] CLOSE HTTP: 200
+[2026-06-24 03:47:21] CLOSE Body: <?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soap:Body><closeConnectionResponse xmlns="http://developer.intuit.com/">
+      <closeConnectionResult>ok</closeConnectionResult>
+    </closeConnectionResponse></soap:Body></soap:Envelope>
+[2026-06-24 03:47:21] CLOSE parsed: True
+[2026-06-24 03:47:21] === QBWC SOAP SEQUENCE SUMMARY ===
+[2026-06-24 03:47:22] ALL 4 STEPS PASSED - QBWC_RUNTIME_CONNECTED
+[2026-06-24 03:47:22] FINAL STATUS: QBWC_RUNTIME_CONNECTED
+[2026-06-24 03:47:22] --- Health Check ---
+[2026-06-24 03:47:22] Health: {"status":"ok","service":"qb-ops-agent","version":"1.1.0","uptime":206.0594481,"timestamp":"2026-06-24T10:47:22.240Z"}
+[2026-06-24 03:47:22] --- Agent Job Output ---
+[2026-06-24 03:47:22]   AGENT: [QB Ops Agent] Listening on http://0.0.0.0:3457
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:43:58.258Z","level":"info","msg":"QB Ops Agent started","service":"qb-ops-agent","port":"3457","nodeEnv":"development","miCoreUrl":"http://localhost:4001"}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:44:01.766Z","level":"info","msg":"Received QBWC SOAP request","service":"qb-ops-agent","length":347}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:44:01.772Z","level":"info","msg":"QBWC authenticated","service":"qb-ops-agent","user":"mi-admin"}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:44:01.777Z","level":"info","msg":"Auth response captured","service":"qb-ops-agent","path":"C:\\Ld-project\\services\\qb-ops-agent\\logs\\qbwc\\authenticate-response.xml","bytes":452}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:44:01.778Z","level":"info","msg":"QBWC request handled successfully","service":"qb-ops-agent"}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.138Z","level":"info","msg":"Received QBWC SOAP request","service":"qb-ops-agent","length":335}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.139Z","level":"info","msg":"Sending QB request XML","service":"qb-ops-agent","size":1200}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.139Z","level":"info","msg":"QBWC request handled successfully","service":"qb-ops-agent"}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.173Z","level":"info","msg":"Received QBWC SOAP request","service":"qb-ops-agent","length":603}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.175Z","level":"info","msg":"Processing QB response","service":"qb-ops-agent","size":189}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.232Z","level":"error","msg":"Failed to forward QB data to mi-core","service":"qb-ops-agent","message":"fetch failed"}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.232Z","level":"info","msg":"QBWC request handled successfully","service":"qb-ops-agent"}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.295Z","level":"info","msg":"Received QBWC SOAP request","service":"qb-ops-agent","length":283}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.297Z","level":"info","msg":"QBWC closeConnection","service":"qb-ops-agent","ticket":"QBWC-TICKET-001"}
+[2026-06-24 03:47:22]   AGENT: {"ts":"2026-06-24T10:47:21.297Z","level":"info","msg":"QBWC request handled successfully","service":"qb-ops-agent"}

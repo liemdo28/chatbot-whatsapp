@@ -136,7 +136,7 @@ def main():
     parser.add_argument('--port', type=int, default=5502)
     args = parser.parse_args()
 
-    model = os.environ.get('VISION_LLM_MODEL', 'gemini-2.0-flash')
+    model = os.environ.get('VISION_LLM_MODEL', 'gemini-2.5-flash')
     primary = GeminiFlashProvider(model=model)
 
     # Optional Claude Vision fallback

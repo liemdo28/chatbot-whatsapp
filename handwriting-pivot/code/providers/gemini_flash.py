@@ -1,5 +1,5 @@
 """
-GeminiFlashProvider — Google Gemini 2.0 Flash via free tier.
+GeminiFlashProvider — Google Gemini Flash via free tier (primary OCR model).
 
 Free tier limits (as of Q2 2026):
   - 15 requests per minute
@@ -34,7 +34,7 @@ from .base import FormExtraction, FieldReading
 class GeminiFlashProvider:
     name = "gemini-flash"
     cost_per_form_usd = 0.0   # free tier
-    DEFAULT_MODEL = "gemini-2.0-flash"
+    DEFAULT_MODEL = "gemini-2.5-flash"
 
     def __init__(self, api_key: Optional[str] = None, model: str = DEFAULT_MODEL):
         self.api_key = api_key or os.environ.get("GEMINI_API_KEY")

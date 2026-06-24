@@ -9,7 +9,7 @@
  *
  * Escalation triggers:
  *   1. Unsafe temperature (value outside safe range)
- *   2. Low OCR confidence (< 60%)
+ *   2. Low vision confidence (< 60%)
  *   3. Missing daily form (no submission today)
  *   4. OCR failure (service unavailable or extraction error)
  */
@@ -54,7 +54,7 @@ function normalizeConfidence(confidence) {
 
 // ─── Escalation Thresholds ───────────────────────────────────────────────────
 
-const CONFIDENCE_THRESHOLD = 0.60;   // Escalate below this OCR confidence
+const CONFIDENCE_THRESHOLD = 0.60;   // Escalate below this vision confidence
 const UNSAFE_COUNT_THRESHOLD = 1;    // Escalate on any unsafe reading
 const MISSING_FORM_HOURS = 14;       // Escalate if no submission by 2 PM
 
@@ -405,14 +405,14 @@ async function autoEscalateV2({ parsed, confidence, storeName, submissionId, lan
             return pred.alert_block_reason || item._alertBlockReason || "low_confidence_or_memory_conflict";
         })));
         const reasonLines = [
-            `OCR confidence ${pct}%`,
+            `Vision confidence ${pct}%`,
             blockedItems.length > 0 ? "Some values conflict with memory/range" : null,
             unreliableUnsafe.length > 0 ? "Unsafe alert blocked until manager/manual confirmation" : null,
             ...blockReasons,
         ].filter(Boolean);
 
         const message = [
-            "Needs review due to low OCR confidence.",
+            "Needs review due to low vision confidence.",
             "",
             `Store: ${storeName} / ${storeGroup}`,
             `Manager: ${managerName} @${MANAGER_MAP[storeGroup].phone}`,

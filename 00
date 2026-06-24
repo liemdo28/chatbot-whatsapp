@@ -1,0 +1,4 @@
+[33me76cdab[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: CEO directive - store resolution, column selection, save behavior, vision prompt, terminology
+[33m341ccb7[m fix(P0): Store resolution never silently fails - 4-level resolution order
+[33m2e3353f[m fix: enforce gpt4o runtime proof path
+[33m54352e4[m chore: initialize root Ld-project source

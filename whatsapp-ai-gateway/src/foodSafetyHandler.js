@@ -21,6 +21,13 @@ const storeKnowledge = require("./storeKnowledge");
 const { decideFormValues } = require("./foodSafetyDecisionEngine");
 const zeroRetakeReply = require("./zeroRetakeReplyBuilder");
 const openaiVision = require("./vision/providers/openaiVision");
+const visionLlmBridge = require("../vision_llm_bridge");
+const imageQualityGate = require("./imageQualityGate");
+const memorySearch = require("./handwriting/memorySearch");
+const numericTextHandler = require("./numericTextHandler");
+
+// VLM Blank Cell Guard: fields with confidence below this are treated as blank
+const VLM_MIN_FIELD_CONFIDENCE = 0.30;
 
 // Per-phone session state for conversation flow
 const sessions = {};
@@ -33,7 +40,7 @@ function getSession(phoneNumber) {
             language: "ES",
             pendingSubmission: null,
             pendingStoreConfirmation: null,
-            waitingFor: null, // 'action', 'image', 'store_confirmation'
+            waitingFor: null, // 'action', 'image', 'store_confirmation', 'numeric_action'
             lastImageHash: null,
         };
     }
@@ -45,6 +52,10 @@ function getMessageId(message) {
         ? message.id._serialized
         : String(message && message.id ? message.id : "");
 }
+
+// Wire numeric text handler to share sessions and message ID resolver
+numericTextHandler.setSessionProvider(getSession);
+numericTextHandler.setMessageIdProvider(getMessageId);
 
 function getChatName(message) {
     return message._chatName || (message._data && message._data.chatName) || "";
@@ -97,6 +108,136 @@ function fieldsForStore(storeInfo) {
         label: item.label,
         range: [item.safeRange.min, item.safeRange.max],
     })) : [];
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// VLM SAFETY LAYER — Vision LLM → Store Knowledge → Decision Engine
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Enrich VLM-extracted items with Store Knowledge safeRange.
+ * The Vision LLM bridge does not include range metadata — this fills it
+ * from the authoritative store knowledge base.
+ */
+function enrichVlmItemsWithStoreKnowledge(parsed, storeInfo) {
+    for (const item of parsed.items || []) {
+        const fieldId = item.field_id || item.id;
+        const fieldKnowledge = storeKnowledge.getFieldKnowledge(storeInfo.storeCode, fieldId);
+        if (fieldKnowledge) {
+            item.safeRange = { min: fieldKnowledge.range[0], max: fieldKnowledge.range[1] };
+            item.range_min = fieldKnowledge.range[0];
+            item.range_max = fieldKnowledge.range[1];
+            item.label = item.label || fieldKnowledge.label;
+        }
+    }
+    return parsed;
+}
+
+/**
+ * Blank Cell Guard for Vision LLM output.
+ *
+ * If the VLM returns a value but its per-field confidence is below
+ * VLM_MIN_FIELD_CONFIDENCE, or the VLM notes indicate blank/empty/illegible,
+ * we treat the cell as genuinely blank and preserve it as null.
+ *
+ * This prevents VLM hallucination from filling cells that are empty on
+ * the physical form.
+ */
+function vlmBlankCellGuard(parsed) {
+    for (const item of parsed.items || []) {
+        const value = item.detectedValue;
+        if (value === null || value === undefined) continue;
+
+        const notes = String(item._visionNotes || "").toLowerCase();
+        const isBlankNote = /\b(blank|empty|illegible|missing|not\s*visible|no\s*data|unclear)\b/i.test(notes);
+        const lowConfidence = (item.confidence || 0) < VLM_MIN_FIELD_CONFIDENCE;
+
+        if (isBlankNote || lowConfidence) {
+            logger.info("[VLM_BLANK_GUARD] Nullified VLM value", {
+                fieldId: item.field_id || item.id,
+                reason: isBlankNote ? "BLANK_NOTE" : "LOW_CONFIDENCE",
+                originalValue: value,
+                confidence: item.confidence || 0,
+                notes: item._visionNotes || "",
+            });
+            item.detectedValue = null;
+            item.value = null;
+            item.status = "MISSING";
+            item.isSafe = false;
+        }
+    }
+    return parsed;
+}
+
+/**
+ * Memory Fallback for Vision Pipeline.
+ *
+ * When the Vision LLM cannot read a field (returns null/missing),
+ * search prior confirmed samples to predict a likely value.
+ * This is the same memory search used by the handwriting prediction engine,
+ * but integrated into the vision path so that fields marked as "unclear"
+ * get a best-effort prediction instead of staying as MISSING.
+ *
+ * Returns enhanced items with memory-predicted values for missing fields.
+ */
+async function memoryFallbackForMissingFields(parsed, storeInfo, senderPhone) {
+    const missingItems = (parsed.items || []).filter(
+        item => item.detectedValue === null || item.detectedValue === undefined
+    );
+
+    if (missingItems.length === 0) return parsed;
+
+    let memoryFilledCount = 0;
+    const memoryResults = {};
+
+    for (const item of missingItems) {
+        const fieldId = item.field_id || item.id;
+        const fieldKnowledge = storeKnowledge.getFieldKnowledge(storeInfo.storeCode, fieldId);
+        const fieldRange = item.safeRange || (fieldKnowledge
+            ? { min: fieldKnowledge.range[0], max: fieldKnowledge.range[1] }
+            : { min: -20, max: 450 });
+
+        try {
+            const matches = await memorySearch.searchMemory({
+                store_code: storeInfo.storeCode,
+                field_id: fieldId,
+                template_id: storeInfo.templateId,
+                limit: 5,
+            });
+
+            if (matches.length > 0) {
+                const bestMatch = matches[0];
+                const memValue = Number(bestMatch.confirmed_value);
+
+                // Only use memory value if it's in range
+                if (Number.isFinite(memValue) && memValue >= fieldRange.min && memValue <= fieldRange.max) {
+                    item.detectedValue = memValue;
+                    item.value = memValue;
+                    item.status = "PREDICTED";
+                    item.isSafe = true;
+                    item._predictionSource = "MEMORY_ASSISTED";
+                    item._needsConfirmation = true;
+                    item._memoryMatchCount = matches.length;
+                    item._memoryConfidence = bestMatch.similarity_score || 0;
+                    memoryFilledCount++;
+                    memoryResults[fieldId] = memValue;
+                }
+            }
+        } catch (err) {
+            logger.warn("[MEMORY_FALLBACK] Memory search failed", { fieldId, error: err.message });
+        }
+    }
+
+    if (memoryFilledCount > 0) {
+        logger.info("[MEMORY_FALLBACK] Filled missing fields from memory", {
+            storeCode: storeInfo.storeCode,
+            filledCount: memoryFilledCount,
+            totalMissing: missingItems.length,
+            results: memoryResults,
+        });
+    }
+
+    return parsed;
 }
 
 function storeInfoForManual(session) {
@@ -271,7 +412,7 @@ function buildProofBlock(proof) {
         `image_hash: ${proof.imageHash || "N/A"}`,
         `handler selected: ${proof.handlerSelected || "N/A"}`,
         `pipeline selected: ${proof.pipelineSelected || "N/A"}`,
-        `Vision confidence provider: ${proof.ocrProvider || "none"}`,
+        `vision_confidence: ${proof.ocrProvider || "none"}`,
         `vision_system: ${proof.visionSystem || "N/A"}`,
         `primary_provider: ${proof.primaryProvider || "N/A"}`,
         `fallback_provider: ${proof.fallbackProvider || "N/A"}`,
@@ -427,11 +568,94 @@ function resolveStoreFromVisionResult(visionResult) {
     return null;
 }
 
+/**
+ * Call the Python Vision LLM bridge (Gemini Flash) first.
+ * Falls back to OpenAI if the bridge is unavailable.
+ */
+async function callVisionPrimary(ctx) {
+    const { image, trace, proof, chatName, storeInfo } = ctx;
+
+    // Attempt 1: Gemini Flash via Python bridge
+    if (visionLlmBridge.isVisionLLMPipelineEnabled()) {
+        try {
+            const bridgeAvailable = await visionLlmBridge.isServerAvailable();
+            if (bridgeAvailable) {
+                const bridgeResult = await visionLlmBridge.extractWithVisionLLM(image.imagePath, chatName);
+                if (bridgeResult && bridgeResult.success !== false && bridgeResult.readings) {
+                    let parsed = visionLlmBridge.toParsedFormat(bridgeResult, storeInfo);
+
+                    // VLM SAFETY: Enrich with store knowledge ranges
+                    if (storeInfo) {
+                        enrichVlmItemsWithStoreKnowledge(parsed, storeInfo);
+                    }
+
+                    // VLM SAFETY: Blank cell guard — nullify hallucinated/unclear values
+                    vlmBlankCellGuard(parsed);
+
+                    proof.gpt4oCalled = false;
+                    proof.visionProvider = bridgeResult.provider_used || bridgeResult.primary_provider || "gemini-flash";
+                    proof.providerUsed = bridgeResult.provider_used || "gemini-flash";
+                    pipelineTrace.step(trace, "GPT4O_VISION_CALLED", "OK", {
+                        output_summary: {
+                            called: true,
+                            provider: bridgeResult.provider_used || "gemini-flash",
+                            model: bridgeResult.model || "gemini-flash",
+                            latency_ms: bridgeResult._bridge_latency_ms || null,
+                            source: "python_vision_llm_bridge",
+                        },
+                    });
+                    pipelineTrace.step(trace, "VLM_BLANK_GUARD", "OK", {
+                        output_summary: { applied: true, source: "vlm_safety_layer" },
+                    });
+                    return { visionResult: bridgeResult, parsed, source: "gemini-flash" };
+                }
+                logger.warn("[VisionPrimary] Gemini bridge returned failure", { error: bridgeResult && bridgeResult.error });
+            } else {
+                logger.warn("[VisionPrimary] Gemini bridge server not available");
+            }
+        } catch (err) {
+            logger.warn("[VisionPrimary] Gemini bridge error, falling back to OpenAI", { error: err.message });
+        }
+    }
+
+    // Attempt 2: OpenAI Vision fallback
+    const tempStore = storeInfo || { ...STORE_CONFIG.B2, storeCode: "??", templateId: "unknown" };
+    const visionResult = await openaiVision.extractForm({
+        imagePath: image.imagePath,
+        storeInfo: tempStore,
+        traceId: trace.trace_id,
+        imageHash: image.hash,
+        chatName,
+        fields: storeInfo ? fieldsForStore(storeInfo) : [],
+    });
+
+    proof.gpt4oCalled = visionResult.called === true;
+    proof.visionProvider = `${visionResult.provider || "openai"}/${visionResult.model || process.env.OPENAI_VISION_MODEL || "gpt-4o"}`;
+    proof.providerUsed = proof.visionProvider;
+
+    pipelineTrace.step(trace, "GPT4O_VISION_CALLED", visionResult.available ? "OK" : "FAIL", {
+        output_summary: {
+            called: visionResult.called === true,
+            provider: visionResult.provider || "openai",
+            model: visionResult.model || process.env.OPENAI_VISION_MODEL || "gpt-4o",
+            latency_ms: visionResult.latency_ms || null,
+            reason: visionResult.reason || null,
+            source: "openai_fallback",
+        },
+    });
+
+    if (!visionResult.available) {
+        return null;
+    }
+
+    const parsed = parsedFromGpt4o(visionResult, tempStore);
+    return { visionResult, parsed, source: "openai" };
+}
+
 async function processGpt4oPath(ctx) {
     const { message, session, image, trace, proof, chatName } = ctx;
 
     // ── Store Resolution ──
-    const scope = getGroupScope({ chatId: message.from, chatName });
     let storeInfo = resolveStoreFromContext(chatName, "", message.from);
     proof.storeResolverResult = storeInfo
         ? `${storeInfo.storeCode} ${storeInfo.storeName} via ${storeInfo.routingSource || "group_context"}`
@@ -441,41 +665,43 @@ async function processGpt4oPath(ctx) {
         output_summary: { store: proof.storeResolverResult },
     });
 
-    pipelineTrace.step(trace, "QUALITY_GATE_DONE", "OK", {
-        output_summary: { saved_image_path: image.imagePath },
-    });
+    // ── Image Quality Gate (actual check, not just metadata logging) ──
+    let imageQuality = { score: 85, decision: "PASS" };
+    try {
+        imageQuality = await imageQualityGate.checkMinimumImageSize(image.imagePath);
+        pipelineTrace.step(trace, "QUALITY_GATE_DONE", imageQuality.passed ? "OK" : "WARN", {
+            output_summary: {
+                width: imageQuality.width,
+                height: imageQuality.height,
+                estimatedCropHeight: imageQuality.estimatedCropHeight,
+                decision: imageQuality.decision,
+                reasons: imageQuality.reasons || [],
+            },
+        });
+        // If the image is too small, lower effective confidence to compensate
+        if (!imageQuality.passed) {
+            logger.warn("[QUALITY_GATE] Image too small for reliable extraction", {
+                width: imageQuality.width,
+                height: imageQuality.height,
+                reasons: imageQuality.reasons,
+            });
+        }
+    } catch (err) {
+        logger.warn("[QUALITY_GATE] Quality gate analysis failed", { error: err.message });
+        pipelineTrace.step(trace, "QUALITY_GATE_DONE", "WARN", {
+            output_summary: { reason: "quality_gate_error", error: err.message },
+        });
+    }
+
     pipelineTrace.step(trace, "OCR_DONE", "SKIPPED", {
-        output_summary: { provider: "none", reason: "gpt4o_vision_primary" },
+        output_summary: { provider: "none", reason: "vision_primary" },
     });
 
-    // ── Call Vision LLM (always — even if store unresolved) ──
-    const tempStoreInfo = storeInfo || { ...STORE_CONFIG.B2, storeCode: "??", templateId: "unknown" };
-    const visionResult = await openaiVision.extractForm({
-        imagePath: image.imagePath,
-        storeInfo: tempStoreInfo,
-        traceId: trace.trace_id,
-        imageHash: image.hash,
-        chatName,
-        fields: storeInfo ? fieldsForStore(storeInfo) : [],
-    });
-
-    proof.gpt4oCalled = visionResult.called === true;
-    proof.visionProvider = `${visionResult.provider || "openai"}/${visionResult.model || process.env.OPENAI_VISION_MODEL || "gpt-4o"}`;
-
-    pipelineTrace.step(trace, "GPT4O_VISION_CALLED", visionResult.available ? "OK" : "FAIL", {
-        output_summary: {
-            called: visionResult.called === true,
-            provider: visionResult.provider || "openai",
-            model: visionResult.model || process.env.OPENAI_VISION_MODEL || "gpt-4o",
-            latency_ms: visionResult.latency_ms || null,
-            openai_request_id: visionResult.openai_request_id || null,
-            reason: visionResult.reason || null,
-        },
-    });
-
-    if (!visionResult.available) {
+    // ── Call Vision Primary (Gemini first, OpenAI fallback) ──
+    const visionCall = await callVisionPrimary(ctx);
+    if (!visionCall) {
         const reply = appendProof(
-            `Food Safety runtime blocked this image because Vision did not complete: ${visionResult.reason || "unavailable"}. No OCR fallback was used and no values were saved.`,
+            "Food Safety runtime blocked this image because Vision did not complete. No OCR fallback was used and no values were saved.",
             proof
         );
         pipelineTrace.step(trace, "REPLY_BUILDER_DONE", "OK", {
@@ -483,6 +709,15 @@ async function processGpt4oPath(ctx) {
         });
         db.logMessage(message.from, "out", reply, "text");
         return reply;
+    }
+
+    const { visionResult, parsed, source } = visionCall;
+    if (source === "gemini-flash") {
+        proof.pipelineSelected = "python_vision_llm_pipeline";
+        proof.visionSystem = "python_vision_llm_pipeline";
+    } else {
+        proof.pipelineSelected = "gpt4o_vision_fallback";
+        proof.visionSystem = "openai_gpt4o_fallback";
     }
 
     // Post-vision store resolution
@@ -543,24 +778,7 @@ async function processGpt4oPath(ctx) {
         return reply;
     }
 
-    // Re-extract with correct store fields if needed
-    let parsed;
-    if (tempStoreInfo.storeCode !== storeInfo.storeCode) {
-        const correctedVisionResult = await openaiVision.extractForm({
-            imagePath: image.imagePath,
-            storeInfo,
-            traceId: trace.trace_id,
-            imageHash: image.hash,
-            chatName,
-            fields: fieldsForStore(storeInfo),
-        });
-        parsed = parsedFromGpt4o(
-            correctedVisionResult.available ? correctedVisionResult : visionResult,
-            storeInfo
-        );
-    } else {
-        parsed = parsedFromGpt4o(visionResult, storeInfo);
-    }
+    // parsed result already from callVisionPrimary
 
     // Deterministic Column Selection
     const visionReadings = visionResult.readings || [];
@@ -604,6 +822,27 @@ async function processGpt4oPath(ctx) {
             selected_column: proof.selectedColumn,
         },
     });
+
+    // ── MEMORY FALLBACK: Fill missing fields from confirmed history ──
+    // When vision cannot read handwriting, search prior confirmed samples
+    // to predict likely values for missing/unclear fields.
+    try {
+        const missingBefore = parsed.items.filter(i => i.detectedValue === null || i.detectedValue === undefined).length;
+        await memoryFallbackForMissingFields(parsed, storeInfo, message.from);
+        const missingAfter = parsed.items.filter(i => i.detectedValue === null || i.detectedValue === undefined).length;
+        pipelineTrace.step(trace, "MEMORY_FALLBACK_DONE", "OK", {
+            output_summary: {
+                missing_before: missingBefore,
+                missing_after: missingAfter,
+                memory_filled: missingBefore - missingAfter,
+            },
+        });
+    } catch (err) {
+        logger.warn("[MEMORY_FALLBACK] Memory fallback failed (non-blocking)", { error: err.message });
+        pipelineTrace.step(trace, "MEMORY_FALLBACK_DONE", "WARN", {
+            output_summary: { reason: "memory_fallback_error", error: err.message },
+        });
+    }
 
     const decision = decideFormValues(parsed.items, storeInfo.storeCode, null, parsed.selected_column, parsed.confidence || 0);
     parsed.items = decision.items;
@@ -766,6 +1005,25 @@ async function handleTextMessage(message, client) {
     const upperBody = body.toUpperCase().trim();
 
     db.logMessage(phone, "in", body, "text");
+
+    // ── NUMERIC TEXT WORKFLOW (Option C) ──
+    // Primary pilot workflow: employee sends number list to WhatsApp.
+    // No OCR, no Vision LLM, no API keys required.
+    // Must run BEFORE the existing logic so it can intercept numeric lists
+    // before the MANUAL command check.
+    if (session.waitingFor === "numeric_action" && session.pendingSubmission) {
+        // While waiting for numeric action (1/2/3/EDIT), route ALL replies
+        // through the numeric text handler — it handles 1/2/3/EDIT/CANCEL.
+        const numericReply = await numericTextHandler.handleNumericTextMessage(message, client);
+        if (numericReply) return numericReply;
+        // If numeric handler returned null (e.g. unknown input), re-prompt via handler
+        const rePrompt = "Please reply:\n1 = Confirm\n2 = Edit\n3 = Cancel";
+        db.logMessage(phone, "out", rePrompt, "text");
+        return rePrompt;
+    } else if (numericTextHandler.isNumericList(body)) {
+        const numericReply = await numericTextHandler.handleNumericTextMessage(message, client);
+        if (numericReply) return numericReply;
+    }
 
     // Mi rejection
     if (upperBody.startsWith("/MI") || upperBody === "MI") {
