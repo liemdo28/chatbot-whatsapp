@@ -85,11 +85,35 @@ const makeParser = () => new xml2js.Parser({
     attrkey: '$',
 });
 
+/**
+ * QuickBooks Web Connector sometimes delivers the response payload as
+ * HTML-encoded text (e.g. &lt;?xml ...). Detect and decode it before
+ * handing the XML to xml2js, otherwise sax throws 'Non-whitespace before
+ * first tag' and we silently get zero parsed rows.
+ */
+function decodeIfNeeded(xml: string): string {
+    if (!xml) return xml;
+    const trimmed = xml.replace(/^\s+/, '');
+    if (trimmed.startsWith('<?xml') || trimmed.startsWith('<')) {
+        return xml;
+    }
+    if (trimmed.startsWith('&lt;') || trimmed.startsWith('&amp;')) {
+        return xml
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&apos;/g, "'")
+            .replace(/&amp;/g, '&');
+    }
+    return xml;
+}
+
 function parseXmlSync(parserInstance: xml2js.Parser, xml: string): XmlObj | null {
     try {
+        const decoded = decodeIfNeeded(xml);
         let result: XmlObj = {};
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        parserInstance.parseString(xml, (err: any, parsed: XmlObj) => {
+        parserInstance.parseString(decoded, (err: any, parsed: XmlObj) => {
             if (!err && parsed) result = parsed;
         });
         return Object.keys(result).length > 0 ? result : null;
@@ -104,7 +128,8 @@ function parseXmlSync(parserInstance: xml2js.Parser, xml: string): XmlObj | null
 export async function parseQbxmlResponse(xml: string): Promise<XmlObj | null> {
     try {
         const parserInstance = makeParser();
-        const result = await parserInstance.parseStringPromise(xml);
+        const decoded = decodeIfNeeded(xml);
+        const result = await parserInstance.parseStringPromise(decoded);
         return result as XmlObj;
     } catch (err) {
         logger.error('Failed to parse QBXML', { error: err instanceof Error ? err.message : String(err) });
@@ -121,6 +146,26 @@ function categorizeAccountType(qbType: string): string {
     return 'Other';
 }
 
+/**
+ * When multiple queries of the same type are sent in one QBXML batch, QB
+ * returns each as a sibling under QBXMLMsgsRs. With explicitArray:false
+ * these collapse into indexed keys ('0', '1', ...) instead of an array.
+ * This helper normalizes that to an array of response objects.
+ */
+function collectRsBlocks(msgs: XmlObj, rsTag: string): XmlObj[] {
+    if (!msgs) return [];
+    const primary = msgs[rsTag];
+    if (!primary) return [];
+    if (Array.isArray(primary)) return primary;
+    // Check if it's the indexed-keys form (multiple siblings)
+    const keys = Object.keys(primary);
+    const isIndexed = keys.length > 0 && keys.every(k => /^\d+$/.test(k));
+    if (isIndexed) {
+        return keys.sort((a, b) => Number(a) - Number(b)).map(k => primary[k]);
+    }
+    return [primary];
+}
+
 function parseAccounts(xml: string): QbAccount[] {
     const accounts: QbAccount[] = [];
     try {
@@ -129,21 +174,23 @@ function parseAccounts(xml: string): QbAccount[] {
 
         const qbxml = parsed.QBXML ?? parsed;
         const msgs = qbxml.QBXMLMsgsRs ?? qbxml;
-        const acctRs = msgs.AccountQueryRs;
-        if (!acctRs) return accounts;
+        const rsBlocks = collectRsBlocks(msgs, 'AccountQueryRs');
 
-        let acctRet = acctRs.AccountRet;
-        if (!acctRet) return accounts;
-        if (!Array.isArray(acctRet)) acctRet = [acctRet];
+        for (const acctRs of rsBlocks) {
+            if (!acctRs) continue;
+            let acctRet = acctRs.AccountRet;
+            if (!acctRet) continue;
+            if (!Array.isArray(acctRet)) acctRet = [acctRet];
 
-        for (const acct of acctRet) {
-            accounts.push({
-                name: acct.Name || '',
-                type: acct.AccountType || acct.AccountSubType || '',
-                balance: parseFloat(acct.Balance || '0') || 0,
-                account_type: categorizeAccountType(acct.AccountType || ''),
-                account_number: acct.AccountNumber || undefined,
-            });
+            for (const acct of acctRet) {
+                accounts.push({
+                    name: acct.Name || '',
+                    type: acct.AccountType || acct.AccountSubType || '',
+                    balance: parseFloat(acct.Balance || '0') || 0,
+                    account_type: categorizeAccountType(acct.AccountType || ''),
+                    account_number: acct.AccountNumber || undefined,
+                });
+            }
         }
     } catch (err) {
         logger.warn('Failed to parse accounts', { error: err instanceof Error ? err.message : String(err) });
@@ -177,6 +224,44 @@ function parseLineItems(lineRet: unknown): QbLineItem[] {
     return items;
 }
 
+function findTotalLineAmount(sr: XmlObj): number {
+    let lines: XmlObj[] = [];
+    const ret = sr.SalesReceiptLineRet;
+    if (!ret) return 0;
+    if (Array.isArray(ret)) lines = ret;
+    else lines = [ret];
+
+    for (const line of lines) {
+        const itemRef = line.ItemRef;
+        const fullName = (itemRef && typeof itemRef === 'object') ? (itemRef.FullName || '') : '';
+        // The 'Total' line item in a Custom Sales Receipt holds the actual total
+        if (fullName.toLowerCase() === 'total') {
+            return parseFloat(line.Amount || '0') || 0;
+        }
+    }
+    return 0;
+}
+
+function sumPositiveLineAmounts(sr: XmlObj): number {
+    let lines: XmlObj[] = [];
+    const ret = sr.SalesReceiptLineRet;
+    if (!ret) return 0;
+    if (Array.isArray(ret)) lines = ret;
+    else lines = [ret];
+
+    let sum = 0;
+    for (const line of lines) {
+        const itemRef = line.ItemRef;
+        const fullName = (itemRef && typeof itemRef === 'object') ? (itemRef.FullName || '') : '';
+        const amt = parseFloat(line.Amount || '0') || 0;
+        // Sum revenue-bearing items (tips, delivery sales, etc.) — exclude Total/Payment rows
+        const lower = fullName.toLowerCase();
+        if (lower === 'total' || lower.includes('cash') || lower.includes('credit card') || lower.includes('gift cards sold')) continue;
+        if (amt > 0) sum += amt;
+    }
+    return sum;
+}
+
 function parseSalesReceipts(xml: string): QbSalesReceipt[] {
     const receipts: QbSalesReceipt[] = [];
     try {
@@ -198,12 +283,18 @@ function parseSalesReceipts(xml: string): QbSalesReceipt[] {
                 ? (custRef.FullName || custRef.ListID || '')
                 : '';
             const items = parseLineItems(sr.SalesReceiptLineRet);
+            // TotalAmount on Custom Sales Receipt templates is often 0; fall back
+            // to the 'Total' line item, then to sum of positive line amounts.
+            const reportedTotal = parseFloat(sr.TotalAmount || '0') || 0;
+            const totalFromLine = findTotalLineAmount(sr);
+            const positiveSum = sumPositiveLineAmounts(sr);
+            const total = reportedTotal || totalFromLine || positiveSum;
             receipts.push({
                 txn_id: sr.TxnID || '',
                 txn_number: sr.TxnNumber || undefined,
                 txn_date: sr.TxnDate || '',
                 customer_name: custName,
-                total_amount: parseFloat(sr.TotalAmount || '0') || 0,
+                total_amount: total,
                 items,
             });
         }

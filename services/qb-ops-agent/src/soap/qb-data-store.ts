@@ -171,3 +171,12 @@ export function loadLatestFinancialData(): ParsedFinancialData | null {
   }
   return parsedCache;
 }
+
+/**
+ * Expose the latest raw QBXML response per request_index for debugging.
+ * Returns the actual XML returned by QuickBooks Desktop so the parser can be
+ * tuned to match the real tag structure.
+ */
+export function loadLatestRawEntries(): RawDataEntry[] {
+  return loadRawEntries();
+}

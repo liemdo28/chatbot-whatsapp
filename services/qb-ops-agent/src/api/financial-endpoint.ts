@@ -8,9 +8,10 @@
  * GET /api/qb/financial/invoices  → invoices only
  * GET /api/qb/financial/sales     → sales receipts only
  * GET /api/qb/financial/raw       → raw sync status
+ * GET /api/qb/raw-dump            → raw QBXML responses from QuickBooks Desktop
  */
 import { Router, Request, Response } from 'express';
-import { loadLatestFinancialData, getSyncStatus } from '../soap/qb-data-store';
+import { loadLatestFinancialData, getSyncStatus, loadLatestRawEntries } from '../soap/qb-data-store';
 
 const router = Router();
 
@@ -112,6 +113,38 @@ router.get('/qb/financial/raw', (_req: Request, res: Response) => {
     res.json({
         status: 'ok',
         sync,
+    });
+});
+
+// ── GET /api/qb/raw-dump — raw QBXML responses for debugging ───────────────
+router.get('/qb/raw-dump', (_req: Request, res: Response) => {
+    const entries = loadLatestRawEntries();
+    if (!entries.length) {
+        res.status(503).json({
+            status: 'no_data',
+            message: 'No raw QBXML data stored yet. Run a QBWC sync first.',
+            hint: 'Open QuickBooks Web Connector → click Update Selected.',
+        });
+        return;
+    }
+
+    // Return each request_index with its XML + a summary of what tags are present
+    const dump = entries.map((e) => {
+        const tagMatches = e.xml.match(/<(\w+Query\w*Rs|SetStatusRs|ERRQ)\b/gi) || [];
+        return {
+            request_index: e.request_index,
+            company_file: e.company_file,
+            received_at: e.received_at,
+            xml_bytes: e.xml.length,
+            tags_found: [...new Set(tagMatches.map((t) => t.replace(/<\//g, '')))],
+            xml: e.xml,
+        };
+    });
+
+    res.json({
+        status: 'ok',
+        count: dump.length,
+        entries: dump,
     });
 });
 
