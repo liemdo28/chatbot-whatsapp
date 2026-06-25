@@ -204,9 +204,41 @@ export function upsertCompanyFile(f: CompanyFileRecord): void {
   ).catch((error) => logger.error('Failed to upsert company file', { error: error instanceof Error ? error.message : String(error) }));
 }
 
-export function getCompanyFiles(_machineId?: string): CompanyFileRecord[] {
-  logger.warn('getCompanyFiles is async-backed and returns empty list in Phase 1 compatibility implementation');
-  return [];
+export function getCompanyFiles(machineId?: string): CompanyFileRecord[] {
+  // Phase 1 sync compat: read directly from the JSON settings file.
+  // The upsertCompanyFile writes to both SQLite (async) and this JSON is
+  // the authoritative source for the list of configured company files.
+  try {
+    const SETTINGS_FILE = path.join(path.dirname(getDbPath()), 'company-files.json');
+    if (!fs.existsSync(SETTINGS_FILE)) return [];
+    const raw = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')) as Array<{
+      company_name?: string;
+      company_file_path?: string;
+      assigned_store?: string | null;
+      assigned_department?: string | null;
+      notes?: string | null;
+    }>;
+    const now = new Date().toISOString();
+    return raw
+      .filter((f) => !!f.company_file_path)
+      .map((f) => ({
+        company_file_id: path.basename(f.company_file_path || '', '.qbw'),
+        company_name: f.company_name || null,
+        company_file_path: f.company_file_path || '',
+        last_opened_at: null,
+        last_checked_at: now,
+        status: 'configured',
+        assigned_store: f.assigned_store ?? null,
+        assigned_department: f.assigned_department ?? null,
+        notes: f.notes ?? null,
+        machine_id: machineId || 'unknown',
+        created_at: now,
+        updated_at: now,
+      }));
+  } catch (error) {
+    logger.error('Failed to read company files', { error: error instanceof Error ? error.message : String(error) });
+    return [];
+  }
 }
 
 export interface WorkflowRunRecord {
@@ -307,7 +339,7 @@ export function setSetting(key: string, value: string): void {
   const settingsPath = path.join(path.dirname(getDbPath()), 'settings-cache.json');
   let data: Record<string, string> = {};
   if (fs.existsSync(settingsPath)) {
-    try { data = JSON.parse(fs.readFileSync(settingsPath, 'utf8')) as Record<string, string>; } catch {}
+    try { data = JSON.parse(fs.readFileSync(settingsPath, 'utf8')) as Record<string, string>; } catch { }
   }
   data[key] = value;
   fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2), 'utf8');
