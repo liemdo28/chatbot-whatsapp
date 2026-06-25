@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBP Dashboard - Mi-Core</title>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #0f172a;
+            color: #e2e8f0
+        }
+
+        h1 {
+            color: #60a5fa;
+            margin: 0 0 4px 0;
+            font-size: 24px
+        }
+
+        .sub {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 24px
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600
+        }
+
+        .badge-ok {
+            background: #064e3b;
+            color: #6ee7b7
+        }
+
+        .badge-err {
+            background: #7f1d1d;
+            color: #fca5a5
+        }
+
+        .badge-load {
+            background: #1e3a8a;
+            color: #93c5fd
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0
+        }
+
+        .ct {
+            color: #60a5fa;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px
+        }
+
+        .cv {
+            color: #f1f5f9;
+            font-size: 28px;
+            font-weight: 700
+        }
+
+        .cs {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 4px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+            font-size: 13px
+        }
+
+        th {
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px
+        }
+
+        .btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            margin: 4px
+        }
+
+        .btn:hover {
+            background: #1d4ed8
+        }
+
+        #status {
+            margin: 12px 0
+        }
+    </style>
+</head>
+
+<body>
+    <h1>GBP Dashboard</h1>
+    <p class="sub">Google Business Profile - Live Data from Mi-Core API</p>
+    <div id="status"><span class="badge badge-load" id="connBadge">Connecting...</span></div>
+    <div class="grid" id="summaryCards"></div>
+    <h2>Actions</h2>
+    <div>
+        <button class="btn" onclick="loadData()">Refresh Data</button>
+        <button class="btn" onclick="runSync()">Run Full Sync</button>
+        <button class="btn" onclick="window.open('/api/gbp/connection-test','_blank')">Connection Test</button>
+    </div>
+    <div id="locSection" style="margin-top:20px"></div>
+    <div id="perfSection" style="margin-top:20px"></div>
+    <div id="callSection" style="margin-top:20px"></div>
+    <div id="dirSection" style="margin-top:20px"></div>
+    <div id="reviewSection" style="margin-top:20px"></div>
+    <div id="rawSection" style="margin-top:20px"></div>
+    <script>
+        const API = '';
+        async function jf(url) { try { const r = await fetch(API + url); return await r.json() } catch (e) { return { ok: false, error: e.message } } }
+        function el(id) { return document.getElementById(id) }
+        function badge(ok) { return ok ? '<span class="badge badge-ok">CONNECTED</span>' : '<span class="badge badge-err">ERROR</span>' }
+        function card(t, v, s) { return '<div class="card"><div class="ct">' + t + '</div><div class="cv">' + v + '</div>' + (s ? '<div class="cs">' + s + '</div>' : '') + '</div>' }
+        async function runSync() {
+            el('status').innerHTML = '<span class="badge badge-load">Syncing...</span>';
+            const r = await jf('/api/gbp/sync');
+            el('status').innerHTML = r.status === 'SUCCESS' ? badge(true) + ' Sync OK: ' + r.locationCount + ' locations at ' + r.timestamp : badge(false) + ' Sync error: ' + r.error;
+        }
+        async function loadData() {
+            el('status').innerHTML = '<span class="badge badge-load">Loading...</span>';
+            const [health, locs, perf, calls, dirs, reviews] = await Promise.all([
+                jf('/api/gbp/health'), jf('/api/gbp/locations'), jf('/api/gbp/performance'),
+                jf('/api/gbp/calls'), jf('/api/gbp/directions'), jf('/api/gbp/reviews')
+            ]);
+            const h = health.status === 'CONNECTED';
+            el('status').innerHTML = h ? badge(true) + ' Connected - ' + health.locationCount + ' locations, ' + health.latencyMs + 'ms' : badge(false) + ' ' + health.error;
+            let totalC = 0, totalD = 0, totalW = 0, totalR = 0;
+            if (calls.ok && calls.results) calls.results.forEach(r => { totalC += r.totalCalls || 0 });
+            if (dirs.ok && dirs.results) dirs.results.forEach(r => { totalD += r.totalDirections || 0 });
+            if (perf.ok && perf.results) perf.results.forEach(r => { if (r.metrics) totalW += r.metrics.websiteClicks || 0 });
+            if (reviews.ok && reviews.results) reviews.results.forEach(r => { totalR += r.reviewCount || 0 });
+            el('summaryCards').innerHTML =
+                card('Locations', locs.ok ? locs.locationCount : '0', 'Accounts: ' + (locs.ok ? locs.accountCount : 0)) +
+                card('Calls (30d)', totalC, 'From Performance API') +
+                card('Directions (30d)', totalD, 'From Performance API') +
+                card('Website Clicks (30d)', totalW, 'From Performance API') +
+                card('Reviews', totalR, 'Live Google data');
+            if (locs.ok && locs.locations) {
+                let h2 = '<h2>Locations</h2><table><tr><th>Title</th><th>Phone</th><th>Website</th><th>Address</th></tr>';
+                locs.locations.forEach(l => {
+                    const addr = l.address ? (l.address.addressLines || []).join(', ') : '';
+                    h2 += '<tr><td>' + l.title + '</td><td>' + (l.phone || '') + '</td><td>' + (l.website || '') + '</td><td>' + addr + '</td></tr>';
+                });
+                h2 += '</table>';
+                el('locSection').innerHTML = h2;
+            }
+            if (calls.ok && calls.results) {
+                let h2 = '<h2>Calls (Live)</h2><table><tr><th>Location</th><th>Total Calls</th><th>Status</th></tr>';
+                calls.results.forEach(r => { h2 += '<tr><td>' + r.title + '</td><td><b>' + r.totalCalls + '</b></td><td>' + r.status + '</td></tr>' });
+                h2 += '</table>';
+                el('callSection').innerHTML = h2;
+            }
+            if (dirs.ok && dirs.results) {
+                let h2 = '<h2>Directions (Live)</h2><table><tr><th>Location</th><th>Total Directions</th><th>Status</th></tr>';
+                dirs.results.forEach(r => { h2 += '<tr><td>' + r.title + '</td><td><b>' + r.totalDirections + '</b></td><td>' + r.status + '</td></tr>' });
+                h2 += '</table>';
+                el('dirSection').innerHTML = h2;
+            }
+            if (perf.ok && perf.results) {
+                let h2 = '<h2>Performance Metrics (Live)</h2><table><tr><th>Location</th><th>Calls</th><th>Clicks</th><th>Directions</th><th>Impressions</th><th>Status</th></tr>';
+                perf.results.forEach(r => {
+                    const m = r.metrics || {};
+                    h2 += '<tr><td>' + r.title + '</td><td>' + (m.calls || 0) + '</td><td>' + (m.websiteClicks || 0) + '</td><td>' + (m.directionRequests || 0) + '</td><td>' + (m.totalImpressions || 0) + '</td><td>' + r.status + '</td></tr>';
+                });
+                h2 += '</table>';
+                el('perfSection').innerHTML = h2;
+            }
+            if (reviews.ok && reviews.results) {
+                let h2 = '<h2>Reviews (Live)</h2>';
+                reviews.results.forEach(r => {
+                    h2 += '<div class="card"><div class="ct">' + r.title + ' - ' + r.reviewCount + ' reviews</div>';
+                    if (r.reviews && r.reviews.length > 0) {
+                        h2 += '<table><tr><th>Author</th><th>Rating</th><th>Comment</th><th>Date</th></tr>';
+                        r.reviews.forEach(rv => {
+                            h2 += '<tr><td>' + rv.author + '</td><td>' + (rv.rating || '-') + '</td><td>' + (rv.comment || '').substring(0, 100) + '</td><td>' + (rv.createTime || '') + '</td></tr>';
+                        });
+                        h2 += '</table>';
+                    } else { h2 += '<p style="color:#94a3b8;font-size:13px">' + (r.reviewsError || 'No reviews available') + '</p>'; }
+                    h2 += '</div>';
+                });
+                el('reviewSection').innerHTML = h2;
+            }
+            el('rawSection').innerHTML = '<h2>Raw API Output</h2><details><summary style="cursor:pointer;color:#94a3b8">Click to expand</summary><pre style="background:#0f172a;padding:12px;border-radius:8px;overflow-x:auto;font-size:12px;max-height:400px;overflow-y:auto">' + JSON.stringify({ health, locations: locs, calls, dirs, performance: perf, reviews }, null, 2) + '</pre></details>';
+        }
+        loadData();
+    </script>
+</body>
+
+</html>

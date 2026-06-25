@@ -18,6 +18,7 @@ const pipelineTrace = require("./pipelineTrace");
 
 // ─── Handwriting Memory System ──────────────────────────────────────────────
 const { registerHandwritingRoutes } = require("./handwriting/api");
+const { registerGbpRoutes } = require("./gbp/api");
 
 const app = express();
 const PORT = process.env.GATEWAY_PORT || 3211;
@@ -312,6 +313,11 @@ app.get("/qr", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "public", "qr.html"));
 });
 
+// GBP Dashboard
+app.get("/gbp", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "public", "gbp-dashboard.html"));
+});
+
 // ===== Missing Submission Alert API =====
 
 // Dashboard panel — submission status for all stores
@@ -439,6 +445,16 @@ async function start() {
         logger.info("Handwriting memory system initialized");
     } catch (err) {
         logger.error("Handwriting memory init failed (non-blocking)", { error: err.message });
+    }
+
+    // Initialize Google Business Profile integration (DEV1 — GBP Activation)
+    try {
+        registerGbpRoutes(app);
+        const gbpDb = require("./gbp/gbp-database");
+        await gbpDb.initTables();
+        logger.info("GBP API routes registered and tables initialized");
+    } catch (err) {
+        logger.error("GBP init failed (non-blocking)", { error: err.message });
     }
 
     // Initialize WhatsApp client
