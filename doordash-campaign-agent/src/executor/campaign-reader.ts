@@ -267,6 +267,39 @@ async function readBodyText(page: Page): Promise<string> {
     return page.innerText('body').catch(() => '');
 }
 
+async function readMainContentText(page: Page): Promise<string> {
+    return page.evaluate(() => {
+        const doc = (globalThis as any).document;
+        const root =
+            doc.querySelector('main') ||
+            doc.querySelector('[role="main"]') ||
+            doc.querySelector('[data-testid*="main" i]');
+        if (root) {
+            const clone = root.cloneNode(true);
+            for (const selector of ['nav', 'aside', '[role="navigation"]', '[aria-label*="navigation" i]']) {
+                for (const element of Array.from(clone.querySelectorAll(selector)) as any[]) {
+                    element.remove();
+                }
+            }
+            return (clone.innerText || clone.textContent || '').replace(/\s+/g, ' ').trim();
+        }
+
+        const seen = new Set<string>();
+        const texts: string[] = [];
+        const selectors = 'h1,h2,h3,h4,p,span,div,section,article,table,tr,td,th,button,a,[data-testid]';
+        for (const element of Array.from(doc.body.querySelectorAll(selectors)) as any[]) {
+            const rect = element.getBoundingClientRect();
+            if (!rect || rect.width <= 0 || rect.height <= 0) continue;
+            if (rect.left < 240) continue;
+            const text = (element.innerText || element.textContent || '').replace(/\s+/g, ' ').trim();
+            if (!text || text.length > 2000 || seen.has(text)) continue;
+            seen.add(text);
+            texts.push(text);
+        }
+        return texts.join(' ').slice(0, 12000);
+    }).catch(() => '');
+}
+
 function textHasCampaignReport(text: string): boolean {
     const normalized = text.toLowerCase().replace(/\s+/g, ' ');
     const signals = [
@@ -300,8 +333,8 @@ function textHasCampaignReport(text: string): boolean {
 
 async function pageLooksLikeCampaigns(page: Page): Promise<boolean> {
     if (await pageLooksLikeLogin(page)) return false;
-    const text = await readBodyText(page);
-    return textHasCampaignReport(text);
+    const text = await readMainContentText(page);
+    return text.length > 40 && textHasCampaignReport(text);
 }
 
 function withCurrentStoreId(page: Page, targetUrl: string): string {
@@ -345,8 +378,8 @@ async function waitForCampaignContent(page: Page, timeoutMs: number = 25000): Pr
         await closeDoorDashInterruptions(page);
         if (await pageLooksLikeLogin(page)) return false;
 
-        const text = await readBodyText(page);
-        if (textHasCampaignReport(text)) return true;
+        const text = await readMainContentText(page);
+        if (text.length > 40 && textHasCampaignReport(text)) return true;
 
         await page.waitForTimeout(1000);
     }

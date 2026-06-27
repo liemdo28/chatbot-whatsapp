@@ -26,7 +26,36 @@ function classifyRisk(ok: boolean, findings: string[]): BrowserQaRisk {
 }
 
 async function collectText(page: Page): Promise<string> {
-    const text = await page.innerText('body', { timeout: 5000 }).catch(() => '');
+    const text = await page.evaluate(() => {
+        const doc = (globalThis as any).document;
+        const root =
+            doc.querySelector('main') ||
+            doc.querySelector('[role="main"]') ||
+            doc.querySelector('[data-testid*="main" i]');
+        if (root) {
+            const clone = root.cloneNode(true);
+            for (const selector of ['nav', 'aside', '[role="navigation"]', '[aria-label*="navigation" i]']) {
+                for (const element of Array.from(clone.querySelectorAll(selector)) as any[]) {
+                    element.remove();
+                }
+            }
+            return (clone.innerText || clone.textContent || '').replace(/\s+/g, ' ').trim();
+        }
+
+        const seen = new Set<string>();
+        const texts: string[] = [];
+        const selectors = 'h1,h2,h3,h4,p,span,div,section,article,table,tr,td,th,button,a,[data-testid]';
+        for (const element of Array.from(doc.body.querySelectorAll(selectors)) as any[]) {
+            const rect = element.getBoundingClientRect();
+            if (!rect || rect.width <= 0 || rect.height <= 0) continue;
+            if (rect.left < 240) continue;
+            const text = (element.innerText || element.textContent || '').replace(/\s+/g, ' ').trim();
+            if (!text || text.length > 2000 || seen.has(text)) continue;
+            seen.add(text);
+            texts.push(text);
+        }
+        return texts.join(' ').slice(0, 12000);
+    }).catch(() => '');
     return text.replace(/\s+/g, ' ').trim().slice(0, 12000);
 }
 
@@ -43,6 +72,9 @@ export async function validateCampaignPage(page: Page, storeId: string): Promise
     }
     if (/access denied|forbidden|blocked|something went wrong|try again later/.test(lowerText)) {
         findings.push('DoorDash page shows an access, blocked, or generic error state.');
+    }
+    if (lowerText.length < 40) {
+        findings.push('Campaign main content area is blank or still loading.');
     }
     if (/campaign|promotion|marketing|sponsored|ad/.test(lowerText)) {
         signals.push('campaign_page_language');
@@ -82,6 +114,9 @@ export async function validateExecutionPage(page: Page, targetDescription: strin
     }
     if (/access denied|forbidden|blocked|something went wrong|try again later/.test(lowerText)) {
         findings.push('DoorDash page shows an access, blocked, or generic error state.');
+    }
+    if (lowerText.length < 40) {
+        findings.push('Execution main content area is blank or still loading.');
     }
     if (/campaign|promotion|marketing|sponsored|ad/.test(lowerText)) {
         signals.push('campaign_management_language');
