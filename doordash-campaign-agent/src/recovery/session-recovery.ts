@@ -9,11 +9,9 @@ import 'dotenv/config';
 import { chromium, BrowserContext, Browser } from 'playwright';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 import { getDb } from '../server/db/init.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT_DIR = path.resolve(__dirname, '../..');
+const ROOT_DIR = path.resolve(process.cwd());
 const SESSIONS_DIR = path.resolve(ROOT_DIR, 'data/sessions');
 const SCREENSHOTS_DIR = path.resolve(ROOT_DIR, 'data/screenshots');
 const REPORT_DIR = path.resolve(ROOT_DIR, '../test-results/dev2-recovery');

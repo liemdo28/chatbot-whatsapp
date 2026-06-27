@@ -16,10 +16,55 @@ import cron from 'node-cron';
 import { getDb } from '../server/db/init.js';
 import { getAllSessionStatuses, canReuseSession, openBrowserSession, closeAllSessions } from '../executor/account-session-manager.js';
 import { readAllStoreCampaigns } from '../executor/campaign-reader.js';
-import { analyzeStoreCampaigns, getPendingRecommendations } from '../intelligence/campaign-analyzer.js';
+import { analyzeStoreCampaigns, Recommendation } from '../intelligence/campaign-analyzer.js';
+import type { CampaignActionType } from '../executor/campaign-executor.js';
 import { v4 as uuidv4 } from 'uuid';
 
 let _cronJob: cron.ScheduledTask | null = null;
+
+interface ApprovalDraft {
+    actionType: CampaignActionType;
+    proposedValue: string;
+}
+
+function extractMoneyValue(value: string): string | null {
+    const match = value.replace(/,/g, '').match(/\$?\s*(\d+(?:\.\d+)?)/);
+    return match ? match[1] : null;
+}
+
+function mapRecommendationToApproval(recommendation: Recommendation): ApprovalDraft | null {
+    switch (recommendation.recommendationType) {
+        case 'INCREASE':
+        case 'DECREASE':
+        case 'TEST': {
+            const budget = extractMoneyValue(recommendation.proposedSetting);
+            if (!budget) return null;
+            return { actionType: 'edit_budget', proposedValue: budget };
+        }
+        case 'PAUSE':
+            return { actionType: 'pause_campaign', proposedValue: 'pause' };
+        case 'ROLLBACK':
+        case 'KEEP':
+        case 'INFO':
+        default:
+            return null;
+    }
+}
+
+function approvalAlreadyQueued(storeId: string, campaignSnapshotId: string | null, actionType: string, proposedValue: string): boolean {
+    const db = getDb();
+    const row = db.prepare(`
+        SELECT id FROM approvals
+        WHERE store_id = ?
+        AND COALESCE(campaign_snapshot_id, '') = COALESCE(?, '')
+        AND action_type = ?
+        AND proposed_value = ?
+        AND status IN ('pending', 'approved')
+        AND executed_at IS NULL
+        LIMIT 1
+    `).get(storeId, campaignSnapshotId || '', actionType, proposedValue);
+    return !!row;
+}
 
 /**
  * Start the weekly loop scheduler
@@ -81,8 +126,10 @@ export async function executeWeeklyLoop(): Promise<{ success: boolean; summary: 
         // Step 2: Open sessions and pull campaign data
         console.log('[WeeklyLoop] Step 2: Pulling campaign data...');
         const campaignResults = await readAllStoreCampaigns();
+        const successfulStoreIds = new Set<string>();
         for (const [storeId, result] of Object.entries(campaignResults)) {
             if (result.success) {
+                successfulStoreIds.add(storeId);
                 summary.push(`${storeId}: ${result.campaigns.length} campaigns read`);
             } else {
                 summary.push(`${storeId}: FAILED - ${result.message}`);
@@ -97,10 +144,16 @@ export async function executeWeeklyLoop(): Promise<{ success: boolean; summary: 
         const db2 = getDb();
         const stores = db2.prepare('SELECT id, name FROM stores WHERE active = 1').all() as any[];
         let totalRecommendations = 0;
+        const generatedRecommendations: Recommendation[] = [];
 
         for (const store of stores) {
+            if (!successfulStoreIds.has(store.id)) {
+                summary.push(`${store.name}: analysis skipped because fresh campaign pull failed`);
+                continue;
+            }
             const { analyses, recommendations } = analyzeStoreCampaigns(store.id);
             totalRecommendations += recommendations.length;
+            generatedRecommendations.push(...recommendations);
             if (recommendations.length > 0) {
                 summary.push(`${store.name}: ${recommendations.length} recommendations generated`);
             }
@@ -108,24 +161,31 @@ export async function executeWeeklyLoop(): Promise<{ success: boolean; summary: 
 
         // Step 5: Create CEO approval cards
         console.log('[WeeklyLoop] Step 5: Creating approval cards...');
-        const pending = getPendingRecommendations();
-        for (const rec of pending) {
+        let approvalCardsCreated = 0;
+        for (const rec of generatedRecommendations) {
+            const approvalDraft = mapRecommendationToApproval(rec);
+            if (!approvalDraft) continue;
+            if (approvalAlreadyQueued(rec.storeId, rec.campaignSnapshotId, approvalDraft.actionType, approvalDraft.proposedValue)) continue;
+
             const approvalId = uuidv4();
             db.prepare(`
                 INSERT INTO approvals (id, store_id, campaign_snapshot_id, recommendation_id, action_type, proposed_value, status)
                 VALUES (?, ?, ?, ?, ?, ?, 'pending')
             `).run(
                 approvalId,
-                rec.store_id,
-                rec.campaign_snapshot_id,
+                rec.storeId,
+                rec.campaignSnapshotId,
                 rec.id,
-                rec.recommendation_type,
-                rec.proposed_setting,
+                approvalDraft.actionType,
+                approvalDraft.proposedValue,
             );
+            approvalCardsCreated += 1;
         }
 
-        if (pending.length > 0) {
-            summary.push(`${pending.length} approval cards created. Waiting for CEO review.`);
+        if (approvalCardsCreated > 0) {
+            summary.push(`${approvalCardsCreated} actionable approval cards created. Waiting for CEO review.`);
+        } else if (totalRecommendations > 0) {
+            summary.push('No actionable approval cards created; recommendations were informational, keep-current, or duplicates.');
         }
 
         // Record completion

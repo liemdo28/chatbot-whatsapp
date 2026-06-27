@@ -8,9 +8,12 @@ import { loginToDoorDash, testDoorDashConnection, getLoginStatus, reuseExistingS
 import { logoutDoorDash, forceClearSession } from '../../executor/doordash-logout.js';
 import { analyzeStoreCampaigns, getPendingRecommendations, updateRecommendationStatus } from '../../intelligence/campaign-analyzer.js';
 import { executeApprovedChange, executeRollback } from '../../executor/campaign-executor.js';
-import { getAllSessionStatuses, getSessionStatus, clearPersistedSession } from '../../executor/account-session-manager.js';
+import { getAllSessionStatuses, getSessionStatus, clearPersistedSession, getPage } from '../../executor/account-session-manager.js';
 import { triggerManualLoop, getLastLoopRun } from '../../automation/weekly-loop.js';
 import { getMiCoreSyncState, syncWithMiCore } from '../../sync/mi-core-sync.js';
+import { runCampaignAudit } from '../../audit/campaign-audit.js';
+import { getStagehandRuntimeStatus } from '../../browser/stagehand-navigation.js';
+import { validateCampaignPage } from '../../qa/browser-use-qa.js';
 import { getDb } from '../db/init.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -132,6 +135,16 @@ router.post('/api/campaigns/read-all', async (_req, res) => {
     }
 });
 
+router.post('/api/campaigns/qa/:storeId', async (req, res) => {
+    try {
+        const page = await getPage(req.params.storeId);
+        const qa = await validateCampaignPage(page, req.params.storeId);
+        res.json({ ok: true, qa });
+    } catch (error: any) {
+        res.status(500).json({ ok: false, message: error.message });
+    }
+});
+
 // ── Analysis ────────────────────────────────────────────
 router.post('/api/analyze/:storeId', (req, res) => {
     try {
@@ -207,7 +220,8 @@ router.post('/api/approvals/:id/approve', (req, res) => {
         db.prepare('UPDATE approvals SET status = ?, approved_by = ?, approved_at = datetime(\'now\'), approved_value = ? WHERE id = ?')
             .run('approved', req.body.approvedBy || 'CEO', approvedValue || approval.proposed_value, req.params.id);
 
-        res.json({ ok: true, message: 'Approved' });
+        const updated = db.prepare('SELECT * FROM approvals WHERE id = ?').get(req.params.id);
+        res.json({ ok: true, message: 'Approved', approval: updated });
     } catch (error: any) {
         res.status(500).json({ ok: false, error: error.message });
     }
@@ -231,16 +245,30 @@ router.post('/api/approvals/:id/reject', (req, res) => {
 // ── Execution ───────────────────────────────────────────
 router.post('/api/execute', async (req, res) => {
     try {
-        const { approvalId, storeId, campaignSnapshotId, actionType, approvedValue } = req.body;
-        if (!approvalId || !storeId || !actionType) {
-            return res.status(400).json({ ok: false, error: 'Missing required fields: approvalId, storeId, actionType' });
+        const { approvalId, storeId, campaignSnapshotId, actionType, approvedValue, mode } = req.body;
+        if (!approvalId) {
+            return res.status(400).json({ ok: false, error: 'Missing required field: approvalId' });
         }
         const result = await executeApprovedChange({
             approvalId,
             storeId,
-            campaignSnapshotId: campaignSnapshotId || '',
+            campaignSnapshotId,
             actionType,
-            approvedValue: approvedValue || '',
+            approvedValue,
+            mode,
+        });
+        res.json(result);
+    } catch (error: any) {
+        res.status(500).json({ ok: false, message: error.message });
+    }
+});
+
+router.post('/api/approvals/:id/execute', async (req, res) => {
+    try {
+        const result = await executeApprovedChange({
+            approvalId: req.params.id,
+            mode: req.body?.mode === 'live' ? 'live' : 'dry_run',
+            approvedValue: req.body?.approvedValue,
         });
         res.json(result);
     } catch (error: any) {
@@ -278,6 +306,19 @@ router.get('/api/execution-logs', (_req, res) => {
     }
 });
 
+router.get('/api/dashboard', (_req, res) => {
+    try {
+        const db = getDb();
+        const pendingApprovals = (db.prepare(`SELECT COUNT(*) AS n FROM approvals WHERE status = 'pending'`).get() as any)?.n ?? 0;
+        const approvedPendingExecution = (db.prepare(`SELECT COUNT(*) AS n FROM approvals WHERE status = 'approved' AND executed_at IS NULL`).get() as any)?.n ?? 0;
+        const campaignsToday = (db.prepare(`SELECT COUNT(*) AS n FROM campaign_snapshots WHERE DATE(created_at) = DATE('now')`).get() as any)?.n ?? 0;
+        const executionsToday = (db.prepare(`SELECT COUNT(*) AS n FROM execution_logs WHERE DATE(executed_at) = DATE('now')`).get() as any)?.n ?? 0;
+        res.json({ ok: true, pendingApprovals, approvedPendingExecution, campaignsToday, executionsToday });
+    } catch (error: any) {
+        res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
 // ── Audit Log ───────────────────────────────────────────
 router.get('/api/audit-log', (_req, res) => {
     try {
@@ -294,6 +335,34 @@ router.get('/api/audit-log', (_req, res) => {
 });
 
 // ── Weekly Loop ─────────────────────────────────────────
+router.post('/api/audit/campaigns/run', async (req, res) => {
+    try {
+        const result = await runCampaignAudit({
+            autonomousAdjustments: req.body?.autonomousAdjustments === true,
+            executionMode: req.body?.executionMode === 'live' ? 'live' : 'dry_run',
+            approvedBy: req.body?.approvedBy,
+        });
+        res.json({ ok: true, report: result });
+    } catch (error: any) {
+        res.status(500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get('/api/ai-browser/status', (_req, res) => {
+    try {
+        res.json({
+            ok: true,
+            stagehand: getStagehandRuntimeStatus(),
+            qa: {
+                provider: process.env['BROWSER_USE_QA_ENABLED'] === 'true' ? 'browser-use-compatible' : 'deterministic',
+                browserUseCommandConfigured: Boolean(process.env['BROWSER_USE_COMMAND'] || process.env['DD_BROWSER_USE_COMMAND']),
+            },
+        });
+    } catch (error: any) {
+        res.status(500).json({ ok: false, error: error.message });
+    }
+});
+
 router.post('/api/weekly-loop/trigger', async (_req, res) => {
     try {
         const result = await triggerManualLoop();

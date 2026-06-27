@@ -174,6 +174,16 @@
             background: #15803d;
         }
 
+        .btn-warning {
+            background: #d97706;
+            border-color: #d97706;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #b45309;
+        }
+
         .log {
             background: #0f172a;
             border: 1px solid #334155;
@@ -427,6 +437,11 @@
             }
             const approvals = await api('/api/approvals/pending');
             if (approvals.ok) document.getElementById('pending-approvals').textContent = approvals.approvals.length;
+            const dashboard = await api('/api/dashboard');
+            if (dashboard.ok) {
+                document.getElementById('campaigns-today').textContent = dashboard.campaignsToday;
+                document.getElementById('pending-approvals').textContent = dashboard.pendingApprovals + dashboard.approvedPendingExecution;
+            }
         }
 
         async function loginStore(storeId) {
@@ -477,6 +492,14 @@
             loadPageData('approvals');
         }
 
+        async function executeApproval(id, mode) {
+            if (mode === 'live' && !confirm('This can submit a live DoorDash campaign change. Continue?')) return;
+            log('Executing approval ' + id + ' in ' + mode + ' mode...', 'info');
+            const result = await api('/api/approvals/' + id + '/execute', { method: 'POST', body: JSON.stringify({ mode }) });
+            log('Execution: ' + (result.message || result.error || 'Done'), result.success ? 'success' : 'error');
+            loadPageData('approvals');
+        }
+
         async function triggerLoop() {
             log('Triggering manual weekly loop...', 'info');
             const result = await api('/api/weekly-loop/trigger', { method: 'POST' });
@@ -520,16 +543,30 @@
                     break;
                 }
                 case 'approvals': {
-                    const data = await api('/api/approvals/pending');
+                    const data = await api('/api/approvals');
                     const el = document.getElementById('approvals-list'); el.innerHTML = '';
-                    if (data.ok) for (const a of data.approvals) {
+                    if (data.ok) for (const a of data.approvals.filter(a => a.status === 'pending' || (a.status === 'approved' && !a.executed_at))) {
                         el.innerHTML += '<div class="approval-card"><h4>' + a.action_type + ' — ' + (STORE_NAMES[a.store_id] || a.store_id) + '</h4>'
                             + '<div class="detail">Proposed: ' + (a.proposed_value || 'N/A') + '</div>'
                             + '<div class="detail">Status: ' + a.status + '</div>'
-                            + '<div class="approval-actions"><button class="btn btn-success" onclick="approveAction(\'' + a.id + '\')">Approve</button>'
-                            + '<button class="btn btn-danger" onclick="rejectAction(\'' + a.id + '\')">Reject</button></div></div>';
+                            + '<div class="approval-actions">'
+                            + (a.status === 'pending'
+                                ? '<button class="btn btn-success" onclick="approveAction(\'' + a.id + '\')">Approve</button><button class="btn btn-danger" onclick="rejectAction(\'' + a.id + '\')">Reject</button>'
+                                : '<button class="btn btn-primary" onclick="executeApproval(\'' + a.id + '\', \'dry_run\')">Dry Run</button><button class="btn btn-warning" onclick="executeApproval(\'' + a.id + '\', \'live\')">Live Execute</button>')
+                            + '</div></div>';
                     }
                     if (el.innerHTML === '') el.innerHTML = '<p style="color:#94a3b8;">No pending approvals.</p>';
+                    break;
+                }
+                case 'execution-logs': {
+                    const data = await api('/api/execution-logs');
+                    const el = document.getElementById('execution-logs-list'); el.innerHTML = '';
+                    if (data.ok) for (const logRow of data.logs) {
+                        el.innerHTML += '<div class="store-card" style="margin-bottom:6px;"><b>' + logRow.action + '</b> - ' + (STORE_NAMES[logRow.store_id] || logRow.store_id)
+                            + '<div style="font-size:12px;color:#94a3b8;margin:4px 0;">' + logRow.result + ': ' + (logRow.details || '') + '</div>'
+                            + '<div style="font-size:11px;color:#64748b;">' + (logRow.executed_at || '') + '</div></div>';
+                    }
+                    if (el.innerHTML === '') el.innerHTML = '<p style="color:#94a3b8;">No execution logs yet.</p>';
                     break;
                 }
                 case 'weekly-loop': {

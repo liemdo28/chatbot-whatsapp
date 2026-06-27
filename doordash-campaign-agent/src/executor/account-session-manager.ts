@@ -65,7 +65,7 @@ function getPersistedSessionInfo(storeId: string): SessionInfo | null {
         storeId: store.id,
         storeName: store.name,
         sessionPath: session?.session_path || path.resolve(SESSIONS_DIR, storeId),
-        sessionStatus: isBrowserConnected ? 'active' : (session?.session_status || 'none'),
+        sessionStatus: session?.session_status || 'none',
         lastLoginAt: session?.last_login_at || null,
         lastLogoutAt: session?.last_logout_at || null,
         twoFaStatus: session?.two_fa_status || 'none',
@@ -113,12 +113,13 @@ export async function openBrowserSession(storeId: string): Promise<{ context: Br
     };
     activeSessions.set(storeId, activeSession);
 
-    // Update DB session status
+    // Opening a browser profile is not proof that DoorDash is logged in.
+    // Login/test flows mark the session active only after they verify the portal.
     const db = getDb();
     const sessionRow = db.prepare('SELECT id FROM sessions WHERE store_id = ?').get(storeId) as any;
     if (sessionRow) {
-        db.prepare('UPDATE sessions SET session_status = ?, updated_at = datetime(\'now\') WHERE store_id = ?')
-            .run('active', storeId);
+        db.prepare('UPDATE sessions SET updated_at = datetime(\'now\') WHERE store_id = ?')
+            .run(storeId);
     }
 
     return { context, browser };
@@ -159,8 +160,8 @@ export async function closeBrowserSession(storeId: string): Promise<void> {
     const db = getDb();
     const sessionRow = db.prepare('SELECT id FROM sessions WHERE store_id = ?').get(storeId) as any;
     if (sessionRow) {
-        db.prepare('UPDATE sessions SET session_status = ?, last_logout_at = datetime(\'now\'), updated_at = datetime(\'now\') WHERE store_id = ?')
-            .run('logged_out', storeId);
+        db.prepare('UPDATE sessions SET updated_at = datetime(\'now\') WHERE store_id = ?')
+            .run(storeId);
     }
 }
 
@@ -268,5 +269,17 @@ export async function takeScreenshot(storeId: string, label: string): Promise<st
     } catch (err) {
         console.error(`[Screenshot] Failed for ${storeId}:`, err);
         return '';
+    }
+}
+
+/**
+ * Mark a persisted DoorDash session as expired after a real portal check fails.
+ */
+export function markSessionExpired(storeId: string, twoFaStatus: 'none' | 'pending' | 'completed' = 'none'): void {
+    const db = getDb();
+    const sessionRow = db.prepare('SELECT id FROM sessions WHERE store_id = ?').get(storeId) as any;
+    if (sessionRow) {
+        db.prepare('UPDATE sessions SET session_status = ?, two_fa_status = ?, updated_at = datetime(\'now\') WHERE store_id = ?')
+            .run('expired', twoFaStatus, storeId);
     }
 }

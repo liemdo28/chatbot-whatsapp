@@ -3,8 +3,8 @@
  * Opens DoorDash Merchant Portal login page, allows CEO to complete login manually,
  * handles 2FA if needed, and saves persistent session.
  */
-import { Page } from 'playwright';
-import { openBrowserSession, getPage, markLoginSuccess, canReuseSession, takeScreenshot } from './account-session-manager.js';
+import { Locator, Page } from 'playwright';
+import { getPage, markLoginSuccess, markSessionExpired, canReuseSession, takeScreenshot } from './account-session-manager.js';
 import { getDb } from '../server/db/init.js';
 import { decryptPassword, deserializeEncrypted, isCredentialSet } from '../security/encryption.js';
 
@@ -78,35 +78,30 @@ export async function loginToDoorDash(storeId: string): Promise<LoginResult> {
 
             console.log(`[DoorDashLogin] Auto-filling credentials for ${storeId} (${email})`);
 
-            // Wait for login form to appear
-            await page.waitForSelector('input[type="email"], input[name="email"], input[name="username"]', { timeout: 10000 }).catch(() => null);
-
-            // Fill email
-            const emailInput = await page.$('input[type="email"], input[name="email"], input[name="username"]');
+            const emailInput = await firstVisible(page.locator('input[type="email"], input[name="email"], input[name="username"]'));
             if (emailInput) {
-                await emailInput.click();
-                await emailInput.fill(email);
+                await emailInput.click().catch(() => undefined);
+                await emailInput.fill(email).catch(() => undefined);
                 console.log(`[DoorDashLogin] Email filled: ${email}`);
             }
 
-            // Fill password
-            await page.waitForSelector('input[type="password"]', { timeout: 5000 }).catch(() => null);
-            const passInput = await page.$('input[type="password"]');
+            const passInput = await firstVisible(page.locator('input[type="password"]'));
             if (passInput) {
-                await passInput.click();
-                await passInput.fill(password);
+                await passInput.click().catch(() => undefined);
+                await passInput.fill(password).catch(() => undefined);
                 console.log(`[DoorDashLogin] Password filled`);
             }
 
-            // Click sign-in button
             await page.waitForTimeout(500);
-            const signInBtn = await page.$('button:has-text("Sign In"), button:has-text("Log In"), button[type="submit"]');
+            const signInBtn = await firstVisible(page.locator('button:has-text("Sign In"), button:has-text("Log In"), button[type="submit"]'));
             if (signInBtn) {
-                await signInBtn.click();
+                await Promise.all([
+                    page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => undefined),
+                    signInBtn.click().catch(() => undefined),
+                ]);
                 console.log(`[DoorDashLogin] Sign-in button clicked`);
             }
 
-            // Wait for navigation after submit
             await page.waitForTimeout(3000);
         } else {
             console.log(`[DoorDashLogin] No stored credentials for ${storeId} — waiting for manual login`);
@@ -117,34 +112,23 @@ export async function loginToDoorDash(storeId: string): Promise<LoginResult> {
         let loggedIn = false;
         let twoFaDetected = false;
 
-        // Poll for login completion
         for (let i = 0; i < 300; i++) { // 300 * 1s = 5 min timeout
-            const currentUrl = page.url();
+            const state = await detectDoorDashState(page).catch(() => ({
+                loggedIn: false,
+                twoFaRequired: false,
+                loginFormVisible: false,
+            }));
 
-            // Check if we reached the home/dashboard page
-            if (currentUrl.includes('/home') || currentUrl.includes('/dashboard') || currentUrl.includes('/account')) {
+            if (state.loggedIn) {
                 loggedIn = true;
                 break;
             }
 
-            // Check for login page elements (still on login)
-            const loginFormVisible = await page.$('input[type="email"], input[name="email"], input[type="password"], button:has-text("Sign In"), button:has-text("Log In")');
-
-            // Check for 2FA page
-            const twoFaInput = await page.$('input[autocomplete="one-time-code"], input[name*="otp"], input[name*="code"], input[name*="token"], input[inputmode="numeric"]');
-
-            if (twoFaInput && !loginFormVisible) {
+            if (state.twoFaRequired && !state.loginFormVisible) {
                 twoFaDetected = true;
             }
 
-            // Check for dashboard elements indicating logged in
-            const dashboardEl = await page.$('[data-testid="dashboard"], [href*="/campaign"], [href*="/promotion"], a:has-text("Campaign"), a:has-text("Promotions")');
-            if (dashboardEl) {
-                loggedIn = true;
-                break;
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await page.waitForTimeout(1000);
         }
 
         if (loggedIn) {
@@ -162,6 +146,7 @@ export async function loginToDoorDash(storeId: string): Promise<LoginResult> {
 
         // If not logged in after 5 min, still save what we have
         const timeoutScreenshot = await takeScreenshot(storeId, `login-timeout-${storeId}`);
+        markLoginIncomplete(storeId, twoFaDetected);
         return {
             success: false,
             message: twoFaDetected
@@ -174,6 +159,7 @@ export async function loginToDoorDash(storeId: string): Promise<LoginResult> {
         };
     } catch (error: any) {
         console.error(`[DoorDashLogin] Error for ${storeId}:`, error);
+        markLoginIncomplete(storeId, false);
         return {
             success: false,
             message: `Login error: ${error.message}`,
@@ -194,15 +180,25 @@ export async function testDoorDashConnection(storeId: string): Promise<{ connect
         await page.goto(DOORDASH_HOME_URL, { waitUntil: 'networkidle', timeout: 30000 });
 
         const currentUrl = page.url();
-        const isLoggedIn = currentUrl.includes('/home') || currentUrl.includes('/dashboard');
+        const state = await detectDoorDashState(page);
+        const isLoggedIn = state.loggedIn;
         const pageTitle = await page.title();
 
         // Take test screenshot
         const screenshot = await takeScreenshot(storeId, `test-connection-${storeId}`);
+        if (isLoggedIn) {
+            markLoginSuccess(storeId);
+        } else {
+            markLoginIncomplete(storeId, state.twoFaRequired);
+        }
 
         return {
             connected: isLoggedIn,
-            message: isLoggedIn ? 'Connected to DoorDash Merchant Portal' : 'Not logged in. Redirected to login page.',
+            message: isLoggedIn
+                ? 'Connected to DoorDash Merchant Portal'
+                : state.twoFaRequired
+                    ? '2FA is required before campaign data can be pulled.'
+                    : 'Not logged in. Redirected to login page.',
             details: {
                 url: currentUrl,
                 title: pageTitle,
@@ -229,18 +225,80 @@ export async function reuseExistingSession(storeId: string): Promise<boolean> {
         const page = await getPage(storeId);
         await page.goto(DOORDASH_HOME_URL, { waitUntil: 'networkidle', timeout: 30000 });
 
-        const currentUrl = page.url();
-        const isLoggedIn = currentUrl.includes('/home') || currentUrl.includes('/dashboard');
+        const state = await detectDoorDashState(page);
 
-        if (isLoggedIn) {
+        if (state.loggedIn) {
             markLoginSuccess(storeId);
             console.log(`[DoorDashLogin] Session reused successfully for ${storeId}`);
             return true;
         }
 
+        markLoginIncomplete(storeId, state.twoFaRequired);
         return false;
     } catch (error) {
         console.error(`[DoorDashLogin] Session reuse failed for ${storeId}:`, error);
         return false;
     }
+}
+
+async function firstVisible(locator: Locator): Promise<Locator | null> {
+    const count = await locator.count().catch(() => 0);
+    if (count === 0) return null;
+
+    const first = locator.first();
+    const visible = await first.isVisible({ timeout: 1500 }).catch(() => false);
+    return visible ? first : null;
+}
+
+async function readBodyText(page: Page): Promise<string> {
+    return page.locator('body').innerText({ timeout: 3000 }).catch(() => '');
+}
+
+function urlLooksLoggedIn(url: string): boolean {
+    const lower = url.toLowerCase();
+    if (lower.includes('/login') || lower.includes('/signin')) return false;
+    return lower.includes('/home') ||
+        lower.includes('/dashboard') ||
+        lower.includes('/account') ||
+        lower.includes('/campaign') ||
+        lower.includes('/promotion') ||
+        lower.includes('/marketing') ||
+        lower.includes('/ads');
+}
+
+async function detectDoorDashState(page: Page): Promise<{ loggedIn: boolean; twoFaRequired: boolean; loginFormVisible: boolean }> {
+    const url = page.url();
+    const body = (await readBodyText(page)).toLowerCase();
+
+    const loginForm = await firstVisible(page.locator([
+        'input[type="email"]',
+        'input[name="email"]',
+        'input[name="username"]',
+        'input[type="password"]',
+        'button:has-text("Sign In")',
+        'button:has-text("Log In")',
+    ].join(',')));
+    const loginFormVisible = !!loginForm;
+
+    const twoFaInput = await firstVisible(page.locator([
+        'input[autocomplete="one-time-code"]',
+        'input[name*="otp"]',
+        'input[name*="code"]',
+        'input[name*="token"]',
+        'input[inputmode="numeric"]',
+    ].join(',')));
+    const twoFaRequired = !!twoFaInput || /two-factor|2fa|verification code|one-time code|enter code/.test(body);
+
+    const loggedInByBody = /campaign|promotions|marketing|merchant portal|store dashboard|orders|payouts/.test(body) &&
+        !/sign in to your account|log in to your account/.test(body);
+
+    return {
+        loggedIn: urlLooksLoggedIn(url) || (loggedInByBody && !loginFormVisible),
+        twoFaRequired,
+        loginFormVisible,
+    };
+}
+
+function markLoginIncomplete(storeId: string, twoFaRequired: boolean): void {
+    markSessionExpired(storeId, twoFaRequired ? 'pending' : 'none');
 }
