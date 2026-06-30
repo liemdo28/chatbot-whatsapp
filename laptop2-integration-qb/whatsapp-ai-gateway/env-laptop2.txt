@@ -1,0 +1,134 @@
+﻿# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# whatsapp-ai-gateway â€” LAPTOP2 Configuration
+# WhatsApp Web Gateway cho food safety chatbot
+# LAPTOP2 dÃ¹ng port 3212 (khÃ¡c laptop1 - port 3210/3211)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+# Dashboard port cho LAPTOP2 (khÃ¡c laptop1: 3210)
+DASHBOARD_PORT=3212
+DASHBOARD_HOST=0.0.0.0
+STARTUP_MODE=normal
+
+# â”€â”€ Telegram â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_group_chat_id_here
+
+# â”€â”€ AI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+AI_ENABLED=true
+
+# â”€â”€ Business Hours â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+BUSINESS_HOURS_ENABLED=true
+
+# â”€â”€ Rate Limiting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+RATE_WINDOW_MS=300000
+RATE_MAX_MESSAGES=10
+RATE_BLOCK_MESSAGES=30
+
+# â”€â”€ WhatsApp Session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+WHATSAPP_SESSION_ROOT=./data/whatsapp
+SESSION_DIR=./data/whatsapp/auth
+WWEBJS_CACHE_DIR=./data/whatsapp/cache
+# Client ID riÃªng cho laptop2 (khÃ¡c laptop1: bakudan-food-safety)
+WHATSAPP_CLIENT_ID=bakudan-food-safety-laptop2
+WHATSAPP_HEADLESS=false
+WHATSAPP_AUTH_TIMEOUT_MS=120000
+WHATSAPP_QR_MAX_RETRIES=0
+WHATSAPP_TAKEOVER_ON_CONFLICT=true
+WWEBJS_REMOTE_WEB_CACHE=https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/{version}.html
+AUTO_RECONNECT=true
+
+# â”€â”€ Logging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+LOG_LEVEL=info
+LOG_DIR=./logs
+
+# â”€â”€ Food Safety AI (Phase 3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+FOOD_SAFETY_ENABLED=false
+FOOD_SAFETY_TEST_MODE=true
+FOOD_SAFETY_SHEET_URL=https://docs.google.com/spreadsheets/d/12J9CRkTpDJ4boKClVaz0qiev9KV7dEyr-TK4KA1ugJs/edit?usp=sharing
+FOOD_SAFETY_RULE_SHEET_NAME=Thresholds_SOP
+FOOD_SAFETY_ALLOWED_CHAT_IDS=
+FOOD_SAFETY_REPLY_MODE=warning_only
+
+# â”€â”€ Vision API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+VISION_API_URL=
+VISION_API_KEY=
+VISION_MODEL=gpt-4o
+
+# â”€â”€ Google Sheets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+GOOGLE_SHEETS_ENABLED=true
+GOOGLE_SERVICE_ACCOUNT_JSON=../mi-gbp-service-account.json
+FOOD_SAFETY_LOG_SHEET_URL=https://docs.google.com/spreadsheets/d/1x_AhaoZhYgBX2zWOx6z78B9Fi8mcbaw4jZUq_PhSlnE/edit?usp=sharing
+FOOD_SAFETY_LOG_SPREADSHEET_ID=1x_AhaoZhYgBX2zWOx6z78B9Fi8mcbaw4jZUq_PhSlnE
+FOOD_SAFETY_WRITE_MODE=test_only
+FOOD_SAFETY_TEST_TAB=WhatsApp_AI_Daily_Log
+FOOD_SAFETY_STORE_TABS=Rim,Stone Oak,Bandera
+FOOD_SAFETY_NEEDS_REVIEW_TAB=Needs_Review
+
+# â”€â”€ Broth Count â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+BROTH_ITEM_SOURCE_SHEET=Daily_Entry_Template
+BROTH_ITEM_SOURCE_COLUMN=B
+BROTH_ITEM_SOURCE_START_ROW=11
+BROTH_ITEM_SPREADSHEET_ID=
+BROTH_LOG_TAB=Broth_Count_Log
+BROTH_HIGH_COUNT_THRESHOLD=250
+
+# â”€â”€ Dynamic Template â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+TEMPLATE_SHEET=Daily_Entry_Template
+TEMPLATE_SPREADSHEET_ID=
+TEMPLATE_NAME_COL=B
+TEMPLATE_MIN_COL=C
+TEMPLATE_MAX_COL=D
+TEMPLATE_START_ROW=11
+TEMPLATE_SYNC_INTERVAL_MS=300000
+
+# â”€â”€ Dashboard External Links â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+TEMPLATE_SHEET_URL=https://docs.google.com/spreadsheets/d/SHEET_ID/edit#gid=TAB_ID
+LOG_SHEET_URL=https://docs.google.com/spreadsheets/d/1x_AhaoZhYgBX2zWOx6z78B9Fi8mcbaw4jZUq_PhSlnE/edit
+
+# â”€â”€ Group Quiet Mode â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+GROUP_QUIET_MODE=true
+GROUP_SILENT_MODE=true
+GROUP_WAKE_COMMANDS=/ldagent,/help,/status,/template,/log
+NON_OWNER_REPLY_MODE=silent
+SESSION_TIMEOUT_MINUTES=5
+SESSION_END_MESSAGE_ENABLED=true
+PASSIVE_IMAGE_MONITORING=false
+
+# â”€â”€ Multi-store Mapping (sáº½ Ä‘Æ°á»£c CEO cáº¥u hÃ¬nh riÃªng cho laptop2) â”€â”€â”€â”€â”€â”€â”€â”€â”€
+STORE_GROUP_MAPPINGS=
+STONE_OAK_GROUP_CHAT_ID=
+BANDERA_GROUP_CHAT_ID=
+RIM_GROUP_CHAT_ID=
+
+# â”€â”€ Manager Alert Group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+MANAGER_ALERTS_ENABLED=true
+MANAGER_ALERT_GROUP_CHAT_ID=
+MANAGER_ALERT_LEVELS=FAIL,DANGER
+MANAGER_ALERT_DEBOUNCE_MINUTES=5
+
+# â”€â”€ Vision AI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+VISION_ENABLED=true
+VISION_PROVIDER=gemini
+GEMINI_API_KEY=
+VISION_CONFIDENCE_THRESHOLD=0.75
+VISION_TEST_MODE=true
+
+# â”€â”€ Incident Reports â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+INCIDENT_LOG_TAB=Incident_Log
+
+# â”€â”€ Photo Audit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+PHOTO_AUDIT_ENABLED=true
+PHOTO_AUDIT_RATE=0.20
+PHOTO_AUDIT_MAX_ITEMS=2
+PHOTO_AUDIT_TIMEOUT_MINUTES=10
+TEMP_TOLERANCE_F=2
+
+# â”€â”€ Permissions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ADMIN_WHATSAPP_IDS=
+MANAGER_WHATSAPP_IDS=
+
+# â”€â”€ Weekly Compliance Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+WEEKLY_REPORT_ENABLED=false
+WEEKLY_REPORT_DAY=SUNDAY
+WEEKLY_REPORT_TIME=20:00
+PHOTO_AUDIT_LOG_TAB=Photo_Audit_Log

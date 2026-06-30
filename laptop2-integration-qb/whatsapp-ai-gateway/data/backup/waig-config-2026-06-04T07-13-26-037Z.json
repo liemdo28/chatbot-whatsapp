@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "exported_at": "2026-06-04T07:13:26.037Z",
+  "generator": "whatsapp-ai-gateway/backup-service",
+  "counts": {
+    "store_groups": 5,
+    "app_config": 5,
+    "sensors": 1,
+    "sensor_item_mapping": 0
+  },
+  "template_cache_meta": {
+    "item_count": 5,
+    "latest_version": null,
+    "latest_synced_at": null
+  },
+  "data": {
+    "store_groups": [
+      {
+        "id": 1,
+        "chat_id": "stone@g.us",
+        "group_name": "Random Name No Store",
+        "store_id": "stone_oak",
+        "store_name": "Stone Oak",
+        "active": 1,
+        "last_message_at": "2026-06-03 14:11:38",
+        "last_log_write_at": null,
+        "created_at": "2026-06-03 14:11:38",
+        "updated_at": "2026-06-03 14:11:38",
+        "locked": 0
+      },
+      {
+        "id": 2,
+        "chat_id": "test_group_1780542846663@g.us",
+        "group_name": "Test Store Group",
+        "store_id": "test",
+        "store_name": "Test",
+        "active": 1,
+        "last_message_at": null,
+        "last_log_write_at": null,
+        "created_at": "2026-06-04 03:14:06",
+        "updated_at": "2026-06-04 07:08:04",
+        "locked": 0
+      },
+      {
+        "id": 3,
+        "chat_id": "audit-stone-oak@g.us",
+        "group_name": "Stone Oak Group",
+        "store_id": "stone_oak",
+        "store_name": "Stone Oak",
+        "active": 1,
+        "last_message_at": "2026-06-04 03:19:25",
+        "last_log_write_at": null,
+        "created_at": "2026-06-04 03:19:25",
+        "updated_at": "2026-06-04 03:19:25",
+        "locked": 1
+      },
+      {
+        "id": 4,
+        "chat_id": "test_group_1780547001838@g.us",
+        "group_name": "Test Store Group 2",
+        "store_id": "test",
+        "store_name": "Test",
+        "active": 1,
+        "last_message_at": null,
+        "last_log_write_at": null,
+        "created_at": "2026-06-04 04:23:21",
+        "updated_at": "2026-06-04 07:09:09",
+        "locked": 0
+      },
+      {
+        "id": 7,
+        "chat_id": "120363426386364543@g.us",
+        "group_name": "LD Agent-Log",
+        "store_id": "test",
+        "store_name": "Test",
+        "active": 1,
+        "last_message_at": null,
+        "last_log_write_at": null,
+        "created_at": "2026-06-04 07:09:13",
+        "updated_at": "2026-06-04 07:09:13",
+        "locked": 0
+      }
+    ],
+    "app_config": [
+      {
+        "key": "MANAGER_ALERT_GROUP_CHAT_ID",
+        "value": "manager_test@g.us",
+        "updated_at": "2026-06-04 07:11:06"
+      },
+      {
+        "key": "MANAGER_ALERT_GROUP_NAME",
+        "value": "Manager Test",
+        "updated_at": "2026-06-04 07:11:06"
+      },
+      {
+        "key": "MANAGER_ALERTS_ENABLED",
+        "value": "true",
+        "updated_at": "2026-06-04 07:11:07"
+      },
+      {
+        "key": "TEMPLATE_SHEET_URL",
+        "value": "https://docs.google.com/test",
+        "updated_at": "2026-06-04 07:11:07"
+      },
+      {
+        "key": "LOG_SHEET_URL",
+        "value": "https://docs.google.com/log",
+        "updated_at": "2026-06-04 07:11:07"
+      }
+    ],
+    "sensors": [
+      {
+        "id": 1,
+        "sensor_id": "yolink_ee1780546837051",
+        "provider": "yolink",
+        "provider_device_id": null,
+        "store_id": "stone_oak",
+        "store_name": "Stone Oak",
+        "location_name": null,
+        "item_name": "Walk-in Cooler",
+        "sensor_type": "temperature",
+        "unit": "F",
+        "active": 1,
+        "trust_enabled": 1,
+        "created_at": "2026-06-04 04:20:37",
+        "updated_at": "2026-06-04 04:20:37",
+        "serial_number": "TEST123",
+        "model": "YS8017-UC",
+        "device_name": "Test Walk-in Cooler",
+        "last_warning": null,
+        "warning_reason": null,
+        "last_reading_value": null,
+        "last_reading_at": null,
+        "device_state": "unknown",
+        "device_eui": "test_eui_1780546837051"
+      }
+    ],
+    "sensor_item_mapping": []
+  },
+  "checksum_sha256": "83b1ba7aa4d08f89362df0cd004a33e594c6b24c53dd24e6516849d00ff692fe"
+}

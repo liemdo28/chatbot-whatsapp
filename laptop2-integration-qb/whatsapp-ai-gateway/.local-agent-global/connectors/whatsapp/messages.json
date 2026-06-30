@@ -1,0 +1,13 @@
+[
+  {
+    "chat_id": "test",
+    "group_id": "",
+    "group_name": "",
+    "sender": "user",
+    "sender_name": "User",
+    "text": "hello",
+    "timestamp": "2026-06-10T01:42:06.605Z",
+    "attachments": [],
+    "cached_at": "2026-06-10T01:42:06.605Z"
+  }
+]
