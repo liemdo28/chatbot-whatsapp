@@ -1,0 +1,53 @@
+﻿2026-06-30 07:21:27  === BAT DAU MERGE qb-ops-agent ===
+2026-06-30 07:21:27  Source: C:\Users\hoang\Downloads\source\qb-ops-agent
+2026-06-30 07:21:27  Target: C:\Ld-project\services\qb-ops-agent
+2026-06-30 07:21:27  [1] Copy 4 files vao docs/
+2026-06-30 07:22:15  === BAT DAU MERGE qb-ops-agent ===
+2026-06-30 07:22:15  Source: C:\Users\hoang\Downloads\source\qb-ops-agent
+2026-06-30 07:22:15  Target: C:\Ld-project\services\qb-ops-agent
+2026-06-30 07:22:15  [1] Copy 4 files vao docs/
+2026-06-30 07:22:15    + docs\ARCHITECTURE.md
+2026-06-30 07:22:15    + docs\MULTI-MACHINE-PLAN.md
+2026-06-30 07:22:15    + docs\QUICKBOOKS-SDK-PLAN.md
+2026-06-30 07:22:15    + docs\SECURITY.md
+2026-06-30 07:22:15  [2] Copy 4 files vao scripts/
+2026-06-30 07:22:15    + scripts\health-check.ps1
+2026-06-30 07:22:15    + scripts\install-windows-service.ps1
+2026-06-30 07:22:15    + scripts\run-dev.ps1
+2026-06-30 07:22:15    + scripts\uninstall-windows-service.ps1
+2026-06-30 07:22:15  [3] Copy 1 files vao reports/
+2026-06-30 07:22:15    + reports\QA_REPORT.md
+2026-06-30 07:22:16  [4] + Cap nhat .env.example (noi dung khac)
+2026-06-30 07:22:16  [5] BO QUA dist/ - source moi la v1.0.0 cu hon project hien tai v2.0.0
+2026-06-30 07:22:16  [6] BO QUA node_modules/ - se chay npm install de lay dung dependencies
+2026-06-30 07:22:16  [7] BO QUA 26 file .ts trung lap - source moi v1.0.0 cu hon project v2.0.0
+2026-06-30 07:22:16  [8] BO QUA package.json - project v2.0.0 co express/xml2js, source v1.0.0 khong co
+2026-06-30 07:22:16  
+2026-06-30 07:22:16  === XAC NHAN DATA/LOG/RUNTIME BI GIU NGUYEN ===
+2026-06-30 07:22:16    OK  data
+2026-06-30 07:22:16    OK  logs
+2026-06-30 07:22:16    OK  .env
+2026-06-30 07:22:16    OK  .machine_token
+2026-06-30 07:22:16    ??  .qwc (khong ton tai - co the OK)
+2026-06-30 07:22:16    OK  start.bat
+2026-06-30 07:22:16    OK  start-hidden.vbs
+2026-06-30 07:22:16    OK  install.bat
+2026-06-30 07:22:16    OK  open-firewall-3457.bat
+2026-06-30 07:22:16    OK  test-authenticate.xml
+2026-06-30 07:22:16    OK  QBWC_AUTH_SOAP_FIX_REPORT.md
+2026-06-30 07:22:16    OK  QBWC_REAL_RUNTIME_VALIDATION.md
+2026-06-30 07:22:16    OK  QBWC_VALIDATION_LOG.txt
+2026-06-30 07:22:16    OK  DEPLOY_V2_SOAP_UPGRADE_REPORT.md
+2026-06-30 07:22:16    OK  DEV1_QUICKBOOKS_SETUP_COMPLETION_REPORT.md
+2026-06-30 07:22:16    ??  DEV1_SYNC_TEST_RESULTS.txt (khong ton tai - co the OK)
+2026-06-30 07:22:16    ??  DEV1_SYNC_TEST.ps1 (khong ton tai - co the OK)
+2026-06-30 07:22:16    OK  _FIND_QBWC.ps1
+2026-06-30 07:22:16    OK  _QBWC_VAL.ps1
+2026-06-30 07:22:16    OK  _AGENT.STDOUT.LOG
+2026-06-30 07:22:16    OK  _AGENT.STDERR.LOG
+2026-06-30 07:22:16    OK  AGENT.LOG
+2026-06-30 07:22:16    OK  AGENT.ERR.LOG
+2026-06-30 07:22:16  
+2026-06-30 07:22:16  === HOAN TAT MERGE ===
+2026-06-30 07:22:16  Tiep theo can chay: cd C:\Ld-project\services\qb-ops-agent; npm install; npx tsc
+2026-06-30 07:22:16  Moi that se chay: node dist\index.js
