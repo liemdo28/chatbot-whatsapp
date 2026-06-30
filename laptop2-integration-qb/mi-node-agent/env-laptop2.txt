@@ -1,0 +1,26 @@
+﻿# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# mi-node-agent â€” LAPTOP2 Configuration
+# Mi-Core Node Agent â€” Express server, port 4100
+# Káº¿t ná»‘i vá» Mi-Core PC giá»‘ng laptop1
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+# ID Ä‘á»‹nh danh node â€” KHÃC laptop1 (laptop1 dÃ¹ng NODE_ID=laptop1)
+NODE_ID=laptop2
+# Secret riÃªng cho laptop2 (CEO sáº½ cáº¥p riÃªng â€” khai bÃ¡o vá»›i Mi-Core)
+NODE_SECRET=replace-with-dev2-secret-laptop2
+# Port agent ná»™i bá»™
+NODE_AGENT_PORT=4100
+# Mi-Core URL (giá»‘ng laptop1)
+MI_CORE_URL=http://100.118.102.113:4001
+
+# Project dir trÃªn laptop2
+PROJECT_DIR=C:/Users/hoang/Downloads/laptop2-integration-qb
+LOGS_DIR=C:/Users/hoang/Downloads/laptop2-integration-qb/logs
+
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# HÆ¯á»šNG DáºªN Äá»”I NODE_SECRET
+# 1. Generate secret: openssl rand -hex 32 (hoáº·c random 32 kÃ½ tá»±)
+# 2. Thay NODE_SECRET á»Ÿ trÃªn
+# 3. BÃ¡o láº¡i CEO Ä‘á»ƒ Mi-Core add vÃ o danh sÃ¡ch allowed nodes
+# 4. Restart agent
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•

@@ -1,0 +1,65 @@
+[
+    {
+        "company_file_path": "C:\\QB\\Raw\\Raw.QBW",
+        "company_name": "Raw",
+        "assigned_store": "Raw Store",
+        "assigned_department": "Accounting",
+        "qb_username": "admin",
+        "qb_password": "Iwinin09",
+        "notes": "Production company file - Raw"
+    },
+    {
+        "company_file_path": "C:\\QB\\B1\\B1.QBW",
+        "company_name": "B1",
+        "assigned_store": "B1 Store",
+        "assigned_department": "Accounting",
+        "qb_username": "admin",
+        "qb_password": "coMp1ex",
+        "notes": "Production company file - B1"
+    },
+    {
+        "company_file_path": "C:\\QB\\B2\\B2.QBW",
+        "company_name": "B2",
+        "assigned_store": "B2 Store",
+        "assigned_department": "Accounting",
+        "qb_username": "admin",
+        "qb_password": "coMp1ex",
+        "notes": "Production company file - B2"
+    },
+    {
+        "company_file_path": "C:\\QB\\B3\\B3.QBW",
+        "company_name": "B3",
+        "assigned_store": "B3 Store",
+        "assigned_department": "Accounting",
+        "qb_username": "admin",
+        "qb_password": "coMp1ex",
+        "notes": "Production company file - B3"
+    },
+    {
+        "company_file_path": "C:\\QB\\Copper\\Copper.QBW",
+        "company_name": "Copper",
+        "assigned_store": "Copper Store",
+        "assigned_department": "Accounting",
+        "qb_username": "admin",
+        "qb_password": "coMp1ex",
+        "notes": "Production company file - Copper"
+    },
+    {
+        "company_file_path": "C:\\QB\\IFT\\IFT.QBW",
+        "company_name": "IFT",
+        "assigned_store": "IFT Store",
+        "assigned_department": "Accounting",
+        "qb_username": "admin",
+        "qb_password": "Abcd1234",
+        "notes": "Production company file - IFT"
+    },
+    {
+        "company_file_path": "C:\\QB\\Heo\\Heo.QBW",
+        "company_name": "Heo",
+        "assigned_store": "Heo Store",
+        "assigned_department": "Accounting",
+        "qb_username": "admin",
+        "qb_password": "coMp1ex",
+        "notes": "Production company file - Heo"
+    }
+]

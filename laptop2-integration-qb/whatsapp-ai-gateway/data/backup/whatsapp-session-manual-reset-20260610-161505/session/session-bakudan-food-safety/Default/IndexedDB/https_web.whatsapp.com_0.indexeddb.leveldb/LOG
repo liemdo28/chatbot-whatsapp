@@ -1,0 +1,14 @@
+2026/06/08-14:55:40.145 5154 Creating DB e:\Project\Master\whatsapp-ai-gateway\data\session\session-bakudan-food-safety\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
+2026/06/08-14:55:40.285 5154 Reusing MANIFEST e:\Project\Master\whatsapp-ai-gateway\data\session\session-bakudan-food-safety\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/06/08-14:56:50.251 5154 Level-0 table #5: started
+2026/06/08-14:56:50.470 5154 Level-0 table #5: 1043929 bytes OK
+2026/06/08-14:56:50.565 5154 Delete type=0 #3
+2026/06/08-15:02:11.689 5154 Level-0 table #7: started
+2026/06/08-15:02:11.897 5154 Level-0 table #7: 1029706 bytes OK
+2026/06/08-15:02:12.006 5154 Delete type=0 #4
+2026/06/08-15:03:16.519 4eec Compacting 1@1 + 1@2 files
+2026/06/08-15:03:16.704 4eec Generated table #8@1: 21386 keys, 826778 bytes
+2026/06/08-15:03:16.704 4eec Compacted 1@1 + 1@2 files => 826778 bytes
+2026/06/08-15:03:16.785 4eec compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/06/08-15:03:16.786 4eec Delete type=2 #5
+2026/06/08-15:03:16.786 4eec Delete type=2 #7
