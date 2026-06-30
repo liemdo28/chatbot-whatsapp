@@ -5,7 +5,9 @@ const crypto = require("crypto");
 const logger = require("./logger");
 const db = require("./database");
 const { handleImageMessage, handleTextMessage } = require("./foodSafetyHandler");
+const numericRouter = require("./foodSafetyNumericRouter");
 const { getGroupScope, logRouterDecision } = require("./formImageRouter");
+const { isFoodSafetyPilotGroup, getFoodSafetyPilotScope } = require("./foodSafetyPilotGuard");
 const pipelineTrace = require("./pipelineTrace");
 
 require("dotenv").config();
@@ -94,14 +96,37 @@ function whatsappMessageId(sentMessage) {
         : String(sentMessage && sentMessage.id ? sentMessage.id : "");
 }
 
+async function sendWhatsAppReply(msg, reply, chatName) {
+    if (!reply) return;
+    const sent = await msg.reply(reply);
+    const waReplyId = whatsappMessageId(sent);
+    if (msg._pipelineTrace) {
+        pipelineTrace.step(msg._pipelineTrace, "WHATSAPP_REPLY_SENT", "OK", {
+            output_summary: {
+                final_reply_id: msg._finalReplyId || null,
+                whatsapp_reply_message_id: waReplyId || null,
+                reply_count: 1,
+            },
+        });
+    }
+    logger.info("Reply sent", {
+        to: msg.from,
+        chatName,
+        replyLength: reply.length,
+        finalReplyId: msg._finalReplyId || null,
+        whatsappReplyMessageId: waReplyId || null,
+    });
+}
+
 async function unifiedHandler(msg) {
     const msgId = msg.id && msg.id._serialized ? msg.id._serialized : String(msg.id || "");
     try {
         const isGroup = msg.from && msg.from.includes("@g.us");
         const chatName = await resolveChatName(msg, isGroup);
+        let groupScope = null;
 
         if (isGroup) {
-            const groupScope = getGroupScope({ chatId: msg.from, chatName });
+            groupScope = getGroupScope({ chatId: msg.from, chatName });
             if (!groupScope.enabled) {
                 logger.debug("Ignoring message from disabled group", { from: msg.from, chatName });
                 return;
@@ -119,73 +144,55 @@ async function unifiedHandler(msg) {
             return;
         }
 
-        if (msg.hasMedia && msg.type === "image") {
-            const chatTimestampKey = `${msg.from || ""}:${msg.timestamp || ""}`;
+        msg._chatName = chatName || "";
+
+        // ─── STEP 7: LOCKED DISPATCHER ─────────────────────────────────────────
+        // CEO DIRECTIVE — Food Safety Source Cleanup & Legacy Workflow Removal
+        //
+        //   if isFoodSafetyGroup:
+        //       route to FoodSafetyNumericRouter
+        //       STOP
+        //   else:
+        //       route to AgentCoding / other bots
+        //
+        // No fallthrough. No second handler. No Agent-Coding reply.
+        // ───────────────────────────────────────────────────────────────────────
+        if (isFoodSafetyPilotGroup(groupScope)) {
+            // Food Safety Numeric Router is the ONLY entry point for these groups.
+            // It handles dedup internally via per-user-per-shift throttling and
+            // numeric session state; we still keep a lightweight message-id dedup
+            // here to short-circuit obvious replay storms.
+            const chatTimestampKey = `fs-numeric:${msg.from || ""}:${msg.timestamp || ""}:${msg.type || ""}`;
             if (
                 isDuplicateKey(_processedMessageIds, msgId) ||
                 isDuplicateKey(_processedChatTimestamps, chatTimestampKey)
             ) {
-                logDuplicate(msg, chatName);
+                logger.info("[FS_NUMERIC_ROUTER] Duplicate message ignored", { msgId, from: msg.from, chatName });
                 return;
             }
 
-            if (_activeProcessing.has(msgId)) {
-                logDuplicate(msg, chatName);
-                return;
-            }
-            _activeProcessing.add(msgId);
+            logger.info("[FS_NUMERIC_ROUTER] Dispatching Food Safety message to numeric router", {
+                from: msg.from || "",
+                chatName,
+                type: msg.type || "",
+                hasMedia: !!msg.hasMedia,
+                body: msg.body ? msg.body.substring(0, 80) : "",
+            });
 
-            try {
-                const media = await msg.downloadMedia();
-                if (media) {
-                    const mediaId = media.mediaKey || (msg._data && msg._data.mediaKey) || "";
-                    if (mediaId && isDuplicateKey(_processedMediaIds, `${msg.from}:${mediaId}`)) {
-                        logDuplicate(msg, chatName);
-                        return;
-                    }
-                    const hash = imageHash(Buffer.from(media.data, "base64"));
-                    if (isDuplicateKey(_processedImages, `${msg.from}:${hash}`)) {
-                        logger.info("Duplicate image ignored", { msgId, hash });
-                        logDuplicate(msg, chatName, hash);
-                        return;
-                    }
-                    msg._cachedMedia = media;
-                    msg._imageHash = hash;
-                }
-            } catch (err) {
-                logger.warn("Dedup media download failed; passing to handler", { error: err.message });
-            }
-        }
-
-        msg._chatName = chatName || "";
-
-        if (msg.hasMedia && msg.type === "image") {
-            const result = await handleImageMessage(msg, client);
+            const result = await numericRouter.handleFoodSafetyMessage(msg, client);
             const reply = typeof result === "string" ? result : (result && result.text);
-            if (reply) {
-                const sent = await msg.reply(reply);
-                const waReplyId = whatsappMessageId(sent);
-                if (msg._pipelineTrace) {
-                    pipelineTrace.step(msg._pipelineTrace, "WHATSAPP_REPLY_SENT", "OK", {
-                        output_summary: {
-                            final_reply_id: msg._finalReplyId || null,
-                            whatsapp_reply_message_id: waReplyId || null,
-                            reply_count: 1,
-                        },
-                    });
-                }
-                logger.info("Reply sent", {
-                    to: msg.from,
-                    chatName,
-                    replyLength: reply.length,
-                    finalReplyId: msg._finalReplyId || null,
-                    whatsappReplyMessageId: waReplyId || null,
-                });
-            }
-        } else if (msg.body && msg.body.trim()) {
-            const reply = await handleTextMessage(msg, client);
-            if (reply) await msg.reply(reply);
+            await sendWhatsAppReply(msg, reply, chatName);
+
+            // ─── STOP: NO FALLTHROUGH TO OTHER HANDLERS ───
+            return;
         }
+
+        // ─── Non-Food-Safety path: only reached if the group is NOT a Food Safety group.
+        // For the controlled pilot, every inbound group is a Food Safety group, so this
+        // branch is effectively dead. It is kept for safety but should never run.
+        logger.warn("[DISPATCHER] Non-Food-Safety group reached; no handler available", {
+            from: msg.from, chatName, role: groupScope && groupScope.role,
+        });
     } catch (err) {
         logger.error("Error in unified handler", { error: err.message, from: msg.from });
     } finally {

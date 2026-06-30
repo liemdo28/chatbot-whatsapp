@@ -51,6 +51,8 @@ PASSWORDS = {
     "pass3": os.environ.get("QB_PASSWORD3", ""),
 }
 
+LAST_QB_AUTOMATION_ERROR = ""
+
 SAFE_QB_APP_PROCESS_NAMES = {
     "QBWEnterprise.exe",
     "QBW32Enterprise.exe",
@@ -87,6 +89,15 @@ KNOWN_QB_POPUP_RULES = [
 
 def _normalize_text(value):
     return "".join(ch.lower() for ch in str(value or "") if ch.isalnum())
+
+
+def _set_last_qb_automation_error(message):
+    global LAST_QB_AUTOMATION_ERROR
+    LAST_QB_AUTOMATION_ERROR = str(message or "").strip()
+
+
+def get_last_qb_automation_error():
+    return LAST_QB_AUTOMATION_ERROR
 
 
 def company_file_matches(path, expected_match):
@@ -261,14 +272,17 @@ def open_store(store_name, store_paths, qbw_match=None, password_key="pass1"):
 def _open_qb_company_file(qbw_path, *, password_key="pass1", callback=None, expected_match=None, store_name=None, opened_label=None):
     from pywinauto import Application
 
+    _set_last_qb_automation_error("")
     password = PASSWORDS.get(password_key, "")
     qb_exe = resolve_qb_executable()
 
     valid_file, file_msg = validate_company_file_path(qbw_path, expected_match, store_name)
     if not valid_file:
+        _set_last_qb_automation_error(file_msg)
         _emit(callback, file_msg)
         return False
     if not qb_exe:
+        _set_last_qb_automation_error("QuickBooks executable not found")
         _emit(callback, "QuickBooks executable not found. Check QB_EXE_PATH or install path.")
         return False
 
@@ -291,6 +305,7 @@ def _open_qb_company_file(qbw_path, *, password_key="pass1", callback=None, expe
         time.sleep(5)
 
     if not app:
+        _set_last_qb_automation_error("Failed to connect to a QuickBooks window after launch")
         _emit(callback, "Failed to connect to QB window")
         return False
 
@@ -298,6 +313,9 @@ def _open_qb_company_file(qbw_path, *, password_key="pass1", callback=None, expe
     time.sleep(3)
     logged_in = _do_login(app, password, lambda msg: _emit(callback, msg))
     if not logged_in:
+        detail = get_last_qb_automation_error()
+        if detail:
+            _emit(callback, detail)
         _emit(callback, "Login failed")
         return False
 
@@ -314,8 +332,16 @@ def _do_login(app, password, _log):
     """Enter password and click OK."""
     dlg = _find_login_dialog(app)
     if not dlg:
+        _set_last_qb_automation_error("")
         _log("No login dialog found - may not need password")
         return True
+
+    if not password:
+        _set_last_qb_automation_error(
+            "QuickBooks requested a company password, but the selected QB_PASSWORD value is empty."
+        )
+        _log("Selected QuickBooks password is empty")
+        return False
 
     _log("Entering password...")
 
@@ -324,6 +350,7 @@ def _do_login(app, password, _log):
         if not pwd_field.exists(timeout=3):
             edits = dlg.descendants(control_type="Edit")
             if not edits:
+                _set_last_qb_automation_error("Could not locate the QuickBooks password field")
                 _log("Cannot find password field")
                 return False
             pwd_field = edits[0]
@@ -342,15 +369,20 @@ def _do_login(app, password, _log):
             win = app.top_window()
             check = win.child_window(title="QuickBooks Desktop Login")
             if check.exists(timeout=5):
+                _set_last_qb_automation_error(
+                    "QuickBooks rejected the stored password for this company file or still requires a different administrator login."
+                )
                 _log("Wrong password - login dialog still showing")
                 return False
         except Exception:
             pass
 
+        _set_last_qb_automation_error("")
         _log("Login successful!")
         return True
 
     except Exception as e:
+        _set_last_qb_automation_error(f"QuickBooks login automation error: {e}")
         _log(f"Login error: {e}")
         return False
 

@@ -1,0 +1,27 @@
+{
+  "date": "2026-06-30",
+  "drive_root_id": "1Fb4tWtUz-YZgjC-O-F8TvnkwfjD6JoSj",
+  "qbw_path": "C:\\QB Data\\Raw Stockton\\rawstockton.qbw",
+  "latest_cached_receipt": {
+    "txn_date": "2026-06-22",
+    "ref_number": "5495",
+    "customer": "Dine In"
+  },
+  "preview_receipt": {
+    "report": "2026-06-29_SalesSummary_Stockton.xlsx",
+    "status": "balanced",
+    "lines": [
+      "Toast:Food Sales 1926.80",
+      "Toast:Bar Sales 236.45",
+      "Discount/comp/Payment error -59.20",
+      "Sales tax 191.80",
+      "Tips 188.73",
+      "CASH 2021 -661.43",
+      "Credit Card -1823.15"
+    ]
+  },
+  "live_qb_attempt": {
+    "result": "blocked_at_login",
+    "detail": "QuickBooks opened the Raw Stockton company login dialog, but password attempts pass1/pass2/pass3 all failed."
+  }
+}

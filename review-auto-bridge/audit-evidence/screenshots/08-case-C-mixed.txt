@@ -1,0 +1,23 @@
+════════════════════════════════════════════════════════════════════════════════
+  HTTP "SCREENSHOT" — 08-case-C-mixed
+════════════════════════════════════════════════════════════════════════════════
+Request:
+  Method: POST
+  URL:    http://localhost:8788/api/reviews/reply-agent/run
+
+Response:
+  Status: 200
+  Headers: {
+             "x-powered-by": "Express",
+             "content-type": "application/json; charset=utf-8",
+             "content-length": "1520",
+             "etag": "W/\"5f0-L5Q4Sm9MCQw0pkn4IXp6oiV6YEI\"",
+             "date": "Mon, 29 Jun 2026 13:03:30 GMT",
+             "connection": "keep-alive",
+             "keep-alive": "timeout=5"
+           }
+
+Body:
+{"ok":true,"analysis":{"rating":3,"sentiment":"mixed","sentiment_detail":{"label":"mixed","score":0,"positive":1.5,"negative":-1.5,"confidence":0.42,"token_count":16},"aspects":["food_quality","service","wait_time"],"risk_level":"approval_required","auto_reply_allowed":false,"requires_approval":true,"summary":"Customer gave 3★ (mixed) about food_quality, service, wait_time. Mixed review — needs approval.","risk_detail":{"risk_level":"approval_required","auto_reply_allowed":false,"requires_approval":true,"reason":"3-star mixed review — manager approval needed (has complaint keywords)","escalation_flags":[],"approval_flags":["late"]}},"draft_reply":"Hi John,\n\nThanks for being honest with us. We hope we get another chance to take better care of you next time.\n\n— Bakudan Ramen Team","requires_approval":true,"reason":"3★ review with 0 complaint(s) detected — manager approval needed before sending","quality_check":{"passed":true,"issues":[],"length":132},"approval_id":6,"approval_message":"New Review Reply Needs Approval\nStore: bakudan_rim\nPlatform: google\nRating: 3 stars\nReviewer: John\nReview: \"Food was good but the ramen came out late and the server didn't check on us.\"\n\nDetected issues:\n- food_quality\n- service\n- wait_time\n\nSuggested reply:\n\"Hi John,\n\nThanks for being honest with us. We hope we get another chance to take better care of you next time.\n\n— Bakudan Ramen Team\"\n\nReply:\n1 = Approve\n2 = Edit\n3 = Reject\n4 = Escalate","draft_id":12,"audit_id":12}
+
+════════════════════════════════════════════════════════════════════════════════

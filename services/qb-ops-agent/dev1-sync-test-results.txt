@@ -1,0 +1,317 @@
+﻿=============================================
+  Dev1 QBWC SOAP Sync Test
+  2026-06-24 08:06:30
+=============================================
+
+powershell : Set-Content : 
+The process 
+At line:1 char:53
++ ... ops-agent"; powershell 
+-ExecutionPolicy Bypass 
+-Command "& { .\dev1-s ...
++                 ~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+    NotSpecified: (Set-Conte  
+  nt : The process :String)   
+  [], RemoteException
+    + FullyQualifiedErrorId : 
+    NativeCommandError
+ 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:16
+ char:6
++ "" | Set-Content -Path 
+$logFile -Encoding UTF8
++      ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+    NotSpecified: (:) [Set-C  
+  ontent], IOException
+    + FullyQualifiedErrorId : 
+    System.IO.IOException,Mi  
+  crosoft.PowerShell.Comman   
+ ds.SetContentCommand
+ 
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:17
+ char:1
++ Add-Content -Path $logFile 
+-Value ("Dev1 QBWC SOAP Sync 
+Test - " + (G ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:18
+ char:1
++ Add-Content -Path $logFile 
+-Value ("=" * 60)
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+[1/5] GET http://localhost:3457/api/status
+  HTTP 200 OK
+  Body: {"status":"ok","qbwc_port":3457,"active_sessions":0,"last_sync":null,"last_company_file":null,"requests_received":0,"total_bytes":0,"error":null}
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:27
+ char:5
++     Add-Content -Path 
+$logFile -Value "[1/5] GET 
+/api/status - HTTP $ ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:28
+ char:5
++     Add-Content -Path 
+$logFile -Value "      Body: 
+$body"
++     ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+  requests_received: 0 (need 3 for full sync)
+
+[2/5] GET http://localhost:3457/qbwc (WSDL)
+  HTTP 200 - WSDL valid: True
+  First 80 chars: <?xml version="1.0" encoding="utf-8"?>
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:58
+ char:5
++     Add-Content -Path 
+$logFile -Value "[2/5] GET 
+/qbwc (WSDL) - HTTP  ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+
+[3/5] GET http://localhost:3457/api/qb/financial
+  HTTP 503 - pre-sync expected
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:98
+ char:5
++     Add-Content -Path 
+$logFile -Value "[3/5] GET 
+/api/qb/financial -  ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+
+[4/5] GET http://localhost:3457/api/qb/financial/summary
+  HTTP 503 - pre-sync expected
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:11
+3 char:5
++     Add-Content -Path 
+$logFile -Value "[4/5] GET 
+/api/qb/financial/su ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+
+[5/5] Trigger QBWC sync manually
+
+  1. Open QuickBooks Desktop on Laptop1
+  2. Open company file: MI_CEO.qbw (must be active)
+  3. Open QuickBooks Web Connector (Start menu)
+  4. Verify 'mi-core-connector' is in the list:
+     - App URL: http://localhost:3457/qbwc
+     - Password: b149c4783a1109ff46d01498d91766e7
+  5. Click 'Update Selected'
+  6. Wait for QBWC to complete the sync
+  7. After sync completes, run this script again
+
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:13
+0 char:1
++ Add-Content -Path $logFile 
+-Value "[5/5] Manual step: 
+trigger QBWC sy ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:13
+1 char:1
++ Add-Content -Path $logFile 
+-Value ""
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+Add-Content : The process 
+cannot access the file 'C:\Ld-
+project\services\qb-ops-agent\
+dev1-sync-test-results.txt' 
+because it is being used by 
+another process.
+At C:\Ld-project\services\qb-o
+ps-agent\dev1-sync-test.ps1:13
+2 char:1
++ Add-Content -Path $logFile 
+-Value "After sync completes, 
+re-run this  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo          : 
+    WriteError: (C:\Ld-proje  
+  ct\s...est-results.txt:St   
+ ring) [Add-Content], IOEx    
+ception
+=============================================
+  Results saved to: C:\Ld-project\services\qb-ops-agent\dev1-sync-test-results.txt
+    + FullyQualifiedErrorId : 
+    GetContentWriterIOError,  
+  Microsoft.PowerShell.Comm   
+ ands.AddContentCommand
+ 
+  Send that file to mi-core.
+=============================================

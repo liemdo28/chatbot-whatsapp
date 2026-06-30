@@ -1,0 +1,38 @@
+﻿ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  HTTP SCREENSHOTS ΓÇö LIVE API RESPONSES
+  Generated: 2026-06-29T13:03:30.908Z
+  Service: review-reply-agent on localhost:8788
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+Total captures: 12
+Successful:     12
+Failed:         0
+
+CAPTURES:
+  01-health-endpoint: HTTP 200 Γ£à
+  02-service-info: HTTP 200 Γ£à
+  03-audit-log: HTTP 200 Γ£à
+  04-approvals-queue: HTTP 200 Γ£à
+  05-stores-list: HTTP 200 Γ£à
+  06-case-A-positive: HTTP 200 Γ£à
+  07-case-B-positive-with-detail: HTTP 200 Γ£à
+  08-case-C-mixed: HTTP 200 Γ£à
+  09-case-D-negative: HTTP 200 Γ£à
+  10-case-E-sensitive: HTTP 200 Γ£à
+  11-case-F-delivery: HTTP 200 Γ£à
+  12-analyze-only: HTTP 200 Γ£à
+
+FILES:
+  audit-evidence/screenshots/01-health-endpoint.txt
+  audit-evidence/screenshots/02-service-info.txt
+  audit-evidence/screenshots/03-audit-log.txt
+  audit-evidence/screenshots/04-approvals-queue.txt
+  audit-evidence/screenshots/05-stores-list.txt
+  audit-evidence/screenshots/06-case-A-positive.txt
+  audit-evidence/screenshots/07-case-B-positive-with-detail.txt
+  audit-evidence/screenshots/08-case-C-mixed.txt
+  audit-evidence/screenshots/09-case-D-negative.txt
+  audit-evidence/screenshots/10-case-E-sensitive.txt
+  audit-evidence/screenshots/11-case-F-delivery.txt
+  audit-evidence/screenshots/12-analyze-only.txt
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ

@@ -1,6 +1,40 @@
 import toast_downloader
 
 
+class _FakeStartedPlaywright:
+    def __init__(self, launch_calls):
+        self.chromium = self
+        self.launch_calls = launch_calls
+
+    def launch(self, **kwargs):
+        self.launch_calls.append(kwargs)
+        return _FakeBrowser()
+
+
+class _FakePlaywrightManager:
+    def __init__(self, launch_calls):
+        self.launch_calls = launch_calls
+
+    def start(self):
+        return _FakeStartedPlaywright(self.launch_calls)
+
+
+class _FakeBrowser:
+    def new_context(self, **kwargs):
+        return _FakeBrowserContext()
+
+    def close(self):
+        return None
+
+
+class _FakeBrowserContext:
+    def new_page(self):
+        return _RunPage()
+
+    def close(self):
+        return None
+
+
 class _FakePage:
     def __init__(self, urls):
         self._urls = list(urls)
@@ -214,6 +248,42 @@ def test_wait_for_manual_login_logs_progress_and_succeeds():
     assert ok is True
     assert any("Waiting for Toast login..." in line for line in logs)
     assert progress
+
+
+def test_load_toast_browser_preferences_reads_local_config(tmp_path, monkeypatch):
+    cfg_path = tmp_path / "local-config.json"
+    cfg_path.write_text(
+        '{"toast_download":{"browser_profile":{"browser":"chrome","use_real_profile":true}}}',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(toast_downloader, "runtime_path", lambda *parts: cfg_path)
+
+    prefs = toast_downloader._load_toast_browser_preferences()
+
+    assert prefs["browser"] == "chrome"
+
+
+def test_start_browser_prefers_installed_chrome_channel(monkeypatch):
+    launch_calls = []
+    monkeypatch.setattr(
+        toast_downloader,
+        "_load_toast_browser_preferences",
+        lambda: {"browser": "chrome"},
+    )
+    monkeypatch.setattr(toast_downloader, "_ensure_playwright_env", lambda: None)
+    monkeypatch.setattr(toast_downloader, "_find_bundled_chromium", lambda: None)
+    monkeypatch.setattr(
+        toast_downloader,
+        "sync_playwright",
+        lambda: _FakePlaywrightManager(launch_calls),
+    )
+    monkeypatch.setattr(toast_downloader.os.path, "exists", lambda path: False)
+
+    downloader = toast_downloader.ToastDownloader()
+    downloader._start_browser()
+
+    assert launch_calls
+    assert launch_calls[0]["channel"] == "chrome"
 
 
 def test_wait_for_manual_login_times_out_cleanly():

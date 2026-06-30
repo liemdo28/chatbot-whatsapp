@@ -1,5 +1,5 @@
 import os from 'os';
-import { machineIdSync } from 'node-machine-id';
+import { execFileSync } from 'child_process';
 import { v5 as uuidv5 } from 'uuid';
 import { getOrCreateMachineToken } from '../security/token';
 import { getSetting, setSetting, upsertMachine, MachineRecord } from '../storage/local-db';
@@ -28,11 +28,33 @@ function detectPrimaryIp(): string | null {
   return null;
 }
 
+function readWindowsMachineGuid(): string {
+  if (process.platform !== 'win32') return os.hostname().toLowerCase();
+
+  try {
+    const output = execFileSync(
+      'reg.exe',
+      ['query', 'HKLM\\SOFTWARE\\Microsoft\\Cryptography', '/v', 'MachineGuid'],
+      {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+        windowsHide: true,
+      }
+    );
+    const match = output.match(/MachineGuid\s+REG_SZ\s+([^\r\n]+)/i);
+    if (match?.[1]) return match[1].trim().toLowerCase();
+  } catch {
+    // Fall back to hostname below; the value is persisted after first creation.
+  }
+
+  return os.hostname().toLowerCase();
+}
+
 export function getMachineIdentity(): MachineIdentity {
   const saved = getSetting('machine_id');
   const hostname = os.hostname();
   const username = process.env.USERNAME || process.env.USER || null;
-  const rawMachineId = machineIdSync(true);
+  const rawMachineId = saved ? null : readWindowsMachineGuid();
   const stableMachineId = saved || uuidv5(`${hostname}:${rawMachineId}`, MACHINE_NAMESPACE);
   if (!saved) setSetting('machine_id', stableMachineId);
   const token = getOrCreateMachineToken();

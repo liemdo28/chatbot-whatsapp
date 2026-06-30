@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-06-29T13:44:09.882Z",
+  "stats": {
+    "total_runs": 25,
+    "by_risk_level": {
+      "escalation_required": 14,
+      "approval_required": 3,
+      "auto_allowed": 8
+    },
+    "by_sentiment": {
+      "negative": 10,
+      "mixed": 3,
+      "positive": 8,
+      "neutral": 4
+    },
+    "auto_replied": 8,
+    "requires_approval": 13,
+    "escalated": 14,
+    "errors": 0
+  }
+}

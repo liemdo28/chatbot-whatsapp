@@ -9,8 +9,8 @@ const logger = require("./logger");
 const db = require("./database");
 const clientManager = require("./clientManager");
 const gsheet = require("./googleSheet");
-const { performOCR, parseTemperatures, applyOcrConfidence, buildOcrJson } = require("./ocr");
 const { handleTextMessage, getSession } = require("./foodSafetyHandler");
+const numericRouter = require("./foodSafetyNumericRouter");
 const { getSubmissionStatus, detectMissingSubmissions } = require("./missingSubmissionDetector");
 const scheduler = require("./missingSubmissionScheduler");
 const clientManagerRef = clientManager;
@@ -161,14 +161,15 @@ app.get("/api/whatsapp/groups", async (req, res) => {
 
 // ===== Food Safety API =====
 
-// CTO DIRECTIVE: Dashboard API bypass DISABLED.
-// All food safety submissions MUST go through WhatsApp → processSubmissionBatch().
-// The dashboard path skipped Decision Engine, Memory, Vision — causing impossible values.
+// CEO DIRECTIVE — Food Safety Source Cleanup & Legacy Workflow Removal:
+// The only active Food Safety workflow is Option C: Numeric Text Entry.
+// All submissions MUST go through WhatsApp → FoodSafetyNumericRouter.
+// Legacy OCR/Vision pipelines are retired and unreachable.
 app.post("/api/food-safety/submit", upload.single("image"), (req, res) => {
     return res.status(403).json({
-        error: "DISABLED — All submissions must go through WhatsApp group chat.",
-        reason: "Dashboard bypass was identified as root cause of pipeline skip (ROOT_CAUSE.md #3).",
-        required_path: "Image -> WhatsApp -> processSubmissionBatch -> GPT-4o Vision primary -> DecisionEngine -> one WhatsApp reply",
+        error: "DISABLED — All submissions must go through WhatsApp group chat using Option C numeric workflow.",
+        reason: "Legacy OCR/Vision pipelines have been retired (CEO directive). Numeric text entry is the only active workflow.",
+        required_path: "WhatsApp -> FoodSafetyNumericRouter -> /agent -> 19 numeric values -> 1=Confirm -> DB save + Google Sheet sync",
     });
 });
 
@@ -240,16 +241,19 @@ app.get("/api/food-safety/pipeline-trace", (req, res) => {
     }
 });
 
+// CEO DIRECTIVE — Food Safety Source Cleanup & Legacy Workflow Removal:
+// Runtime proof now advertises the locked numeric-only path.
+// All Vision / OCR / Runtime-proof-with-legacy-markers fields are REMOVED.
 app.get("/api/runtime/proof", (req, res) => {
     try {
         const files = [
             "src/index.js",
             "src/foodSafetyHandler.js",
-            "src/pipelineTrace.js",
-            "src/vision/providers/openaiVision.js",
-            "src/foodSafetyDecisionEngine.js",
-            "src/foodSafetyAlertComposer.js",
+            "src/foodSafetyNumericRouter.js",
+            "src/foodSafetyPilotGuard.js",
+            "src/numericTextHandler.js",
             "src/clientManager.js",
+            "src/database.js",
         ];
         const sourceFiles = files.map((file) => {
             const fullPath = path.join(__dirname, "..", file);
@@ -261,12 +265,7 @@ app.get("/api/runtime/proof", (req, res) => {
                 size: stat ? stat.size : null,
             };
         });
-        const latestTraceRows = db.getAll(
-            `SELECT trace_id, submission_id, chat_id, chat_name, image_id, step, status, output_summary, error, created_at
-             FROM pipeline_trace_events
-             ORDER BY id DESC LIMIT 50`
-        );
-
+        const routerProof = numericRouter.getRouterLockdownProof();
         res.json({
             ok: true,
             pid: process.pid,
@@ -274,28 +273,24 @@ app.get("/api/runtime/proof", (req, res) => {
             argv: process.argv,
             port: PORT,
             active_runtime_path: {
-                handler_selected: "foodSafetyHandler.processSubmissionBatch",
-                pipeline_selected: "gpt4o_vision_primary",
-                ocr_provider: "none/skipped",
-                vision_provider: `${process.env.VISION_PROVIDER || "openai"}/${process.env.OPENAI_VISION_MODEL || "gpt-4o"}`,
-                whatsapp_reply_owner: "clientManager.unifiedHandler",
+                workflow_mode: routerProof.workflow_mode,
+                legacy_image_flow_enabled: routerProof.legacy_image_flow_enabled,
+                dispatcher: "clientManager.unifiedHandler",
+                food_safety_router: routerProof.router,
+                active_workflow: "Option C Numeric Text Entry",
+                pipeline: "WhatsApp -> FoodSafetyNumericRouter -> numericTextHandler",
+                accepts: routerProof.accepts,
+                rejects: routerProof.rejects,
                 execution_path_count: 1,
                 whatsapp_reply_count: 1,
             },
             env: {
-                HYBRID_TRACE_ENABLED: process.env.HYBRID_TRACE_ENABLED || null,
-                HYBRID_TRACE_GROUPS: process.env.HYBRID_TRACE_GROUPS || null,
-                HYBRID_TRACE_GROUPS_STRICT: process.env.HYBRID_TRACE_GROUPS_STRICT || null,
-                USE_GPT4O_VISION_PIPELINE: process.env.USE_GPT4O_VISION_PIPELINE || null,
-                VISION_REVIEW_ENABLED: process.env.VISION_REVIEW_ENABLED || null,
-                VISION_PROVIDER: process.env.VISION_PROVIDER || null,
-                OPENAI_VISION_MODEL: process.env.OPENAI_VISION_MODEL || "gpt-4o",
-                VISION_REVIEW_FIELDS: process.env.VISION_REVIEW_FIELDS || null,
-                VISION_MAX_CALLS_PER_FORM: process.env.VISION_MAX_CALLS_PER_FORM || null,
-                OPENAI_API_KEY_PRESENT: !!process.env.OPENAI_API_KEY,
+                FOOD_SAFETY_WORKFLOW_MODE: process.env.FOOD_SAFETY_WORKFLOW_MODE || "numeric",
+                ENABLE_LEGACY_FOOD_SAFETY_IMAGE_FLOW: process.env.ENABLE_LEGACY_FOOD_SAFETY_IMAGE_FLOW || "false",
+                USE_VISION_LLM_PIPELINE: process.env.USE_VISION_LLM_PIPELINE || "false",
+                VISION_REVIEW_ENABLED: process.env.VISION_REVIEW_ENABLED || "false",
             },
             sourceFiles,
-            latest_trace_rows: latestTraceRows,
             timestamp: new Date().toISOString(),
         });
     } catch (err) {

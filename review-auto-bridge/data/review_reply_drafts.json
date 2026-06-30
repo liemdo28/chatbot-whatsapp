@@ -1,0 +1,558 @@
+[
+    {
+        "id": 25,
+        "store_id": "bakudan_rim",
+        "platform": "doordash",
+        "rating": 2,
+        "review_text": "My DoorDash order was missing items and everything was cold.",
+        "reviewer_name": "Mike",
+        "sentiment": "negative",
+        "aspects": [
+            "delivery",
+            "order_accuracy",
+            "food_quality"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Mike,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 271
+        },
+        "created_at": "2026-06-29T13:44:09.835Z"
+    },
+    {
+        "id": 24,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "I got sick after eating here.",
+        "reviewer_name": "Anonymous",
+        "sentiment": "negative",
+        "aspects": [
+            "food_safety"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 276
+        },
+        "created_at": "2026-06-29T13:44:09.820Z"
+    },
+    {
+        "id": 23,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 1,
+        "review_text": "Terrible service and dirty table.",
+        "reviewer_name": "Karen",
+        "sentiment": "negative",
+        "aspects": [
+            "cleanliness",
+            "service"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Karen,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 272
+        },
+        "created_at": "2026-06-29T13:44:09.801Z"
+    },
+    {
+        "id": 22,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 3,
+        "review_text": "Food was good but the ramen came out late and the server didn't check on us.",
+        "reviewer_name": "John",
+        "sentiment": "mixed",
+        "aspects": [
+            "food_quality",
+            "service",
+            "wait_time"
+        ],
+        "risk_level": "approval_required",
+        "draft_reply": "Hi John,\n\nThanks for being honest with us. We hope we get another chance to take better care of you next time.\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 132
+        },
+        "created_at": "2026-06-29T13:44:09.783Z"
+    },
+    {
+        "id": 21,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "The spicy miso ramen was excellent and our server was super friendly.",
+        "reviewer_name": "Bob",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service",
+            "staff_attitude",
+            "menu_item"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Bob,\n\nI'm really glad the spicy miso ramen and miso ramen hit the spot. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 229
+        },
+        "created_at": "2026-06-29T13:44:09.772Z"
+    },
+    {
+        "id": 20,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "Amazing ramen and great service.",
+        "reviewer_name": "Alice",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Alice,\n\nAmazing to hear that. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 187
+        },
+        "created_at": "2026-06-29T13:44:09.758Z"
+    },
+    {
+        "id": 19,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "Drift test review 1782740579705",
+        "reviewer_name": "DriftTester",
+        "sentiment": "neutral",
+        "aspects": [
+            "general_positive"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi DriftTester,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 278
+        },
+        "created_at": "2026-06-29T13:42:59.708Z"
+    },
+    {
+        "id": 18,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "Drift test review 1782739581931",
+        "reviewer_name": "DriftTester",
+        "sentiment": "neutral",
+        "aspects": [
+            "general_positive"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi DriftTester,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 278
+        },
+        "created_at": "2026-06-29T13:26:21.940Z"
+    },
+    {
+        "id": 17,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "Drift test review 1782739552424",
+        "reviewer_name": "DriftTester",
+        "sentiment": "neutral",
+        "aspects": [
+            "general_positive"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi DriftTester,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 278
+        },
+        "created_at": "2026-06-29T13:25:52.432Z"
+    },
+    {
+        "id": 16,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "Drift test review 1782739490641",
+        "reviewer_name": "DriftTester",
+        "sentiment": "neutral",
+        "aspects": [
+            "general_positive"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi DriftTester,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 278
+        },
+        "created_at": "2026-06-29T13:24:50.645Z"
+    },
+    {
+        "id": 15,
+        "store_id": "bakudan_rim",
+        "platform": "doordash",
+        "rating": 2,
+        "review_text": "My DoorDash order was missing items and everything was cold.",
+        "reviewer_name": "Mike",
+        "sentiment": "negative",
+        "aspects": [
+            "delivery",
+            "order_accuracy",
+            "food_quality"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Mike,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 271
+        },
+        "created_at": "2026-06-29T13:03:30.888Z"
+    },
+    {
+        "id": 14,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "I got sick after eating here.",
+        "reviewer_name": "Anonymous",
+        "sentiment": "negative",
+        "aspects": [
+            "general_positive"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 276
+        },
+        "created_at": "2026-06-29T13:03:30.867Z"
+    },
+    {
+        "id": 13,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 1,
+        "review_text": "Terrible service and dirty table.",
+        "reviewer_name": "Karen",
+        "sentiment": "negative",
+        "aspects": [
+            "cleanliness",
+            "service"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Karen,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 272
+        },
+        "created_at": "2026-06-29T13:03:30.846Z"
+    },
+    {
+        "id": 12,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 3,
+        "review_text": "Food was good but the ramen came out late and the server didn't check on us.",
+        "reviewer_name": "John",
+        "sentiment": "mixed",
+        "aspects": [
+            "food_quality",
+            "service",
+            "wait_time"
+        ],
+        "risk_level": "approval_required",
+        "draft_reply": "Hi John,\n\nThanks for being honest with us. We hope we get another chance to take better care of you next time.\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 132
+        },
+        "created_at": "2026-06-29T13:03:30.820Z"
+    },
+    {
+        "id": 11,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "The spicy miso ramen was excellent and our server was super friendly.",
+        "reviewer_name": "Bob",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service",
+            "staff_attitude",
+            "menu_item"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Bob,\n\nI'm really glad the spicy miso ramen and miso ramen hit the spot. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 229
+        },
+        "created_at": "2026-06-29T13:03:30.799Z"
+    },
+    {
+        "id": 10,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "Amazing ramen and great service.",
+        "reviewer_name": "Alice",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Alice,\n\nAmazing to hear that. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 187
+        },
+        "created_at": "2026-06-29T13:03:30.780Z"
+    },
+    {
+        "id": 9,
+        "store_id": "bakudan_rim",
+        "platform": "doordash",
+        "rating": 2,
+        "review_text": "My DoorDash order was missing items and everything was cold.",
+        "reviewer_name": "Mike",
+        "sentiment": "negative",
+        "aspects": [
+            "delivery",
+            "order_accuracy",
+            "food_quality"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Mike,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 271
+        },
+        "created_at": "2026-06-29T13:02:04.478Z"
+    },
+    {
+        "id": 8,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "I got sick after eating here.",
+        "reviewer_name": "Anonymous",
+        "sentiment": "negative",
+        "aspects": [
+            "general_positive"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 276
+        },
+        "created_at": "2026-06-29T13:02:04.460Z"
+    },
+    {
+        "id": 7,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 1,
+        "review_text": "Terrible service and dirty table.",
+        "reviewer_name": "Karen",
+        "sentiment": "negative",
+        "aspects": [
+            "cleanliness",
+            "service"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Karen,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 272
+        },
+        "created_at": "2026-06-29T13:02:04.443Z"
+    },
+    {
+        "id": 6,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 3,
+        "review_text": "Food was good but the ramen came out late and the server didn't check on us.",
+        "reviewer_name": "John",
+        "sentiment": "mixed",
+        "aspects": [
+            "food_quality",
+            "service",
+            "wait_time"
+        ],
+        "risk_level": "approval_required",
+        "draft_reply": "Hi John,\n\nThanks for being honest with us. We hope we get another chance to take better care of you next time.\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 132
+        },
+        "created_at": "2026-06-29T13:02:04.423Z"
+    },
+    {
+        "id": 5,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "The spicy miso ramen was excellent and our server was super friendly.",
+        "reviewer_name": "Bob",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service",
+            "staff_attitude",
+            "menu_item"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Bob,\n\nI'm really glad the spicy miso ramen and miso ramen hit the spot. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 229
+        },
+        "created_at": "2026-06-29T13:02:04.409Z"
+    },
+    {
+        "id": 4,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "Amazing ramen and great service.",
+        "reviewer_name": "Alice",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Alice,\n\nAmazing to hear that. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 187
+        },
+        "created_at": "2026-06-29T13:02:04.394Z"
+    },
+    {
+        "id": 3,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "Amazing ramen and great service.",
+        "reviewer_name": "Alice",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Alice,\n\nAmazing to hear that. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 187
+        },
+        "created_at": "2026-06-29T12:56:29.457Z"
+    },
+    {
+        "id": 2,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "I got sick after eating here.",
+        "reviewer_name": "Anonymous",
+        "sentiment": "negative",
+        "aspects": [
+            "general_positive"
+        ],
+        "risk_level": "escalation_required",
+        "draft_reply": "Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 276
+        },
+        "created_at": "2026-06-29T11:48:00.084Z"
+    },
+    {
+        "id": 1,
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "The spicy miso ramen was excellent and our server was super friendly.",
+        "reviewer_name": "Bob",
+        "sentiment": "positive",
+        "aspects": [
+            "food_quality",
+            "service",
+            "staff_attitude",
+            "menu_item"
+        ],
+        "risk_level": "auto_allowed",
+        "draft_reply": "Hi Bob,\n\nI'm really glad the spicy miso ramen and miso ramen hit the spot. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "quality_check": {
+            "passed": true,
+            "issues": [],
+            "length": 229
+        },
+        "created_at": "2026-06-29T11:46:06.651Z"
+    }
+]

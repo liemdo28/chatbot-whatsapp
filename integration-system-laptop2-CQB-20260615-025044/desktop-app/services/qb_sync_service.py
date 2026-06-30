@@ -87,6 +87,49 @@ def _download_drive_report(store_name: str, date_display: str):
         return None
 
 
+def _ensure_qb_company_ready(
+    *,
+    store_name: str,
+    store_config: dict,
+    qbw_path: str,
+    on_log,
+) -> tuple[bool, str]:
+    try:
+        from qb_automate import (
+            close_qb_completely,
+            get_last_qb_automation_error,
+            open_store,
+            validate_company_file_path,
+        )
+    except Exception as exc:
+        return False, f"QB automation is unavailable: {exc}"
+
+    qbw_match = store_config.get("qbw_match")
+    file_ok, file_msg = validate_company_file_path(qbw_path, qbw_match, store_name)
+    if not file_ok:
+        return False, file_msg
+
+    on_log(f"  {file_msg}")
+    on_log(f"  Opening QuickBooks company file: {Path(qbw_path).name}")
+
+    if not close_qb_completely(callback=on_log):
+        return False, "QuickBooks did not close cleanly before switching company files"
+
+    opened = open_store(
+        store_name,
+        {store_name: qbw_path},
+        qbw_match=qbw_match,
+        password_key=store_config.get("password") or "pass1",
+    )
+    if not opened:
+        detail = get_last_qb_automation_error()
+        if detail:
+            return False, detail
+        return False, f"Failed to open QuickBooks company file: {Path(qbw_path).name}"
+
+    return True, ""
+
+
 def _sync_single_date(
     *,
     qb_sync,
@@ -242,6 +285,18 @@ def run_qb_sync(
                 result["warnings"].append(f"{requested_store}: No QB company file configured")
                 result["fail_count"] += 1
                 _log(f"{requested_store}: Skipped - no QB company file configured")
+                continue
+
+            ready, ready_error = _ensure_qb_company_ready(
+                store_name=store_name,
+                store_config=store_config,
+                qbw_path=qbw_path,
+                on_log=_log,
+            )
+            if not ready:
+                result["warnings"].append(f"{requested_store}: {ready_error}")
+                result["fail_count"] += 1
+                _log(f"{requested_store}: Skipped - {ready_error}")
                 continue
 
             _log(f"Syncing {store_name}...")

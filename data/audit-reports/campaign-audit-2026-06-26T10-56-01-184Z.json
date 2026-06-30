@@ -1,0 +1,129 @@
+{
+  "runId": "a5d7545f-986a-4de1-9075-7bce15b62085",
+  "startedAt": "2026-06-26T10:56:01.184Z",
+  "completedAt": "2026-06-26T10:56:27.581Z",
+  "autonomousAdjustmentsEnabled": false,
+  "executionMode": "dry_run",
+  "liveExecutionEnabled": false,
+  "summary": {
+    "storesAudited": 4,
+    "storesPulled": 0,
+    "freshCampaignsPulled": 0,
+    "recommendationsGenerated": 0,
+    "approvalsQueued": 0,
+    "executionsAttempted": 0,
+    "executionsSubmitted": 0
+  },
+  "sessionsBefore": [
+    {
+      "storeId": "bakudan-the-rim",
+      "storeName": "Bakudan The Rim",
+      "sessionPath": "./data/sessions/bakudan-the-rim",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "bakudan-stone-oak",
+      "storeName": "Bakudan Stone Oak",
+      "sessionPath": "./data/sessions/bakudan-stone-oak",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "bakudan-bandera",
+      "storeName": "Bakudan Bandera",
+      "sessionPath": "./data/sessions/bakudan-bandera",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "raw-sushi-bar",
+      "storeName": "Raw Sushi Bar",
+      "sessionPath": "./data/sessions/raw-sushi-bar",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    }
+  ],
+  "stores": [
+    {
+      "storeId": "bakudan-bandera",
+      "storeName": "Bakudan Bandera",
+      "pullSuccess": false,
+      "pullMessage": "DoorDash session is not logged in. Login is required before reading campaigns.",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\data\\screenshots\\bakudan-bandera\\campaigns-bakudan-bandera-2026-06-26T10-56-20-786Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    },
+    {
+      "storeId": "bakudan-stone-oak",
+      "storeName": "Bakudan Stone Oak",
+      "pullSuccess": false,
+      "pullMessage": "DoorDash session is not logged in. Login is required before reading campaigns.",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\data\\screenshots\\bakudan-stone-oak\\campaigns-bakudan-stone-oak-2026-06-26T10-56-14-547Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    },
+    {
+      "storeId": "bakudan-the-rim",
+      "storeName": "Bakudan The Rim",
+      "pullSuccess": false,
+      "pullMessage": "DoorDash session is not logged in. Login is required before reading campaigns.",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\data\\screenshots\\bakudan-the-rim\\campaigns-bakudan-the-rim-2026-06-26T10-56-08-162Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    },
+    {
+      "storeId": "raw-sushi-bar",
+      "storeName": "Raw Sushi Bar",
+      "pullSuccess": false,
+      "pullMessage": "DoorDash session is not logged in. Login is required before reading campaigns.",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-26T10-56-27-357Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    }
+  ],
+  "reportPaths": {
+    "json": "C:\\Ld-project\\data\\audit-reports\\campaign-audit-2026-06-26T10-56-01-184Z.json",
+    "markdown": "C:\\Ld-project\\data\\audit-reports\\campaign-audit-2026-06-26T10-56-01-184Z.md"
+  }
+}

@@ -1,0 +1,23 @@
+════════════════════════════════════════════════════════════════════════════════
+  HTTP "SCREENSHOT" — 01-health-endpoint
+════════════════════════════════════════════════════════════════════════════════
+Request:
+  Method: GET
+  URL:    http://localhost:8788/health
+
+Response:
+  Status: 200
+  Headers: {
+             "x-powered-by": "Express",
+             "content-type": "application/json; charset=utf-8",
+             "content-length": "61",
+             "etag": "W/\"3d-+uPORpODGwBipedlWERLM0UlGnk\"",
+             "date": "Mon, 29 Jun 2026 13:03:30 GMT",
+             "connection": "keep-alive",
+             "keep-alive": "timeout=5"
+           }
+
+Body:
+{"status":"ok","service":"review-reply-agent","uptime_s":480}
+
+════════════════════════════════════════════════════════════════════════════════

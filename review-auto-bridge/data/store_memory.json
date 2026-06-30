@@ -1,0 +1,126 @@
+{
+    "stores": {
+        "bakudan_rim": {
+            "store_id": "bakudan_rim",
+            "store_name": "Bakudan Ramen - The Rim",
+            "brand_name": "Bakudan Ramen",
+            "manager_name_optional": null,
+            "tone_style": "friendly, honest, not corporate",
+            "common_menu_items": [
+                "spicy miso ramen",
+                "tonkotsu",
+                "gyoza",
+                "karaage",
+                "tonkotsu ramen",
+                "miso ramen"
+            ],
+            "common_complaints": [
+                "wait time during peak hours",
+                "parking",
+                "noise on weekends"
+            ],
+            "reply_signature": "Bakudan Ramen Team",
+            "auto_reply_enabled": true,
+            "approval_required_keywords": [
+                "waited",
+                "slow",
+                "rude",
+                "cold",
+                "dirty",
+                "missing"
+            ],
+            "escalation_keywords": [
+                "food poisoning",
+                "sick",
+                "lawsuit",
+                "discriminated",
+                "roach",
+                "hair"
+            ]
+        },
+        "bakudan_bandera": {
+            "store_id": "bakudan_bandera",
+            "store_name": "Bakudan Ramen - Bandera",
+            "brand_name": "Bakudan Ramen",
+            "manager_name_optional": null,
+            "tone_style": "friendly, honest, not corporate",
+            "common_menu_items": [
+                "ramen",
+                "gyoza",
+                "karaage",
+                "bento"
+            ],
+            "common_complaints": [
+                "wait",
+                "parking"
+            ],
+            "reply_signature": "Bakudan Ramen Team",
+            "auto_reply_enabled": true,
+            "approval_required_keywords": [
+                "waited",
+                "slow",
+                "rude",
+                "cold",
+                "dirty"
+            ],
+            "escalation_keywords": [
+                "food poisoning",
+                "sick",
+                "lawsuit"
+            ]
+        },
+        "bakudan_stone_oak": {
+            "store_id": "bakudan_stone_oak",
+            "store_name": "Bakudan Ramen - Stone Oak",
+            "brand_name": "Bakudan Ramen",
+            "tone_style": "friendly, honest",
+            "common_menu_items": [
+                "ramen",
+                "gyoza",
+                "karaage"
+            ],
+            "common_complaints": [
+                "wait"
+            ],
+            "reply_signature": "Bakudan Ramen Team",
+            "auto_reply_enabled": true,
+            "approval_required_keywords": [
+                "waited",
+                "rude",
+                "cold"
+            ],
+            "escalation_keywords": [
+                "food poisoning",
+                "sick",
+                "hair"
+            ]
+        },
+        "raw_sushi_bistro": {
+            "store_id": "raw_sushi_bistro",
+            "store_name": "Raw Sushi Bistro",
+            "brand_name": "Raw Sushi",
+            "tone_style": "warm, casual",
+            "common_menu_items": [
+                "sushi",
+                "sashimi",
+                "spicy tuna roll",
+                "nigiri"
+            ],
+            "common_complaints": [
+                "price"
+            ],
+            "reply_signature": "Raw Sushi Team",
+            "auto_reply_enabled": true,
+            "approval_required_keywords": [
+                "expensive",
+                "cold",
+                "slow"
+            ],
+            "escalation_keywords": [
+                "food poisoning",
+                "sick",
+                "lawsuit"
+            ]
+        }
+    }
+}

@@ -1,0 +1,7967 @@
+{
+  "accounts": [
+    {
+      "name": "Cash Sale",
+      "type": "Income",
+      "balance": 37283.82,
+      "account_type": "Income"
+    },
+    {
+      "name": "Discount/comp",
+      "type": "Income",
+      "balance": -142509.09,
+      "account_type": "Income"
+    },
+    {
+      "name": "GC",
+      "type": "Income",
+      "balance": -1690,
+      "account_type": "Income"
+    },
+    {
+      "name": "Reimbursed Expenses",
+      "type": "Income",
+      "balance": 1927.99,
+      "account_type": "Income",
+      "account_number": "4030"
+    },
+    {
+      "name": "SALES",
+      "type": "Income",
+      "balance": 6504202.57,
+      "account_type": "Income"
+    },
+    {
+      "name": "3rd Party Deliveries",
+      "type": "Income",
+      "balance": 1620915.19,
+      "account_type": "Income"
+    },
+    {
+      "name": "Bar Sales",
+      "type": "Income",
+      "balance": 0,
+      "account_type": "Income"
+    },
+    {
+      "name": "Chargeback",
+      "type": "Income",
+      "balance": -61.96,
+      "account_type": "Income"
+    },
+    {
+      "name": "Food Sales",
+      "type": "Income",
+      "balance": 0,
+      "account_type": "Income"
+    },
+    {
+      "name": "Gloria Food",
+      "type": "Income",
+      "balance": 579511.81,
+      "account_type": "Income"
+    },
+    {
+      "name": "POS",
+      "type": "Income",
+      "balance": 2658217.03,
+      "account_type": "Income",
+      "account_number": "4050"
+    },
+    {
+      "name": "CreditCardProcessor",
+      "type": "Income",
+      "balance": 0,
+      "account_type": "Income"
+    },
+    {
+      "name": "Dine In Sales",
+      "type": "Income",
+      "balance": 5700463.22,
+      "account_type": "Income",
+      "account_number": "4060"
+    },
+    {
+      "name": "Amex",
+      "type": "Income",
+      "balance": 729941.33,
+      "account_type": "Income"
+    },
+    {
+      "name": "Giftcard Sold (2019)",
+      "type": "Income",
+      "balance": 0,
+      "account_type": "Income"
+    },
+    {
+      "name": "Tips",
+      "type": "Income",
+      "balance": 548808.04,
+      "account_type": "Income",
+      "account_number": "4065"
+    },
+    {
+      "name": "Direct cash tips (1)",
+      "type": "Income",
+      "balance": -26832,
+      "account_type": "Income"
+    },
+    {
+      "name": "Toast",
+      "type": "Income",
+      "balance": 3446421.23,
+      "account_type": "Income"
+    },
+    {
+      "name": "Bar Sales",
+      "type": "Income",
+      "balance": 353892.56,
+      "account_type": "Income"
+    },
+    {
+      "name": "Food Sales",
+      "type": "Income",
+      "balance": 4548818.34,
+      "account_type": "Income"
+    },
+    {
+      "name": "Uncategorized Income",
+      "type": "Income",
+      "balance": 0,
+      "account_type": "Income",
+      "account_number": "49900"
+    },
+    {
+      "name": "-",
+      "type": "Expense",
+      "balance": 4577.15,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Advertising",
+      "type": "Expense",
+      "balance": 7380.44,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Amortization Expense",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense",
+      "account_number": "6040"
+    },
+    {
+      "name": "Automobile Expense",
+      "type": "Expense",
+      "balance": 59822.48,
+      "account_type": "Expense",
+      "account_number": "6110"
+    },
+    {
+      "name": "Gas",
+      "type": "Expense",
+      "balance": 13164.82,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Bad Debt",
+      "type": "Expense",
+      "balance": 4647.5,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Bank Service Charges",
+      "type": "Expense",
+      "balance": 242141.65,
+      "account_type": "Expense",
+      "account_number": "6120"
+    },
+    {
+      "name": "Buildout Expense",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Additional Labor",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Contractor Fees",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Materials",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Tools and Equipment Rental",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Cash Discounts",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense",
+      "account_number": "6130"
+    },
+    {
+      "name": "Cintas",
+      "type": "Expense",
+      "balance": 6454.99,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Contributions",
+      "type": "Expense",
+      "balance": 2751.84,
+      "account_type": "Expense",
+      "account_number": "6140"
+    },
+    {
+      "name": "Credit card fee",
+      "type": "Expense",
+      "balance": 173.17,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Credit Card Over/Short",
+      "type": "Expense",
+      "balance": 808.83,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Depreciation Expense",
+      "type": "Expense",
+      "balance": 218972.8,
+      "account_type": "Expense",
+      "account_number": "6150"
+    },
+    {
+      "name": "Disposable Food Containers",
+      "type": "Expense",
+      "balance": 126461.7,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Donation",
+      "type": "Expense",
+      "balance": 3220,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Dues and Subscriptions",
+      "type": "Expense",
+      "balance": 47397.73,
+      "account_type": "Expense",
+      "account_number": "6160"
+    },
+    {
+      "name": "Education",
+      "type": "Expense",
+      "balance": 160,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Equipment Rental",
+      "type": "Expense",
+      "balance": 119976.97,
+      "account_type": "Expense",
+      "account_number": "6170"
+    },
+    {
+      "name": "Fraud",
+      "type": "Expense",
+      "balance": 6787.65,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Insurance",
+      "type": "Expense",
+      "balance": 188784.65,
+      "account_type": "Expense",
+      "account_number": "6180"
+    },
+    {
+      "name": "Disability Insurance",
+      "type": "Expense",
+      "balance": 11385.5,
+      "account_type": "Expense",
+      "account_number": "6190"
+    },
+    {
+      "name": "Health Insurance",
+      "type": "Expense",
+      "balance": 307993.07,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Liability Insurance",
+      "type": "Expense",
+      "balance": 46057.38,
+      "account_type": "Expense",
+      "account_number": "6185"
+    },
+    {
+      "name": "Work Comp",
+      "type": "Expense",
+      "balance": 158104.41,
+      "account_type": "Expense",
+      "account_number": "6420"
+    },
+    {
+      "name": "Interest Expense",
+      "type": "Expense",
+      "balance": -0.09,
+      "account_type": "Expense",
+      "account_number": "6200"
+    },
+    {
+      "name": "Finance Charge",
+      "type": "Expense",
+      "balance": 2729.09,
+      "account_type": "Expense",
+      "account_number": "6210"
+    },
+    {
+      "name": "Loan Interest",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense",
+      "account_number": "6220"
+    },
+    {
+      "name": "Mortgage",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense",
+      "account_number": "6375"
+    },
+    {
+      "name": "Internet",
+      "type": "Expense",
+      "balance": 229.97,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Late Fee",
+      "type": "Expense",
+      "balance": 1353.69,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Licenses and Permits",
+      "type": "Expense",
+      "balance": 63608.37,
+      "account_type": "Expense",
+      "account_number": "6230"
+    },
+    {
+      "name": "Marketing",
+      "type": "Expense",
+      "balance": 109641.94,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Meals and Entertainment",
+      "type": "Expense",
+      "balance": 68274.59,
+      "account_type": "Expense",
+      "account_number": "6350"
+    },
+    {
+      "name": "Meetings Expenses",
+      "type": "Expense",
+      "balance": 58017.11,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Miscellaneous",
+      "type": "Expense",
+      "balance": 7826.55,
+      "account_type": "Expense",
+      "account_number": "6240"
+    },
+    {
+      "name": "Music and entertainment",
+      "type": "Expense",
+      "balance": 577.44,
+      "account_type": "Expense",
+      "account_number": "6245"
+    },
+    {
+      "name": "Office Supplies",
+      "type": "Expense",
+      "balance": 89902.37,
+      "account_type": "Expense",
+      "account_number": "6550"
+    },
+    {
+      "name": "Payroll Expenses",
+      "type": "Expense",
+      "balance": 9064614.33,
+      "account_type": "Expense",
+      "account_number": "6560"
+    },
+    {
+      "name": "CalSaver",
+      "type": "Expense",
+      "balance": 13890.3,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Employer Taxes and Contribution",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense"
+    },
+    {
+      "name": "CA - Employment Training Tax",
+      "type": "Expense",
+      "balance": 606.83,
+      "account_type": "Expense"
+    },
+    {
+      "name": "CA - Unemployment Company",
+      "type": "Expense",
+      "balance": 16035.86,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Federal Unemployment",
+      "type": "Expense",
+      "balance": 3682.88,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Medicare Company",
+      "type": "Expense",
+      "balance": 20083.75,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Social Security Company",
+      "type": "Expense",
+      "balance": 85875.32,
+      "account_type": "Expense"
+    },
+    {
+      "name": "ERC Refund",
+      "type": "Expense",
+      "balance": -239387.46,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Owners Salary",
+      "type": "Expense",
+      "balance": 54943.1,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Salary",
+      "type": "Expense",
+      "balance": 1346294.81,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Postage and Delivery",
+      "type": "Expense",
+      "balance": 565.03,
+      "account_type": "Expense",
+      "account_number": "6250"
+    },
+    {
+      "name": "Printing and Reproduction",
+      "type": "Expense",
+      "balance": 374.17,
+      "account_type": "Expense",
+      "account_number": "6260"
+    },
+    {
+      "name": "Professional Fees",
+      "type": "Expense",
+      "balance": 184505.11,
+      "account_type": "Expense",
+      "account_number": "6270"
+    },
+    {
+      "name": "Accounting",
+      "type": "Expense",
+      "balance": 67998.7,
+      "account_type": "Expense",
+      "account_number": "6650"
+    },
+    {
+      "name": "Architect",
+      "type": "Expense",
+      "balance": 3500,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Legal Fees",
+      "type": "Expense",
+      "balance": 14990.3,
+      "account_type": "Expense",
+      "account_number": "6280"
+    },
+    {
+      "name": "Medical Expense",
+      "type": "Expense",
+      "balance": 5162.93,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Rent",
+      "type": "Expense",
+      "balance": 2107738.64,
+      "account_type": "Expense",
+      "account_number": "6290"
+    },
+    {
+      "name": "Repairs",
+      "type": "Expense",
+      "balance": 30664.48,
+      "account_type": "Expense",
+      "account_number": "6300"
+    },
+    {
+      "name": "Building Repairs",
+      "type": "Expense",
+      "balance": 28602.06,
+      "account_type": "Expense",
+      "account_number": "6310"
+    },
+    {
+      "name": "Computer Repairs",
+      "type": "Expense",
+      "balance": 1608,
+      "account_type": "Expense",
+      "account_number": "6320"
+    },
+    {
+      "name": "Equipment Repairs",
+      "type": "Expense",
+      "balance": 58312.02,
+      "account_type": "Expense",
+      "account_number": "6330"
+    },
+    {
+      "name": "Janitorial Exp",
+      "type": "Expense",
+      "balance": 126231.26,
+      "account_type": "Expense",
+      "account_number": "6750"
+    },
+    {
+      "name": "Restaurant Equipment Depre",
+      "type": "Expense",
+      "balance": 400.2,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Salaries and wages",
+      "type": "Expense",
+      "balance": -4540,
+      "account_type": "Expense",
+      "account_number": "6810"
+    },
+    {
+      "name": "Supplies",
+      "type": "Expense",
+      "balance": 76698.51,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Taxes",
+      "type": "Expense",
+      "balance": 15375.46,
+      "account_type": "Expense",
+      "account_number": "6820"
+    },
+    {
+      "name": "Federal",
+      "type": "Expense",
+      "balance": 24000.85,
+      "account_type": "Expense",
+      "account_number": "6830"
+    },
+    {
+      "name": "Property",
+      "type": "Expense",
+      "balance": 3488.76,
+      "account_type": "Expense",
+      "account_number": "6850"
+    },
+    {
+      "name": "Sales Tax",
+      "type": "Expense",
+      "balance": 683753.64,
+      "account_type": "Expense"
+    },
+    {
+      "name": "State",
+      "type": "Expense",
+      "balance": 455691.84,
+      "account_type": "Expense",
+      "account_number": "6860"
+    },
+    {
+      "name": "Telephone",
+      "type": "Expense",
+      "balance": 11001.29,
+      "account_type": "Expense",
+      "account_number": "6340"
+    },
+    {
+      "name": "Travel",
+      "type": "Expense",
+      "balance": 17925.69,
+      "account_type": "Expense",
+      "account_number": "6380"
+    },
+    {
+      "name": "Airfare",
+      "type": "Expense",
+      "balance": 28686.6,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Hotel",
+      "type": "Expense",
+      "balance": 10430.32,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Taxi",
+      "type": "Expense",
+      "balance": 9777.42,
+      "account_type": "Expense"
+    },
+    {
+      "name": "Uncategorized Expenses",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense",
+      "account_number": "69800"
+    },
+    {
+      "name": "Utilities",
+      "type": "Expense",
+      "balance": 307472.14,
+      "account_type": "Expense",
+      "account_number": "6390"
+    },
+    {
+      "name": "Gas and Electric",
+      "type": "Expense",
+      "balance": 318411.83,
+      "account_type": "Expense",
+      "account_number": "6400"
+    },
+    {
+      "name": "Water",
+      "type": "Expense",
+      "balance": 0,
+      "account_type": "Expense",
+      "account_number": "6410"
+    }
+  ],
+  "sales_receipts": [
+    {
+      "txn_id": "D9300-1778627942",
+      "txn_number": "57219",
+      "txn_date": "2026-04-02",
+      "customer_name": "Uber",
+      "total_amount": 49.24,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 77.99,
+          "rate": 77.99
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -28.75,
+          "rate": -28.75
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 49.24
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -49.24,
+          "rate": -49.24
+        }
+      ]
+    },
+    {
+      "txn_id": "D932E-1778629496",
+      "txn_number": "57224",
+      "txn_date": "2026-04-30",
+      "customer_name": "Uber",
+      "total_amount": 1442.4,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 2433.36,
+          "rate": 2433.36
+        },
+        {
+          "description": "Tax",
+          "quantity": 1,
+          "amount": 205.66,
+          "rate": 205.66
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -1196.62,
+          "rate": -1196.62
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 1442.4
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -1442.4,
+          "rate": -1442.4
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7C5-1781193342",
+      "txn_number": "57460",
+      "txn_date": "2026-05-01",
+      "customer_name": "Uber",
+      "total_amount": 18.7,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 37.37,
+          "rate": 37.37
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 3.36,
+          "rate": 3.36
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -22.03,
+          "rate": -22.03
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 18.7
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -18.7,
+          "rate": -18.7
+        }
+      ]
+    },
+    {
+      "txn_id": "DA439-1781177477",
+      "txn_number": "57380",
+      "txn_date": "2026-05-02",
+      "customer_name": "Dine In",
+      "total_amount": 7070.79,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 5635.43,
+          "rate": 5635.43
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 351.4,
+          "rate": 351.4
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -89.13,
+          "rate": -89.13
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 633.63,
+          "rate": 633.63
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 538.05,
+          "rate": 538.05
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 1.41,
+          "rate": 1.41
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 7070.79
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -907.24,
+          "rate": -907.24
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -6135.58,
+          "rate": -6135.58
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -27.97,
+          "rate": -27.97
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7CF-1781193741",
+      "txn_number": "57461",
+      "txn_date": "2026-05-02",
+      "customer_name": "Uber",
+      "total_amount": 202.2,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 323.08,
+          "rate": 323.08
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 27.04,
+          "rate": 27.04
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -147.92,
+          "rate": -147.92
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 202.2
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -202.2,
+          "rate": -202.2
+        }
+      ]
+    },
+    {
+      "txn_id": "DA446-1781177560",
+      "txn_number": "57381",
+      "txn_date": "2026-05-03",
+      "customer_name": "Dine In",
+      "total_amount": 6298.44,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4906.14,
+          "rate": 4906.14
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 332.85,
+          "rate": 332.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -22.36,
+          "rate": -22.36
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 600.78,
+          "rate": 600.78
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 481.03,
+          "rate": 481.03
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 6298.44
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -857.11,
+          "rate": -857.11
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -5441.33,
+          "rate": -5441.33
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7D8-1781193766",
+      "txn_number": "57462",
+      "txn_date": "2026-05-03",
+      "customer_name": "Uber",
+      "total_amount": 82.18,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 137.1,
+          "rate": 137.1
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 12.04,
+          "rate": 12.04
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -66.96,
+          "rate": -66.96
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 82.18
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -82.18,
+          "rate": -82.18
+        }
+      ]
+    },
+    {
+      "txn_id": "DA452-1781177618",
+      "txn_number": "57382",
+      "txn_date": "2026-05-04",
+      "customer_name": "Dine In",
+      "total_amount": 2394.33,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1942.65,
+          "rate": 1942.65
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 68.9,
+          "rate": 68.9
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -16.25,
+          "rate": -16.25
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 219.44,
+          "rate": 219.44
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 179.59,
+          "rate": 179.59
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2394.33
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -100.44,
+          "rate": -100.44
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2293.89,
+          "rate": -2293.89
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5CA-1781186317",
+      "txn_number": "57413",
+      "txn_date": "2026-05-04",
+      "customer_name": "DoorDash",
+      "total_amount": 192.86,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 226.79,
+          "rate": 226.79
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 20.42,
+          "rate": 20.42
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -54.35,
+          "rate": -54.35
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 192.86
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -192.86,
+          "rate": -192.86
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7E1-1781193784",
+      "txn_number": "57463",
+      "txn_date": "2026-05-04",
+      "customer_name": "Uber",
+      "total_amount": 180.98,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 268.46,
+          "rate": 268.46
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 21.4,
+          "rate": 21.4
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -108.88,
+          "rate": -108.88
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 180.98
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -180.98,
+          "rate": -180.98
+        }
+      ]
+    },
+    {
+      "txn_id": "DA45E-1781177772",
+      "txn_number": "57383",
+      "txn_date": "2026-05-05",
+      "customer_name": "Dine In",
+      "total_amount": 1502.98,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1274.02,
+          "rate": 1274.02
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 49.9,
+          "rate": 49.9
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -75.22,
+          "rate": -75.22
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 142.03,
+          "rate": 142.03
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 112.25,
+          "rate": 112.25
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 1502.98
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -157.87,
+          "rate": -157.87
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1323.09,
+          "rate": -1323.09
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -22.02,
+          "rate": -22.02
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5D5-1781186345",
+      "txn_number": "57414",
+      "txn_date": "2026-05-05",
+      "customer_name": "DoorDash",
+      "total_amount": 144.36,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 162.2,
+          "rate": 162.2
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 14.6,
+          "rate": 14.6
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -32.44,
+          "rate": -32.44
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 144.36
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -144.36,
+          "rate": -144.36
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7EA-1781193810",
+      "txn_number": "57464",
+      "txn_date": "2026-05-05",
+      "customer_name": "Uber",
+      "total_amount": 81.3,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 148.05,
+          "rate": 148.05
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 12.35,
+          "rate": 12.35
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -79.1,
+          "rate": -79.1
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 81.3
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -81.3,
+          "rate": -81.3
+        }
+      ]
+    },
+    {
+      "txn_id": "DA46B-1781178126",
+      "txn_number": "57384",
+      "txn_date": "2026-05-06",
+      "customer_name": "Dine In",
+      "total_amount": 2146.98,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1696.74,
+          "rate": 1696.74
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 115,
+          "rate": 115
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -13.48,
+          "rate": -13.48
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 184.78,
+          "rate": 184.78
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 163.94,
+          "rate": 163.94
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2146.98
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -295.11,
+          "rate": -295.11
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1851.87,
+          "rate": -1851.87
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5E0-1781186376",
+      "txn_number": "57415",
+      "txn_date": "2026-05-06",
+      "customer_name": "DoorDash",
+      "total_amount": 138.25,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 151.13,
+          "rate": 151.13
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 13.6,
+          "rate": 13.6
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -28.73,
+          "rate": -28.73
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 2.25,
+          "rate": 2.25
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 138.25
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -138.25,
+          "rate": -138.25
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7F3-1781193871",
+      "txn_number": "57465",
+      "txn_date": "2026-05-06",
+      "customer_name": "Uber",
+      "total_amount": 19.24,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 36.77,
+          "rate": 36.77
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 3.31,
+          "rate": 3.31
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -20.84,
+          "rate": -20.84
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 19.24
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -19.24,
+          "rate": -19.24
+        }
+      ]
+    },
+    {
+      "txn_id": "DA477-1781178181",
+      "txn_number": "57385",
+      "txn_date": "2026-05-07",
+      "customer_name": "Dine In",
+      "total_amount": 2975.5,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2353.05,
+          "rate": 2353.05
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 187.4,
+          "rate": 187.4
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -19.29,
+          "rate": -19.29
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 223.74,
+          "rate": 223.74
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 230.6,
+          "rate": 230.6
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2975.5
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -552.71,
+          "rate": -552.71
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2422.79,
+          "rate": -2422.79
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5EB-1781186412",
+      "txn_number": "57416",
+      "txn_date": "2026-05-07",
+      "customer_name": "DoorDash",
+      "total_amount": 526.08,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 606.49,
+          "rate": 606.49
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 51.83,
+          "rate": 51.83
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -137.24,
+          "rate": -137.24
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 5,
+          "rate": 5
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 526.08
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -526.08,
+          "rate": -526.08
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7FC-1781193896",
+      "txn_number": "57466",
+      "txn_date": "2026-05-07",
+      "customer_name": "Uber",
+      "total_amount": 119.58,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 184.86,
+          "rate": 184.86
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 13.03,
+          "rate": 13.03
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -78.31,
+          "rate": -78.31
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 119.58
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -119.58,
+          "rate": -119.58
+        }
+      ]
+    },
+    {
+      "txn_id": "DA483-1781178322",
+      "txn_number": "57386",
+      "txn_date": "2026-05-08",
+      "customer_name": "Dine In",
+      "total_amount": 9283.09,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 7099.1,
+          "rate": 7099.1
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 714.1,
+          "rate": 714.1
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -149.59,
+          "rate": -149.59
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 925.19,
+          "rate": 925.19
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 694.29,
+          "rate": 694.29
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 9283.09
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -1104.76,
+          "rate": -1104.76
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -8178.33,
+          "rate": -8178.33
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5F6-1781186466",
+      "txn_number": "57417",
+      "txn_date": "2026-05-08",
+      "customer_name": "DoorDash",
+      "total_amount": 491.37,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 604.58,
+          "rate": 604.58
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 51.64,
+          "rate": 51.64
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -164.85,
+          "rate": -164.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 491.37
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -491.37,
+          "rate": -491.37
+        }
+      ]
+    },
+    {
+      "txn_id": "DA805-1781193923",
+      "txn_number": "57467",
+      "txn_date": "2026-05-08",
+      "customer_name": "Uber",
+      "total_amount": 253.48,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 361.12,
+          "rate": 361.12
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 32.49,
+          "rate": 32.49
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -140.13,
+          "rate": -140.13
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 253.48
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -253.48,
+          "rate": -253.48
+        }
+      ]
+    },
+    {
+      "txn_id": "DA48F-1781178450",
+      "txn_number": "57387",
+      "txn_date": "2026-05-09",
+      "customer_name": "Dine In",
+      "total_amount": 8587.78,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 6879.74,
+          "rate": 6879.74
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 461.85,
+          "rate": 461.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -198.08,
+          "rate": -198.08
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 793.82,
+          "rate": 793.82
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 650.45,
+          "rate": 650.45
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 8587.78
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -943.82,
+          "rate": -943.82
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -7643.96,
+          "rate": -7643.96
+        }
+      ]
+    },
+    {
+      "txn_id": "DA601-1781186495",
+      "txn_number": "57418",
+      "txn_date": "2026-05-09",
+      "customer_name": "DoorDash",
+      "total_amount": 871.62,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 987.15,
+          "rate": 987.15
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 85.68,
+          "rate": 85.68
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -201.21,
+          "rate": -201.21
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 871.62
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -871.62,
+          "rate": -871.62
+        }
+      ]
+    },
+    {
+      "txn_id": "DA80E-1781193962",
+      "txn_number": "57468",
+      "txn_date": "2026-05-09",
+      "customer_name": "Uber",
+      "total_amount": 36.67,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 75.04,
+          "rate": 75.04
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 6.75,
+          "rate": 6.75
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -45.12,
+          "rate": -45.12
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 36.67
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -36.67,
+          "rate": -36.67
+        }
+      ]
+    },
+    {
+      "txn_id": "DA49B-1781180102",
+      "txn_number": "57388",
+      "txn_date": "2026-05-10",
+      "customer_name": "Dine In",
+      "total_amount": 10716.61,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 8425.34,
+          "rate": 8425.34
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 621.65,
+          "rate": 621.65
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -127.16,
+          "rate": -127.16
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 974.05,
+          "rate": 974.05
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 822.73,
+          "rate": 822.73
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 10716.61
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -2111.04,
+          "rate": -2111.04
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -8605.57,
+          "rate": -8605.57
+        }
+      ]
+    },
+    {
+      "txn_id": "DA60C-1781186816",
+      "txn_number": "57419",
+      "txn_date": "2026-05-10",
+      "customer_name": "DoorDash",
+      "total_amount": 1071.76,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 1230.23,
+          "rate": 1230.23
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 107.72,
+          "rate": 107.72
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -270.75,
+          "rate": -270.75
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 4.56,
+          "rate": 4.56
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 1071.76
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -1071.76,
+          "rate": -1071.76
+        }
+      ]
+    },
+    {
+      "txn_id": "DA761-1781192686",
+      "txn_number": "57450",
+      "txn_date": "2026-05-10",
+      "customer_name": "GRUBHUB",
+      "total_amount": 222.8,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 289.16,
+          "rate": 289.16
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 26.11,
+          "rate": 26.11
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -92.47,
+          "rate": -92.47
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 222.8
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -222.8,
+          "rate": -222.8
+        }
+      ]
+    },
+    {
+      "txn_id": "DA817-1781193987",
+      "txn_number": "57469",
+      "txn_date": "2026-05-10",
+      "customer_name": "Uber",
+      "total_amount": 107.13,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 176.78,
+          "rate": 176.78
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 15.92,
+          "rate": 15.92
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -85.57,
+          "rate": -85.57
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 107.13
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -107.13,
+          "rate": -107.13
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4A7-1781180249",
+      "txn_number": "57389",
+      "txn_date": "2026-05-11",
+      "customer_name": "Dine In",
+      "total_amount": 2156.98,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1785.68,
+          "rate": 1785.68
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 82.9,
+          "rate": 82.9
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -97.27,
+          "rate": -97.27
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 226.31,
+          "rate": 226.31
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 159.36,
+          "rate": 159.36
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2156.98
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -83.99,
+          "rate": -83.99
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2072.99,
+          "rate": -2072.99
+        }
+      ]
+    },
+    {
+      "txn_id": "DA617-1781186845",
+      "txn_number": "57420",
+      "txn_date": "2026-05-11",
+      "customer_name": "DoorDash",
+      "total_amount": 340.71,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 414.16,
+          "rate": 414.16
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 35.17,
+          "rate": 35.17
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -108.62,
+          "rate": -108.62
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 340.71
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -340.71,
+          "rate": -340.71
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4B3-1781180340",
+      "txn_number": "57390",
+      "txn_date": "2026-05-12",
+      "customer_name": "Dine In",
+      "total_amount": 2734.9,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2102.13,
+          "rate": 2102.13
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 183.95,
+          "rate": 183.95
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -36.58,
+          "rate": -36.58
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 280.31,
+          "rate": 280.31
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 205.09,
+          "rate": 205.09
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2734.9
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -347.85,
+          "rate": -347.85
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2387.05,
+          "rate": -2387.05
+        }
+      ]
+    },
+    {
+      "txn_id": "DA622-1781186873",
+      "txn_number": "57421",
+      "txn_date": "2026-05-12",
+      "customer_name": "DoorDash",
+      "total_amount": 425.4,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 517.22,
+          "rate": 517.22
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 44.42,
+          "rate": 44.42
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -136.24,
+          "rate": -136.24
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 425.4
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -425.4,
+          "rate": -425.4
+        }
+      ]
+    },
+    {
+      "txn_id": "DA820-1781194021",
+      "txn_number": "57470",
+      "txn_date": "2026-05-12",
+      "customer_name": "Uber",
+      "total_amount": 55.62,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 86.49,
+          "rate": 86.49
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 7.65,
+          "rate": 7.65
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -38.52,
+          "rate": -38.52
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 55.62
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -55.62,
+          "rate": -55.62
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4BF-1781180397",
+      "txn_number": "57391",
+      "txn_date": "2026-05-13",
+      "customer_name": "Dine In",
+      "total_amount": 2320.47,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1833.15,
+          "rate": 1833.15
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 161.85,
+          "rate": 161.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -56.4,
+          "rate": -56.4
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 207.38,
+          "rate": 207.38
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 174.49,
+          "rate": 174.49
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2320.47
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -372.63,
+          "rate": -372.63
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1947.84,
+          "rate": -1947.84
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4CB-1781180587",
+      "txn_number": "57392",
+      "txn_date": "2026-05-14",
+      "customer_name": "Dine In",
+      "total_amount": 2273.58,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1839.33,
+          "rate": 1839.33
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 107.5,
+          "rate": 107.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -40.94,
+          "rate": -40.94
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 196.3,
+          "rate": 196.3
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 171.39,
+          "rate": 171.39
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2273.58
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -117.62,
+          "rate": -117.62
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2105.96,
+          "rate": -2105.96
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -50,
+          "rate": -50
+        }
+      ]
+    },
+    {
+      "txn_id": "DA62D-1781186926",
+      "txn_number": "57422",
+      "txn_date": "2026-05-14",
+      "customer_name": "DoorDash",
+      "total_amount": 612.1,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 773.65,
+          "rate": 773.65
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 64.53,
+          "rate": 64.53
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -226.08,
+          "rate": -226.08
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 612.1
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -612.1,
+          "rate": -612.1
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4D8-1781180668",
+      "txn_number": "57393",
+      "txn_date": "2026-05-15",
+      "customer_name": "Dine In",
+      "total_amount": 7237.05,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 5641.49,
+          "rate": 5641.49
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 437.2,
+          "rate": 437.2
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -92.61,
+          "rate": -92.61
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 704.43,
+          "rate": 704.43
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 546.54,
+          "rate": 546.54
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 7237.05
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -459.99,
+          "rate": -459.99
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -6777.06,
+          "rate": -6777.06
+        }
+      ]
+    },
+    {
+      "txn_id": "DA643-1781189821",
+      "txn_number": "57424",
+      "txn_date": "2026-05-15",
+      "customer_name": "DoorDash",
+      "total_amount": 498.62,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 640.05,
+          "rate": 640.05
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 53.38,
+          "rate": 53.38
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -194.81,
+          "rate": -194.81
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 498.62
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -498.62,
+          "rate": -498.62
+        }
+      ]
+    },
+    {
+      "txn_id": "DA829-1781194254",
+      "txn_number": "57471",
+      "txn_date": "2026-05-15",
+      "customer_name": "Uber",
+      "total_amount": 151.26,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 232.12,
+          "rate": 232.12
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 19.26,
+          "rate": 19.26
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -100.12,
+          "rate": -100.12
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 151.26
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -151.26,
+          "rate": -151.26
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4E4-1781180715",
+      "txn_number": "57394",
+      "txn_date": "2026-05-16",
+      "customer_name": "Dine In",
+      "total_amount": 5284.24,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4226.6,
+          "rate": 4226.6
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 269.95,
+          "rate": 269.95
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -51.95,
+          "rate": -51.95
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 435.42,
+          "rate": 435.42
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 404.22,
+          "rate": 404.22
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 5284.24
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -504.35,
+          "rate": -504.35
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4779.89,
+          "rate": -4779.89
+        }
+      ]
+    },
+    {
+      "txn_id": "DA638-1781189784",
+      "txn_number": "57423",
+      "txn_date": "2026-05-16",
+      "customer_name": "DoorDash",
+      "total_amount": 758.12,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 902.55,
+          "rate": 902.55
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 79.11,
+          "rate": 79.11
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -210.72,
+          "rate": -210.72
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -12.82,
+          "rate": -12.82
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 758.12
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -758.12,
+          "rate": -758.12
+        }
+      ]
+    },
+    {
+      "txn_id": "DA76B-1781192758",
+      "txn_number": "57451",
+      "txn_date": "2026-05-16",
+      "customer_name": "GRUBHUB",
+      "total_amount": 71.23,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 86.37,
+          "rate": 86.37
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 7.77,
+          "rate": 7.77
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -22.91,
+          "rate": -22.91
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 71.23
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -71.23,
+          "rate": -71.23
+        }
+      ]
+    },
+    {
+      "txn_id": "DA832-1781194278",
+      "txn_number": "57472",
+      "txn_date": "2026-05-16",
+      "customer_name": "Uber",
+      "total_amount": 272.06,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 433.68,
+          "rate": 433.68
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 32.52,
+          "rate": 32.52
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -194.14,
+          "rate": -194.14
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 272.06
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -272.06,
+          "rate": -272.06
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4F0-1781180805",
+      "txn_number": "57395",
+      "txn_date": "2026-05-17",
+      "customer_name": "Dine In",
+      "total_amount": 4319.58,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 3562.51,
+          "rate": 3562.51
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 141,
+          "rate": 141
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -73.22,
+          "rate": -73.22
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 362.88,
+          "rate": 362.88
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 326.41,
+          "rate": 326.41
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 4319.58
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -542.48,
+          "rate": -542.48
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -3777.1,
+          "rate": -3777.1
+        }
+      ]
+    },
+    {
+      "txn_id": "DA64E-1781189929",
+      "txn_number": "57425",
+      "txn_date": "2026-05-17",
+      "customer_name": "DoorDash",
+      "total_amount": 567.23,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 681.07,
+          "rate": 681.07
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 57.47,
+          "rate": 57.47
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -171.31,
+          "rate": -171.31
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 567.23
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -567.23,
+          "rate": -567.23
+        }
+      ]
+    },
+    {
+      "txn_id": "DA83B-1781194299",
+      "txn_number": "57473",
+      "txn_date": "2026-05-17",
+      "customer_name": "Uber",
+      "total_amount": 216.22,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 340.17,
+          "rate": 340.17
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 29.37,
+          "rate": 29.37
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -153.32,
+          "rate": -153.32
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 216.22
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -216.22,
+          "rate": -216.22
+        }
+      ]
+    },
+    {
+      "txn_id": "DA4FC-1781180859",
+      "txn_number": "57396",
+      "txn_date": "2026-05-18",
+      "customer_name": "Dine In",
+      "total_amount": 2557.09,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1995.45,
+          "rate": 1995.45
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 143.45,
+          "rate": 143.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -9.24,
+          "rate": -9.24
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 235.67,
+          "rate": 235.67
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 191.76,
+          "rate": 191.76
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2557.09
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -348.68,
+          "rate": -348.68
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2208.41,
+          "rate": -2208.41
+        }
+      ]
+    },
+    {
+      "txn_id": "DA659-1781189982",
+      "txn_number": "57426",
+      "txn_date": "2026-05-18",
+      "customer_name": "DoorDash",
+      "total_amount": 629.53,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 739.43,
+          "rate": 739.43
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 64.45,
+          "rate": 64.45
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -179.37,
+          "rate": -179.37
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 5.02,
+          "rate": 5.02
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 629.53
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -629.53,
+          "rate": -629.53
+        }
+      ]
+    },
+    {
+      "txn_id": "DA844-1781194319",
+      "txn_number": "57474",
+      "txn_date": "2026-05-18",
+      "customer_name": "Uber",
+      "total_amount": 28.9,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 47.62,
+          "rate": 47.62
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 4.17,
+          "rate": 4.17
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -22.89,
+          "rate": -22.89
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 28.9
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -28.9,
+          "rate": -28.9
+        }
+      ]
+    },
+    {
+      "txn_id": "DA508-1781180930",
+      "txn_number": "57397",
+      "txn_date": "2026-05-19",
+      "customer_name": "Dine In",
+      "total_amount": 3341.11,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2520,
+          "rate": 2520
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 259.5,
+          "rate": 259.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -61.75,
+          "rate": -61.75
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 378.6,
+          "rate": 378.6
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 244.76,
+          "rate": 244.76
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 3341.11
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -306.96,
+          "rate": -306.96
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -3034.15,
+          "rate": -3034.15
+        }
+      ]
+    },
+    {
+      "txn_id": "DA664-1781190011",
+      "txn_number": "57427",
+      "txn_date": "2026-05-19",
+      "customer_name": "DoorDash",
+      "total_amount": 209.76,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 251.7,
+          "rate": 251.7
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 21.59,
+          "rate": 21.59
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -63.53,
+          "rate": -63.53
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 209.76
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -209.76,
+          "rate": -209.76
+        }
+      ]
+    },
+    {
+      "txn_id": "DA84D-1781194348",
+      "txn_number": "57475",
+      "txn_date": "2026-05-19",
+      "customer_name": "Uber",
+      "total_amount": 59.09,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 96.92,
+          "rate": 96.92
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 8.72,
+          "rate": 8.72
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -46.55,
+          "rate": -46.55
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 59.09
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -59.09,
+          "rate": -59.09
+        }
+      ]
+    },
+    {
+      "txn_id": "DA514-1781180998",
+      "txn_number": "57398",
+      "txn_date": "2026-05-20",
+      "customer_name": "Dine In",
+      "total_amount": 2562.49,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1910.1,
+          "rate": 1910.1
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 238,
+          "rate": 238
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -19.35,
+          "rate": -19.35
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 236.67,
+          "rate": 236.67
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 197.07,
+          "rate": 197.07
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2562.49
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -529.83,
+          "rate": -529.83
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2032.66,
+          "rate": -2032.66
+        }
+      ]
+    },
+    {
+      "txn_id": "DA66F-1781190854",
+      "txn_number": "57428",
+      "txn_date": "2026-05-20",
+      "customer_name": "DoorDash",
+      "total_amount": 307.79,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 367.6,
+          "rate": 367.6
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 32.44,
+          "rate": 32.44
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -92.25,
+          "rate": -92.25
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 307.79
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -307.79,
+          "rate": -307.79
+        }
+      ]
+    },
+    {
+      "txn_id": "DA520-1781181070",
+      "txn_number": "57399",
+      "txn_date": "2026-05-21",
+      "customer_name": "Dine In",
+      "total_amount": 4608.88,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 3627.9,
+          "rate": 3627.9
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 266.35,
+          "rate": 266.35
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -42.2,
+          "rate": -42.2
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 410.3,
+          "rate": 410.3
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 346.53,
+          "rate": 346.53
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 4608.88
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -605.28,
+          "rate": -605.28
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4003.6,
+          "rate": -4003.6
+        }
+      ]
+    },
+    {
+      "txn_id": "DA67A-1781190895",
+      "txn_number": "57429",
+      "txn_date": "2026-05-21",
+      "customer_name": "DoorDash",
+      "total_amount": 509.51,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 601.34,
+          "rate": 601.34
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 52.42,
+          "rate": 52.42
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -144.25,
+          "rate": -144.25
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 509.51
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -509.51,
+          "rate": -509.51
+        }
+      ]
+    },
+    {
+      "txn_id": "DA856-1781194374",
+      "txn_number": "57476",
+      "txn_date": "2026-05-21",
+      "customer_name": "Uber",
+      "total_amount": 142.38,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 203.3,
+          "rate": 203.3
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 17.2,
+          "rate": 17.2
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -78.12,
+          "rate": -78.12
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 142.38
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -142.38,
+          "rate": -142.38
+        }
+      ]
+    },
+    {
+      "txn_id": "DA52C-1781181139",
+      "txn_number": "57400",
+      "txn_date": "2026-05-22",
+      "customer_name": "Dine In",
+      "total_amount": 7533.03,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 5831.7,
+          "rate": 5831.7
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 516.85,
+          "rate": 516.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -104.61,
+          "rate": -104.61
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 713.92,
+          "rate": 713.92
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 575.17,
+          "rate": 575.17
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 7533.03
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -464.54,
+          "rate": -464.54
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -7068.49,
+          "rate": -7068.49
+        }
+      ]
+    },
+    {
+      "txn_id": "DA685-1781190924",
+      "txn_number": "57430",
+      "txn_date": "2026-05-22",
+      "customer_name": "DoorDash",
+      "total_amount": 1200.92,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 1448.23,
+          "rate": 1448.23
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 124.58,
+          "rate": 124.58
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -371.89,
+          "rate": -371.89
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 1200.92
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -1200.92,
+          "rate": -1200.92
+        }
+      ]
+    },
+    {
+      "txn_id": "DA775-1781192809",
+      "txn_number": "57452",
+      "txn_date": "2026-05-22",
+      "customer_name": "GRUBHUB",
+      "total_amount": 266.68,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 287.46,
+          "rate": 287.46
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 25.87,
+          "rate": 25.87
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -58.76,
+          "rate": -58.76
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 12.11,
+          "rate": 12.11
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 266.68
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -266.68,
+          "rate": -266.68
+        }
+      ]
+    },
+    {
+      "txn_id": "DA85F-1781194400",
+      "txn_number": "57477",
+      "txn_date": "2026-05-22",
+      "customer_name": "Uber",
+      "total_amount": 57.37,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 89.55,
+          "rate": 89.55
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 6.95,
+          "rate": 6.95
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -39.13,
+          "rate": -39.13
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 57.37
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -57.37,
+          "rate": -57.37
+        }
+      ]
+    },
+    {
+      "txn_id": "DA538-1781181182",
+      "txn_number": "57401",
+      "txn_date": "2026-05-23",
+      "customer_name": "Dine In",
+      "total_amount": 6192.96,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4818.7,
+          "rate": 4818.7
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 352.4,
+          "rate": 352.4
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -74.97,
+          "rate": -74.97
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 626.69,
+          "rate": 626.69
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 470.14,
+          "rate": 470.14
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 6192.96
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -623.68,
+          "rate": -623.68
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -5569.28,
+          "rate": -5569.28
+        }
+      ]
+    },
+    {
+      "txn_id": "DA690-1781190947",
+      "txn_number": "57431",
+      "txn_date": "2026-05-23",
+      "customer_name": "DoorDash",
+      "total_amount": 318.24,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 379.35,
+          "rate": 379.35
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 33.49,
+          "rate": 33.49
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -94.6,
+          "rate": -94.6
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 318.24
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -318.24,
+          "rate": -318.24
+        }
+      ]
+    },
+    {
+      "txn_id": "DA868-1781194424",
+      "txn_number": "57478",
+      "txn_date": "2026-05-23",
+      "customer_name": "Uber",
+      "total_amount": 50.38,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 75.94,
+          "rate": 75.94
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 6.69,
+          "rate": 6.69
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -32.25,
+          "rate": -32.25
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 50.38
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -50.38,
+          "rate": -50.38
+        }
+      ]
+    },
+    {
+      "txn_id": "DA544-1781181277",
+      "txn_number": "57402",
+      "txn_date": "2026-05-24",
+      "customer_name": "Dine In",
+      "total_amount": 5710.49,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4499.4,
+          "rate": 4499.4
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 253.45,
+          "rate": 253.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -37.6,
+          "rate": -37.6
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 562.98,
+          "rate": 562.98
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 432.26,
+          "rate": 432.26
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 5710.49
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -1182.94,
+          "rate": -1182.94
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4527.55,
+          "rate": -4527.55
+        }
+      ]
+    },
+    {
+      "txn_id": "DA69B-1781190984",
+      "txn_number": "57432",
+      "txn_date": "2026-05-24",
+      "customer_name": "DoorDash",
+      "total_amount": 408,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 532.97,
+          "rate": 532.97
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 43.08,
+          "rate": 43.08
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -168.05,
+          "rate": -168.05
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 408
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -408,
+          "rate": -408
+        }
+      ]
+    },
+    {
+      "txn_id": "DA77F-1781192853",
+      "txn_number": "57453",
+      "txn_date": "2026-05-24",
+      "customer_name": "GRUBHUB",
+      "total_amount": 24.02,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 29.24,
+          "rate": 29.24
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 2.63,
+          "rate": 2.63
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -7.85,
+          "rate": -7.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 24.02
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -24.02,
+          "rate": -24.02
+        }
+      ]
+    },
+    {
+      "txn_id": "DA871-1781194448",
+      "txn_number": "57479",
+      "txn_date": "2026-05-24",
+      "customer_name": "Uber",
+      "total_amount": 6.87,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 22.3,
+          "rate": 22.3
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 2.02,
+          "rate": 2.02
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -17.45,
+          "rate": -17.45
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 6.87
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -6.87,
+          "rate": -6.87
+        }
+      ]
+    },
+    {
+      "txn_id": "DA550-1781181334",
+      "txn_number": "57403",
+      "txn_date": "2026-05-25",
+      "customer_name": "Dine In",
+      "total_amount": 3339.68,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2660.5,
+          "rate": 2660.5
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 133.45,
+          "rate": 133.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -11.37,
+          "rate": -11.37
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 300.65,
+          "rate": 300.65
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 256.45,
+          "rate": 256.45
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 3339.68
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -632.28,
+          "rate": -632.28
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2707.4,
+          "rate": -2707.4
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6A6-1781191008",
+      "txn_number": "57433",
+      "txn_date": "2026-05-25",
+      "customer_name": "DoorDash",
+      "total_amount": 328.83,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 384.7,
+          "rate": 384.7
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 33.55,
+          "rate": 33.55
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -89.42,
+          "rate": -89.42
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 328.83
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -328.83,
+          "rate": -328.83
+        }
+      ]
+    },
+    {
+      "txn_id": "DA87A-1781194469",
+      "txn_number": "57480",
+      "txn_date": "2026-05-25",
+      "customer_name": "Uber",
+      "total_amount": 88.95,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 156.22,
+          "rate": 156.22
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 8.55,
+          "rate": 8.55
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -75.82,
+          "rate": -75.82
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 88.95
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -88.95,
+          "rate": -88.95
+        }
+      ]
+    },
+    {
+      "txn_id": "DA55C-1781181385",
+      "txn_number": "57404",
+      "txn_date": "2026-05-26",
+      "customer_name": "Dine In",
+      "total_amount": 3359.91,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2603.44,
+          "rate": 2603.44
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 168.45,
+          "rate": 168.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -14.36,
+          "rate": -14.36
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 352.05,
+          "rate": 352.05
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 250.33,
+          "rate": 250.33
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 3359.91
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -737.73,
+          "rate": -737.73
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2622.18,
+          "rate": -2622.18
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6B1-1781191034",
+      "txn_number": "57434",
+      "txn_date": "2026-05-26",
+      "customer_name": "DoorDash",
+      "total_amount": 231.22,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 282.76,
+          "rate": 282.76
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 24.4,
+          "rate": 24.4
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -75.94,
+          "rate": -75.94
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 231.22
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -231.22,
+          "rate": -231.22
+        }
+      ]
+    },
+    {
+      "txn_id": "DA883-1781194489",
+      "txn_number": "57481",
+      "txn_date": "2026-05-26",
+      "customer_name": "Uber",
+      "total_amount": 110.8,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 177.19,
+          "rate": 177.19
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 14.34,
+          "rate": 14.34
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -80.73,
+          "rate": -80.73
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 110.8
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -110.8,
+          "rate": -110.8
+        }
+      ]
+    },
+    {
+      "txn_id": "DA568-1781181459",
+      "txn_number": "57405",
+      "txn_date": "2026-05-27",
+      "customer_name": "Dine In",
+      "total_amount": 2259.97,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1787.29,
+          "rate": 1787.29
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 143.8,
+          "rate": 143.8
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -46.53,
+          "rate": -46.53
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 175.84,
+          "rate": 175.84
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 169.57,
+          "rate": 169.57
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 30,
+          "rate": 30
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2259.97
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -316.36,
+          "rate": -316.36
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1943.61,
+          "rate": -1943.61
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6BC-1781191638",
+      "txn_number": "57435",
+      "txn_date": "2026-05-27",
+      "customer_name": "DoorDash",
+      "total_amount": 350.69,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 412.7,
+          "rate": 412.7
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 35.44,
+          "rate": 35.44
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -99.45,
+          "rate": -99.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 2,
+          "rate": 2
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 350.69
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -350.69,
+          "rate": -350.69
+        }
+      ]
+    },
+    {
+      "txn_id": "DA789-1781192894",
+      "txn_number": "57454",
+      "txn_date": "2026-05-27",
+      "customer_name": "GRUBHUB",
+      "total_amount": 64.12,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 77.45,
+          "rate": 77.45
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 6.97,
+          "rate": 6.97
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -20.3,
+          "rate": -20.3
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 64.12
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -64.12,
+          "rate": -64.12
+        }
+      ]
+    },
+    {
+      "txn_id": "DA88C-1781194511",
+      "txn_number": "57482",
+      "txn_date": "2026-05-27",
+      "customer_name": "Uber",
+      "total_amount": 73.63,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 109.19,
+          "rate": 109.19
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 9.83,
+          "rate": 9.83
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -45.39,
+          "rate": -45.39
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 73.63
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -73.63,
+          "rate": -73.63
+        }
+      ]
+    },
+    {
+      "txn_id": "DA574-1781181509",
+      "txn_number": "57406",
+      "txn_date": "2026-05-28",
+      "customer_name": "Dine In",
+      "total_amount": 3116.37,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2451.2,
+          "rate": 2451.2
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 151.95,
+          "rate": 151.95
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -8,
+          "rate": -8
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 284.41,
+          "rate": 284.41
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 236.81,
+          "rate": 236.81
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 3116.37
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -231.68,
+          "rate": -231.68
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2834.69,
+          "rate": -2834.69
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -50,
+          "rate": -50
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6C7-1781191666",
+      "txn_number": "57436",
+      "txn_date": "2026-05-28",
+      "customer_name": "DoorDash",
+      "total_amount": 366.5,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 427.82,
+          "rate": 427.82
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 37.44,
+          "rate": 37.44
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -98.76,
+          "rate": -98.76
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 366.5
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -366.5,
+          "rate": -366.5
+        }
+      ]
+    },
+    {
+      "txn_id": "DA793-1781192935",
+      "txn_number": "57455",
+      "txn_date": "2026-05-28",
+      "customer_name": "GRUBHUB",
+      "total_amount": 26.52,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 32.25,
+          "rate": 32.25
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 2.9,
+          "rate": 2.9
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -8.63,
+          "rate": -8.63
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 26.52
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -26.52,
+          "rate": -26.52
+        }
+      ]
+    },
+    {
+      "txn_id": "DA895-1781194530",
+      "txn_number": "57483",
+      "txn_date": "2026-05-28",
+      "customer_name": "Uber",
+      "total_amount": 36.6,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 61.41,
+          "rate": 61.41
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 4.76,
+          "rate": 4.76
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -29.57,
+          "rate": -29.57
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 36.6
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -36.6,
+          "rate": -36.6
+        }
+      ]
+    },
+    {
+      "txn_id": "DA581-1781181585",
+      "txn_number": "57407",
+      "txn_date": "2026-05-29",
+      "customer_name": "Dine In",
+      "total_amount": 6093.6,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4955.6,
+          "rate": 4955.6
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 274.5,
+          "rate": 274.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -104.66,
+          "rate": -104.66
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 504.18,
+          "rate": 504.18
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 463.98,
+          "rate": 463.98
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 6093.6
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -475.08,
+          "rate": -475.08
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -5618.52,
+          "rate": -5618.52
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6D2-1781191714",
+      "txn_number": "57437",
+      "txn_date": "2026-05-29",
+      "customer_name": "DoorDash",
+      "total_amount": 865.81,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 1033.2,
+          "rate": 1033.2
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 89.82,
+          "rate": 89.82
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -257.21,
+          "rate": -257.21
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 865.81
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -865.81,
+          "rate": -865.81
+        }
+      ]
+    },
+    {
+      "txn_id": "DA79D-1781193019",
+      "txn_number": "57456",
+      "txn_date": "2026-05-29",
+      "customer_name": "GRUBHUB",
+      "total_amount": 43.31,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 52.42,
+          "rate": 52.42
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 4.72,
+          "rate": 4.72
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -13.83,
+          "rate": -13.83
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 43.31
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -43.31,
+          "rate": -43.31
+        }
+      ]
+    },
+    {
+      "txn_id": "DA89E-1781194551",
+      "txn_number": "57484",
+      "txn_date": "2026-05-29",
+      "customer_name": "Uber",
+      "total_amount": 205.75,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 300.39,
+          "rate": 300.39
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 25.67,
+          "rate": 25.67
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -120.31,
+          "rate": -120.31
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 205.75
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -205.75,
+          "rate": -205.75
+        }
+      ]
+    },
+    {
+      "txn_id": "DA58D-1781181630",
+      "txn_number": "57408",
+      "txn_date": "2026-05-30",
+      "customer_name": "Dine In",
+      "total_amount": 7054.92,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 5691.35,
+          "rate": 5691.35
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 382.75,
+          "rate": 382.75
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -31.88,
+          "rate": -31.88
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 465.48,
+          "rate": 465.48
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 547.22,
+          "rate": 547.22
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 7054.92
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -901.06,
+          "rate": -901.06
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -6091.55,
+          "rate": -6091.55
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -62.31,
+          "rate": -62.31
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6DD-1781191746",
+      "txn_number": "57438",
+      "txn_date": "2026-05-30",
+      "customer_name": "DoorDash",
+      "total_amount": 709.69,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 865.26,
+          "rate": 865.26
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 73.41,
+          "rate": 73.41
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -228.98,
+          "rate": -228.98
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 709.69
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -709.69,
+          "rate": -709.69
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8A7-1781194568",
+      "txn_number": "57485",
+      "txn_date": "2026-05-30",
+      "customer_name": "Uber",
+      "total_amount": 186.22,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 249.04,
+          "rate": 249.04
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 22.05,
+          "rate": 22.05
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -84.87,
+          "rate": -84.87
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 186.22
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -186.22,
+          "rate": -186.22
+        }
+      ]
+    },
+    {
+      "txn_id": "DA59A-1781181749",
+      "txn_number": "57409",
+      "txn_date": "2026-05-31",
+      "customer_name": "Dine In",
+      "total_amount": 5452.81,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4379.75,
+          "rate": 4379.75
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 275.45,
+          "rate": 275.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -63.41,
+          "rate": -63.41
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 445.38,
+          "rate": 445.38
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 415.64,
+          "rate": 415.64
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 5452.81
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -615.81,
+          "rate": -615.81
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4837,
+          "rate": -4837
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6E8-1781191773",
+      "txn_number": "57439",
+      "txn_date": "2026-05-31",
+      "customer_name": "DoorDash",
+      "total_amount": 642.56,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 753,
+          "rate": 753
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 64.61,
+          "rate": 64.61
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -183.76,
+          "rate": -183.76
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 8.71,
+          "rate": 8.71
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 642.56
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -642.56,
+          "rate": -642.56
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7A7-1781193109",
+      "txn_number": "57457",
+      "txn_date": "2026-05-31",
+      "customer_name": "GRUBHUB",
+      "total_amount": 32.98,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 40.01,
+          "rate": 40.01
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 3.6,
+          "rate": 3.6
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -10.63,
+          "rate": -10.63
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 32.98
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -32.98,
+          "rate": -32.98
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5A6-1781181799",
+      "txn_number": "57410",
+      "txn_date": "2026-06-01",
+      "customer_name": "Dine In",
+      "total_amount": 2612.14,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2063.4,
+          "rate": 2063.4
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 142.4,
+          "rate": 142.4
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -23.37,
+          "rate": -23.37
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 233.19,
+          "rate": 233.19
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 196.52,
+          "rate": 196.52
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2612.14
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -636.41,
+          "rate": -636.41
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1975.73,
+          "rate": -1975.73
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6F3-1781191805",
+      "txn_number": "57440",
+      "txn_date": "2026-06-01",
+      "customer_name": "DoorDash",
+      "total_amount": 659.51,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 790.77,
+          "rate": 790.77
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 68.41,
+          "rate": 68.41
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -199.67,
+          "rate": -199.67
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 659.51
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -659.51,
+          "rate": -659.51
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8B0-1781194596",
+      "txn_number": "57486",
+      "txn_date": "2026-06-01",
+      "customer_name": "Uber",
+      "total_amount": 21.79,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 44.29,
+          "rate": 44.29
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 4,
+          "rate": 4
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -26.5,
+          "rate": -26.5
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 21.79
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -21.79,
+          "rate": -21.79
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5B2-1781181849",
+      "txn_number": "57411",
+      "txn_date": "2026-06-02",
+      "customer_name": "Dine In",
+      "total_amount": 2180.81,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1831.6,
+          "rate": 1831.6
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 99.95,
+          "rate": 99.95
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -203.47,
+          "rate": -203.47
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 197.2,
+          "rate": 197.2
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 155.53,
+          "rate": 155.53
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 100,
+          "rate": 100
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2180.81
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -422.13,
+          "rate": -422.13
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1758.68,
+          "rate": -1758.68
+        }
+      ]
+    },
+    {
+      "txn_id": "DA6FE-1781191832",
+      "txn_number": "57441",
+      "txn_date": "2026-06-02",
+      "customer_name": "DoorDash",
+      "total_amount": 562.57,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 634.85,
+          "rate": 634.85
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 56.08,
+          "rate": 56.08
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -128.36,
+          "rate": -128.36
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 562.57
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -562.57,
+          "rate": -562.57
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8B9-1781194616",
+      "txn_number": "57487",
+      "txn_date": "2026-06-02",
+      "customer_name": "Uber",
+      "total_amount": 123.07,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 185.32,
+          "rate": 185.32
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 16.51,
+          "rate": 16.51
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -78.76,
+          "rate": -78.76
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 123.07
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -123.07,
+          "rate": -123.07
+        }
+      ]
+    },
+    {
+      "txn_id": "DA5BE-1781181909",
+      "txn_number": "57412",
+      "txn_date": "2026-06-03",
+      "customer_name": "Dine In",
+      "total_amount": 2893.33,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2256.95,
+          "rate": 2256.95
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 60.5,
+          "rate": 60.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -48.23,
+          "rate": -48.23
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 319.79,
+          "rate": 319.79
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 204.32,
+          "rate": 204.32
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 100,
+          "rate": 100
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2893.33
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -631.36,
+          "rate": -631.36
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2261.97,
+          "rate": -2261.97
+        }
+      ]
+    },
+    {
+      "txn_id": "DA709-1781191862",
+      "txn_number": "57442",
+      "txn_date": "2026-06-03",
+      "customer_name": "DoorDash",
+      "total_amount": 346.13,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 369.42,
+          "rate": 369.42
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 33.25,
+          "rate": 33.25
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -60.39,
+          "rate": -60.39
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 3.85,
+          "rate": 3.85
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 346.13
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -346.13,
+          "rate": -346.13
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8C2-1781194649",
+      "txn_number": "57488",
+      "txn_date": "2026-06-03",
+      "customer_name": "Uber",
+      "total_amount": 195.82,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 332.03,
+          "rate": 332.03
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 28.34,
+          "rate": 28.34
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -164.55,
+          "rate": -164.55
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 195.82
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -195.82,
+          "rate": -195.82
+        }
+      ]
+    },
+    {
+      "txn_id": "DA714-1781191901",
+      "txn_number": "57443",
+      "txn_date": "2026-06-04",
+      "customer_name": "DoorDash",
+      "total_amount": 774.81,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 967.68,
+          "rate": 967.68
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 79.31,
+          "rate": 79.31
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -282.18,
+          "rate": -282.18
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 10,
+          "rate": 10
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 774.81
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -774.81,
+          "rate": -774.81
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8CB-1781194671",
+      "txn_number": "57489",
+      "txn_date": "2026-06-04",
+      "customer_name": "Uber",
+      "total_amount": 65.67,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 93.81,
+          "rate": 93.81
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 8.44,
+          "rate": 8.44
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -36.58,
+          "rate": -36.58
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 65.67
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -65.67,
+          "rate": -65.67
+        }
+      ]
+    },
+    {
+      "txn_id": "DB1E0-1782277904",
+      "txn_number": "57846",
+      "txn_date": "2026-06-04",
+      "customer_name": "Dine In",
+      "total_amount": 2570.21,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1987.9,
+          "rate": 1987.9
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 119.5,
+          "rate": 119.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -7.2,
+          "rate": -7.2
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 280.85,
+          "rate": 280.85
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 189.16,
+          "rate": 189.16
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2570.21
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -260.02,
+          "rate": -260.02
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2310.19,
+          "rate": -2310.19
+        }
+      ]
+    },
+    {
+      "txn_id": "DA71F-1781191929",
+      "txn_number": "57444",
+      "txn_date": "2026-06-05",
+      "customer_name": "DoorDash",
+      "total_amount": 960.5,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 1323.36,
+          "rate": 1323.36
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 104.61,
+          "rate": 104.61
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -493.21,
+          "rate": -493.21
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 25.74,
+          "rate": 25.74
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 960.5
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -960.5,
+          "rate": -960.5
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8D4-1781194695",
+      "txn_number": "57490",
+      "txn_date": "2026-06-05",
+      "customer_name": "Uber",
+      "total_amount": 67.4,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 112.22,
+          "rate": 112.22
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 10.1,
+          "rate": 10.1
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -54.92,
+          "rate": -54.92
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 67.4
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -67.4,
+          "rate": -67.4
+        }
+      ]
+    },
+    {
+      "txn_id": "DB1EC-1782277984",
+      "txn_number": "57847",
+      "txn_date": "2026-06-05",
+      "customer_name": "Dine In",
+      "total_amount": 7509.77,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 5990.59,
+          "rate": 5990.59
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 386.3,
+          "rate": 386.3
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -83.41,
+          "rate": -83.41
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 648.16,
+          "rate": 648.16
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 568.13,
+          "rate": 568.13
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 7509.77
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -620.36,
+          "rate": -620.36
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -6889.41,
+          "rate": -6889.41
+        }
+      ]
+    },
+    {
+      "txn_id": "DA72A-1781191957",
+      "txn_number": "57445",
+      "txn_date": "2026-06-06",
+      "customer_name": "DoorDash",
+      "total_amount": 604.68,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 815.64,
+          "rate": 815.64
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 67.22,
+          "rate": 67.22
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -278.18,
+          "rate": -278.18
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 604.68
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -604.68,
+          "rate": -604.68
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8DD-1781194712",
+      "txn_number": "57491",
+      "txn_date": "2026-06-06",
+      "customer_name": "Uber",
+      "total_amount": 31.62,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 48.52,
+          "rate": 48.52
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 4.22,
+          "rate": 4.22
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -21.12,
+          "rate": -21.12
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 31.62
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -31.62,
+          "rate": -31.62
+        }
+      ]
+    },
+    {
+      "txn_id": "DB1F8-1782278050",
+      "txn_number": "57848",
+      "txn_date": "2026-06-06",
+      "customer_name": "Dine In",
+      "total_amount": 4287.62,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 3418.1,
+          "rate": 3418.1
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 253.85,
+          "rate": 253.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -85.43,
+          "rate": -85.43
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 375.41,
+          "rate": 375.41
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 325.69,
+          "rate": 325.69
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 4287.62
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -239.14,
+          "rate": -239.14
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4048.48,
+          "rate": -4048.48
+        }
+      ]
+    },
+    {
+      "txn_id": "DA735-1781192019",
+      "txn_number": "57446",
+      "txn_date": "2026-06-07",
+      "customer_name": "DoorDash",
+      "total_amount": 514.77,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 705.08,
+          "rate": 705.08
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 53.77,
+          "rate": 53.77
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -244.08,
+          "rate": -244.08
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 514.77
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -514.77,
+          "rate": -514.77
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7B1-1781193147",
+      "txn_number": "57458",
+      "txn_date": "2026-06-07",
+      "customer_name": "GRUBHUB",
+      "total_amount": 56.53,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 68.32,
+          "rate": 68.32
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 6.15,
+          "rate": 6.15
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -17.94,
+          "rate": -17.94
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 56.53
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -56.53,
+          "rate": -56.53
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8E6-1781194735",
+      "txn_number": "57492",
+      "txn_date": "2026-06-07",
+      "customer_name": "Uber",
+      "total_amount": 159.27,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 286.93,
+          "rate": 286.93
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 22.87,
+          "rate": 22.87
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -150.53,
+          "rate": -150.53
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 159.27
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -159.27,
+          "rate": -159.27
+        }
+      ]
+    },
+    {
+      "txn_id": "DB204-1782278166",
+      "txn_number": "57849",
+      "txn_date": "2026-06-07",
+      "customer_name": "Dine In",
+      "total_amount": 5197.41,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4259.99,
+          "rate": 4259.99
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 169.9,
+          "rate": 169.9
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -43.7,
+          "rate": -43.7
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 416.49,
+          "rate": 416.49
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 394.73,
+          "rate": 394.73
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 5197.41
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -800.51,
+          "rate": -800.51
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4396.9,
+          "rate": -4396.9
+        }
+      ]
+    },
+    {
+      "txn_id": "DA740-1781192047",
+      "txn_number": "57447",
+      "txn_date": "2026-06-08",
+      "customer_name": "DoorDash",
+      "total_amount": 655.54,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 755.93,
+          "rate": 755.93
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 66.42,
+          "rate": 66.42
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -166.81,
+          "rate": -166.81
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 655.54
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -655.54,
+          "rate": -655.54
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8EF-1781194755",
+      "txn_number": "57493",
+      "txn_date": "2026-06-08",
+      "customer_name": "Uber",
+      "total_amount": 22.58,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 41.29,
+          "rate": 41.29
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 3.71,
+          "rate": 3.71
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -22.42,
+          "rate": -22.42
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 22.58
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -22.58,
+          "rate": -22.58
+        }
+      ]
+    },
+    {
+      "txn_id": "DB210-1782278239",
+      "txn_number": "57850",
+      "txn_date": "2026-06-08",
+      "customer_name": "Dine In",
+      "total_amount": 1756.3,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1422.85,
+          "rate": 1422.85
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 91.45,
+          "rate": 91.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -2.12,
+          "rate": -2.12
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 107.95,
+          "rate": 107.95
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 136.17,
+          "rate": 136.17
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 1756.3
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -588.71,
+          "rate": -588.71
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1167.59,
+          "rate": -1167.59
+        }
+      ]
+    },
+    {
+      "txn_id": "DA74B-1781192075",
+      "txn_number": "57448",
+      "txn_date": "2026-06-09",
+      "customer_name": "DoorDash",
+      "total_amount": 224.92,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 285.75,
+          "rate": 285.75
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 25.71,
+          "rate": 25.71
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -62.95,
+          "rate": -62.95
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -23.59,
+          "rate": -23.59
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 224.92
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -224.92,
+          "rate": -224.92
+        }
+      ]
+    },
+    {
+      "txn_id": "DA8F8-1781194775",
+      "txn_number": "57494",
+      "txn_date": "2026-06-09",
+      "customer_name": "Uber",
+      "total_amount": 100.76,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 183.23,
+          "rate": 183.23
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": 15.94,
+          "rate": 15.94
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -98.41,
+          "rate": -98.41
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 100.76
+        },
+        {
+          "description": "UberE",
+          "quantity": 1,
+          "amount": -100.76,
+          "rate": -100.76
+        }
+      ]
+    },
+    {
+      "txn_id": "DB21C-1782278302",
+      "txn_number": "57851",
+      "txn_date": "2026-06-09",
+      "customer_name": "Dine In",
+      "total_amount": 4312.56,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 3358.46,
+          "rate": 3358.46
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 183.75,
+          "rate": 183.75
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -8.44,
+          "rate": -8.44
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 459.03,
+          "rate": 459.03
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 319.76,
+          "rate": 319.76
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 4312.56
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -367.22,
+          "rate": -367.22
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -3945.34,
+          "rate": -3945.34
+        }
+      ]
+    },
+    {
+      "txn_id": "DA756-1781192105",
+      "txn_number": "57449",
+      "txn_date": "2026-06-10",
+      "customer_name": "DoorDash",
+      "total_amount": 409.83,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 459.28,
+          "rate": 459.28
+        },
+        {
+          "description": "Delivery sales:Adjustments",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 41.33,
+          "rate": 41.33
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -90.78,
+          "rate": -90.78
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 409.83
+        },
+        {
+          "description": "Door Dash",
+          "quantity": 1,
+          "amount": -409.83,
+          "rate": -409.83
+        }
+      ]
+    },
+    {
+      "txn_id": "DA7BB-1781193173",
+      "txn_number": "57459",
+      "txn_date": "2026-06-10",
+      "customer_name": "GRUBHUB",
+      "total_amount": 30.28,
+      "items": [
+        {
+          "description": "Delivery sales",
+          "quantity": 1,
+          "amount": 36.77,
+          "rate": 36.77
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 3.31,
+          "rate": 3.31
+        },
+        {
+          "description": "3rd party Delivery commission",
+          "quantity": 1,
+          "amount": -9.8,
+          "rate": -9.8
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 30.28
+        },
+        {
+          "description": "Grub hub",
+          "quantity": 1,
+          "amount": -30.28,
+          "rate": -30.28
+        }
+      ]
+    },
+    {
+      "txn_id": "DB228-1782278746",
+      "txn_number": "57852",
+      "txn_date": "2026-06-10",
+      "customer_name": "Dine In",
+      "total_amount": 2777.52,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2242.04,
+          "rate": 2242.04
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 100.5,
+          "rate": 100.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -23.93,
+          "rate": -23.93
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 244.9,
+          "rate": 244.9
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 214.01,
+          "rate": 214.01
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2777.52
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -268.19,
+          "rate": -268.19
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2509.33,
+          "rate": -2509.33
+        }
+      ]
+    },
+    {
+      "txn_id": "DB234-1782278826",
+      "txn_number": "57853",
+      "txn_date": "2026-06-11",
+      "customer_name": "Dine In",
+      "total_amount": 4500.13,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 3546.95,
+          "rate": 3546.95
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 226.9,
+          "rate": 226.9
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 386.48,
+          "rate": 386.48
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 339.8,
+          "rate": 339.8
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 4500.13
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -180.65,
+          "rate": -180.65
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4319.48,
+          "rate": -4319.48
+        }
+      ]
+    },
+    {
+      "txn_id": "DB240-1782278899",
+      "txn_number": "57854",
+      "txn_date": "2026-06-12",
+      "customer_name": "Dine In",
+      "total_amount": 5535.89,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4480.15,
+          "rate": 4480.15
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 312.85,
+          "rate": 312.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -101.33,
+          "rate": -101.33
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 421.95,
+          "rate": 421.95
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 422.27,
+          "rate": 422.27
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 5535.89
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -894.91,
+          "rate": -894.91
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4640.98,
+          "rate": -4640.98
+        }
+      ]
+    },
+    {
+      "txn_id": "DB24C-1782279026",
+      "txn_number": "57855",
+      "txn_date": "2026-06-13",
+      "customer_name": "Dine In",
+      "total_amount": 5092.68,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 4140.25,
+          "rate": 4140.25
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 253.45,
+          "rate": 253.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -170.59,
+          "rate": -170.59
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 489.45,
+          "rate": 489.45
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 380.12,
+          "rate": 380.12
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 5092.68
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -545.29,
+          "rate": -545.29
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -4547.39,
+          "rate": -4547.39
+        }
+      ]
+    },
+    {
+      "txn_id": "DB258-1782279108",
+      "txn_number": "57856",
+      "txn_date": "2026-06-14",
+      "customer_name": "Dine In",
+      "total_amount": 3989.14,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 3143.74,
+          "rate": 3143.74
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 251.7,
+          "rate": 251.7
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -71.69,
+          "rate": -71.69
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 362.92,
+          "rate": 362.92
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 302.47,
+          "rate": 302.47
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 3989.14
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -622.71,
+          "rate": -622.71
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -3366.43,
+          "rate": -3366.43
+        }
+      ]
+    },
+    {
+      "txn_id": "DB264-1782279166",
+      "txn_number": "57857",
+      "txn_date": "2026-06-15",
+      "customer_name": "Dine In",
+      "total_amount": 1998.28,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 1622.8,
+          "rate": 1622.8
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 82,
+          "rate": 82
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -9.5,
+          "rate": -9.5
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 150.38,
+          "rate": 150.38
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 152.6,
+          "rate": 152.6
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 1998.28
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -463.54,
+          "rate": -463.54
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1534.74,
+          "rate": -1534.74
+        }
+      ]
+    },
+    {
+      "txn_id": "DB270-1782279231",
+      "txn_number": "57858",
+      "txn_date": "2026-06-16",
+      "customer_name": "Dine In",
+      "total_amount": 2823.99,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2230.19,
+          "rate": 2230.19
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 186.5,
+          "rate": 186.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -35.46,
+          "rate": -35.46
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 228.44,
+          "rate": 228.44
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 214.32,
+          "rate": 214.32
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2823.99
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -246.69,
+          "rate": -246.69
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -2527.3,
+          "rate": -2527.3
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -50,
+          "rate": -50
+        }
+      ]
+    },
+    {
+      "txn_id": "DB27D-1782279416",
+      "txn_number": "57859",
+      "txn_date": "2026-06-17",
+      "customer_name": "Dine In",
+      "total_amount": 4035.15,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 3080.15,
+          "rate": 3080.15
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 238.35,
+          "rate": 238.35
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -7.69,
+          "rate": -7.69
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 326.22,
+          "rate": 326.22
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 298.12,
+          "rate": 298.12
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 100,
+          "rate": 100
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 4035.15
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -375.31,
+          "rate": -375.31
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -3659.84,
+          "rate": -3659.84
+        }
+      ]
+    },
+    {
+      "txn_id": "DB289-1782279554",
+      "txn_number": "57860",
+      "txn_date": "2026-06-18",
+      "customer_name": "Dine In",
+      "total_amount": 3539.14,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2871.78,
+          "rate": 2871.78
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 168.95,
+          "rate": 168.95
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -46.23,
+          "rate": -46.23
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 271.34,
+          "rate": 271.34
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 273.3,
+          "rate": 273.3
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 3539.14
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -286.37,
+          "rate": -286.37
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -3252.77,
+          "rate": -3252.77
+        }
+      ]
+    },
+    {
+      "txn_id": "DB295-1782279654",
+      "txn_number": "57861",
+      "txn_date": "2026-06-19",
+      "customer_name": "Dine In",
+      "total_amount": 6994.96,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 5444.84,
+          "rate": 5444.84
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 361.85,
+          "rate": 361.85
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -60.99,
+          "rate": -60.99
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 665.91,
+          "rate": 665.91
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 519.8,
+          "rate": 519.8
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 63.55,
+          "rate": 63.55
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 6994.96
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -708.93,
+          "rate": -708.93
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -6186.03,
+          "rate": -6186.03
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -100,
+          "rate": -100
+        }
+      ]
+    },
+    {
+      "txn_id": "DB2A2-1782279785",
+      "txn_number": "57862",
+      "txn_date": "2026-06-20",
+      "customer_name": "Dine In",
+      "total_amount": 7088.3,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 5377.55,
+          "rate": 5377.55
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 472,
+          "rate": 472
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -64.72,
+          "rate": -64.72
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 782.58,
+          "rate": 782.58
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 520.89,
+          "rate": 520.89
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 7088.3
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -813.24,
+          "rate": -813.24
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -6275.06,
+          "rate": -6275.06
+        }
+      ]
+    },
+    {
+      "txn_id": "DB2AE-1782279930",
+      "txn_number": "57863",
+      "txn_date": "2026-06-21",
+      "customer_name": "Dine In",
+      "total_amount": 8374.72,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 6409.99,
+          "rate": 6409.99
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 380.45,
+          "rate": 380.45
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -48.35,
+          "rate": -48.35
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 800.38,
+          "rate": 800.38
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 622.25,
+          "rate": 622.25
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 210,
+          "rate": 210
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 8374.72
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -568.59,
+          "rate": -568.59
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -7706.13,
+          "rate": -7706.13
+        },
+        {
+          "description": "Gift Certificate Redeemed",
+          "quantity": 1,
+          "amount": -100,
+          "rate": -100
+        }
+      ]
+    },
+    {
+      "txn_id": "DB2BB-1782280075",
+      "txn_number": "57864",
+      "txn_date": "2026-06-22",
+      "customer_name": "Dine In",
+      "total_amount": 2440.07,
+      "items": [
+        {
+          "description": "Toast:Food Sales",
+          "quantity": 1,
+          "amount": 2022.1,
+          "rate": 2022.1
+        },
+        {
+          "description": "Toast:Bar Sales",
+          "quantity": 1,
+          "amount": 175.5,
+          "rate": 175.5
+        },
+        {
+          "description": "Discount/comp/Payment error",
+          "quantity": 1,
+          "amount": -92.23,
+          "rate": -92.23
+        },
+        {
+          "description": "Tips",
+          "quantity": 1,
+          "amount": 145.19,
+          "rate": 145.19
+        },
+        {
+          "description": "Sales tax",
+          "quantity": 1,
+          "amount": 189.51,
+          "rate": 189.51
+        },
+        {
+          "description": "Gift Cards Sold",
+          "quantity": 1,
+          "amount": 0
+        },
+        {
+          "description": "Total",
+          "quantity": 1,
+          "amount": 2440.07
+        },
+        {
+          "description": "CASH 2021",
+          "quantity": 1,
+          "amount": -688.61,
+          "rate": -688.61
+        },
+        {
+          "description": "Credit Card",
+          "quantity": 1,
+          "amount": -1751.46,
+          "rate": -1751.46
+        }
+      ]
+    }
+  ],
+  "invoices": [],
+  "summary": {
+    "total_income_accounts": 21,
+    "total_expense_accounts": 83,
+    "total_income_balance": 26559310.079999994,
+    "total_expense_balance": 16934852.729999997,
+    "total_sales_receipts_30d": 258389.16999999998,
+    "total_invoices_30d": 0,
+    "total_invoices_outstanding": 0,
+    "total_revenue_30d": 258389.16999999998,
+    "net_income_30d": -16676463.559999997,
+    "transaction_count": 136
+  },
+  "parsed_at": "2026-06-29T08:43:29.645Z"
+}

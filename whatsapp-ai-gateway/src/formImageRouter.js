@@ -331,7 +331,7 @@ function validateStoreGroupMatch(chatName, storeInfo, chatId) {
     if (scope.storeInfo.storeCode !== storeInfo.storeCode) {
         return {
             valid: false,
-            message: "This form does not match this store group. Please upload the correct store form.",
+            message: "This submission does not match this store group. Please type /agent in the correct store group and enter the 19 temperature readings.",
             expected: scope.storeInfo,
             actual: storeInfo,
         };

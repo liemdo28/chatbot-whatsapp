@@ -1,0 +1,16 @@
+{
+    "name": "review-auto-bridge",
+    "version": "1.0.0",
+    "description": "Review auto-reply bridge: scheduler Mon+Thu, CEO approval, dashboard",
+    "main": "main.js",
+    "scripts": {
+        "start": "node main.js",
+        "dev": "node --watch main.js"
+    },
+    "dependencies": {
+        "express": "^4.19.2",
+        "node-cron": "^4.5.0",
+        "googleapis": "^144.0.0",
+        "playwright-core": "^1.61.1"
+    }
+}

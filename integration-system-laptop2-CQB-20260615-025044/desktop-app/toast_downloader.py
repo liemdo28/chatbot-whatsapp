@@ -26,6 +26,18 @@ DOWNLOAD_AUDIT_DIR = runtime_path("audit-logs", "download-reports")
 TOAST_LOCATIONS = ["Stockton", "The Rim", "Stone Oak", "Bandera", "WA1", "WA2", "WA3"]
 
 
+def _load_toast_browser_preferences():
+    try:
+        cfg_path = runtime_path("local-config.json")
+        if not cfg_path.exists():
+            return {}
+        data = json.loads(cfg_path.read_text(encoding="utf-8-sig"))
+        toast_cfg = dict(data.get("toast_download") or {})
+        return dict(toast_cfg.get("browser_profile") or {})
+    except Exception:
+        return {}
+
+
 def _find_bundled_chromium():
     """
     Return the path to the bundled chrome.exe in a frozen build, or None.
@@ -294,18 +306,36 @@ class ToastDownloader:
         _ensure_playwright_env()  # ensure Chromium path is set before Playwright init
         try:
             self.playwright = sync_playwright().start()
+            browser_profile = _load_toast_browser_preferences()
+            preferred_browser = str(browser_profile.get("browser") or "").strip().lower()
 
             # In frozen builds, pass the bundled executable directly so Playwright
             # does not have to traverse versioned discovery folders (Layout B).
             launch_kwargs: dict = {
                 "headless": self.headless,
-                "args": [] if self.headless else ["--start-maximized"],
+                "args": [] if self.headless else ["--start-maximized", "--disable-blink-features=AutomationControlled"],
             }
             bundled_exe = _find_bundled_chromium()
             if bundled_exe:
                 launch_kwargs["executable_path"] = bundled_exe
+            elif preferred_browser in {"chrome", "msedge"}:
+                launch_kwargs["channel"] = preferred_browser
 
-            self.browser = self.playwright.chromium.launch(**launch_kwargs)
+            try:
+                if launch_kwargs.get("channel"):
+                    self.log(f"Launching Toast browser via installed {launch_kwargs['channel']} channel...")
+                self.browser = self.playwright.chromium.launch(**launch_kwargs)
+            except Exception as exc:
+                if launch_kwargs.get("channel"):
+                    fallback_kwargs = dict(launch_kwargs)
+                    fallback_kwargs.pop("channel", None)
+                    self.log(
+                        f"Installed browser channel '{preferred_browser}' failed ({exc}). "
+                        "Falling back to Playwright Chromium."
+                    )
+                    self.browser = self.playwright.chromium.launch(**fallback_kwargs)
+                else:
+                    raise
 
             ctx_opts = {
                 "accept_downloads": True,

@@ -6,6 +6,9 @@
 *.p12
 *.pfx
 *.key
+*service-account*.json
+.machine_token
+*.qwc
 
 # Dependencies and virtual environments
 node_modules/

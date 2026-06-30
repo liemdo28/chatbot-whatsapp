@@ -20,6 +20,7 @@ import { financialRouter } from '../api/financial-endpoint';
 const QBWC_PORT = parseInt(process.env.QBWC_PORT || '3457', 10);
 const QBWC_USER = process.env.QBWC_USER || 'mi-qb-agent';
 const QBWC_PASS = process.env.QB_API_KEY || 'b149c4783a1109ff46d01498d91766e7';
+const QBWC_NAMESPACE = 'http://developer.intuit.com/';
 
 // Active session tickets: ticket → { companyFile, requestsSent, done }
 const sessions = new Map<string, { companyFile: string; requestIndex: number; done: boolean }>();
@@ -72,7 +73,7 @@ function soapEnvelope(method: string, content: string): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <soap:Body>
-    <${method}Response xmlns="http://developer.intuit.com/qbwc/wsdl">
+    <${method}Response xmlns="${QBWC_NAMESPACE}">
       ${content}
     </${method}Response>
   </soap:Body>
@@ -108,7 +109,11 @@ export function createQbwcServer(): express.Application {
 
     let responseXml = '';
 
-    if (action === 'authenticate' || body.includes('authenticate')) {
+    if (action === 'serverVersion' || body.includes('serverVersion')) {
+      responseXml = handleServerVersion();
+    } else if (action === 'clientVersion' || body.includes('clientVersion')) {
+      responseXml = handleClientVersion();
+    } else if (action === 'authenticate' || body.includes('authenticate')) {
       responseXml = handleAuthenticate(body);
     } else if (action === 'sendRequestXML' || body.includes('sendRequestXML')) {
       responseXml = handleSendRequestXML(body);
@@ -147,6 +152,14 @@ export function createQbwcServer(): express.Application {
 }
 
 // ── SOAP method handlers ───────────────────────────────────────────────────
+
+function handleServerVersion(): string {
+  return soapEnvelope('serverVersion', '<serverVersionResult>2.0.0</serverVersionResult>');
+}
+
+function handleClientVersion(): string {
+  return soapEnvelope('clientVersion', '<clientVersionResult></clientVersionResult>');
+}
 
 function handleAuthenticate(body: string): string {
   const user = extractSoapValue(body, 'strUserName');
@@ -249,12 +262,23 @@ function handleConnectionError(body: string): string {
 const WSDL = `<?xml version="1.0" encoding="utf-8"?>
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-  xmlns:tns="http://developer.intuit.com/qbwc/wsdl"
+  xmlns:tns="${QBWC_NAMESPACE}"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   name="QBWebConnectorSvc"
-  targetNamespace="http://developer.intuit.com/qbwc/wsdl">
+  targetNamespace="${QBWC_NAMESPACE}">
   <types>
-    <xsd:schema targetNamespace="http://developer.intuit.com/qbwc/wsdl">
+    <xsd:schema targetNamespace="${QBWC_NAMESPACE}">
+      <xsd:element name="serverVersion"><xsd:complexType><xsd:sequence>
+      </xsd:sequence></xsd:complexType></xsd:element>
+      <xsd:element name="serverVersionResponse"><xsd:complexType><xsd:sequence>
+        <xsd:element name="serverVersionResult" type="xsd:string"/>
+      </xsd:sequence></xsd:complexType></xsd:element>
+      <xsd:element name="clientVersion"><xsd:complexType><xsd:sequence>
+        <xsd:element name="strVersion" type="xsd:string"/>
+      </xsd:sequence></xsd:complexType></xsd:element>
+      <xsd:element name="clientVersionResponse"><xsd:complexType><xsd:sequence>
+        <xsd:element name="clientVersionResult" type="xsd:string"/>
+      </xsd:sequence></xsd:complexType></xsd:element>
       <xsd:element name="authenticate"><xsd:complexType><xsd:sequence>
         <xsd:element name="strUserName" type="xsd:string"/>
         <xsd:element name="strPassword" type="xsd:string"/>
@@ -306,6 +330,10 @@ const WSDL = `<?xml version="1.0" encoding="utf-8"?>
       </xsd:sequence></xsd:complexType></xsd:element>
     </xsd:schema>
   </types>
+  <message name="serverVersionRequest"><part name="parameters" element="tns:serverVersion"/></message>
+  <message name="serverVersionResponse"><part name="parameters" element="tns:serverVersionResponse"/></message>
+  <message name="clientVersionRequest"><part name="parameters" element="tns:clientVersion"/></message>
+  <message name="clientVersionResponse"><part name="parameters" element="tns:clientVersionResponse"/></message>
   <message name="authenticateRequest"><part name="parameters" element="tns:authenticate"/></message>
   <message name="authenticateResponse"><part name="parameters" element="tns:authenticateResponse"/></message>
   <message name="sendRequestXMLRequest"><part name="parameters" element="tns:sendRequestXML"/></message>
@@ -319,6 +347,8 @@ const WSDL = `<?xml version="1.0" encoding="utf-8"?>
   <message name="connectionErrorRequest"><part name="parameters" element="tns:connectionError"/></message>
   <message name="connectionErrorResponse"><part name="parameters" element="tns:connectionErrorResponse"/></message>
   <portType name="QBWebConnectorSvcSoap">
+    <operation name="serverVersion"><input message="tns:serverVersionRequest"/><output message="tns:serverVersionResponse"/></operation>
+    <operation name="clientVersion"><input message="tns:clientVersionRequest"/><output message="tns:clientVersionResponse"/></operation>
     <operation name="authenticate"><input message="tns:authenticateRequest"/><output message="tns:authenticateResponse"/></operation>
     <operation name="sendRequestXML"><input message="tns:sendRequestXMLRequest"/><output message="tns:sendRequestXMLResponse"/></operation>
     <operation name="receiveResponseXML"><input message="tns:receiveResponseXMLRequest"/><output message="tns:receiveResponseXMLResponse"/></operation>
@@ -328,12 +358,14 @@ const WSDL = `<?xml version="1.0" encoding="utf-8"?>
   </portType>
   <binding name="QBWebConnectorSvcSoap" type="tns:QBWebConnectorSvcSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
-    <operation name="authenticate"><soap:operation soapAction="http://developer.intuit.com/qbwc/wsdl/authenticate"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
-    <operation name="sendRequestXML"><soap:operation soapAction="http://developer.intuit.com/qbwc/wsdl/sendRequestXML"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
-    <operation name="receiveResponseXML"><soap:operation soapAction="http://developer.intuit.com/qbwc/wsdl/receiveResponseXML"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
-    <operation name="closeConnection"><soap:operation soapAction="http://developer.intuit.com/qbwc/wsdl/closeConnection"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
-    <operation name="getLastError"><soap:operation soapAction="http://developer.intuit.com/qbwc/wsdl/getLastError"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
-    <operation name="connectionError"><soap:operation soapAction="http://developer.intuit.com/qbwc/wsdl/connectionError"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="serverVersion"><soap:operation soapAction="${QBWC_NAMESPACE}serverVersion"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="clientVersion"><soap:operation soapAction="${QBWC_NAMESPACE}clientVersion"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="authenticate"><soap:operation soapAction="${QBWC_NAMESPACE}authenticate"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="sendRequestXML"><soap:operation soapAction="${QBWC_NAMESPACE}sendRequestXML"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="receiveResponseXML"><soap:operation soapAction="${QBWC_NAMESPACE}receiveResponseXML"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="closeConnection"><soap:operation soapAction="${QBWC_NAMESPACE}closeConnection"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="getLastError"><soap:operation soapAction="${QBWC_NAMESPACE}getLastError"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
+    <operation name="connectionError"><soap:operation soapAction="${QBWC_NAMESPACE}connectionError"/><input><soap:body use="literal"/></input><output><soap:body use="literal"/></output></operation>
   </binding>
   <service name="QBWebConnectorSvc">
     <port name="QBWebConnectorSvcSoap" binding="tns:QBWebConnectorSvcSoap">

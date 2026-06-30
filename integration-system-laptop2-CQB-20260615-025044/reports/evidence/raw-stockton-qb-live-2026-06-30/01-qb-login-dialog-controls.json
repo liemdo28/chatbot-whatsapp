@@ -1,0 +1,37 @@
+[
+  {
+    "title": "",
+    "control_type": "Edit",
+    "automation_id": "21573",
+    "class_name": "Edit",
+    "rectangle": "(L640, T283, R645, B288)"
+  },
+  {
+    "title": "OK",
+    "control_type": "Pane",
+    "automation_id": "51",
+    "class_name": "MauiPushButton",
+    "rectangle": "(L729, T513, R869, B546)"
+  },
+  {
+    "title": "Cancel",
+    "control_type": "Pane",
+    "automation_id": "52",
+    "class_name": "MauiPushButton",
+    "rectangle": "(L897, T513, R1037, B546)"
+  },
+  {
+    "title": "Help",
+    "control_type": "Pane",
+    "automation_id": "53",
+    "class_name": "MauiPushButton",
+    "rectangle": "(L1061, T513, R1201, B546)"
+  },
+  {
+    "title": "",
+    "control_type": "Edit",
+    "automation_id": "15924",
+    "class_name": "Edit",
+    "rectangle": "(L858, T413, R1053, B434)"
+  }
+]

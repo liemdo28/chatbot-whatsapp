@@ -1,0 +1,23 @@
+════════════════════════════════════════════════════════════════════════════════
+  HTTP "SCREENSHOT" — 12-analyze-only
+════════════════════════════════════════════════════════════════════════════════
+Request:
+  Method: POST
+  URL:    http://localhost:8788/api/reviews/analyze
+
+Response:
+  Status: 200
+  Headers: {
+             "x-powered-by": "Express",
+             "content-type": "application/json; charset=utf-8",
+             "content-length": "591",
+             "etag": "W/\"24f-7Bo6JBBSat+Rll/K+ok+NSUHqhI\"",
+             "date": "Mon, 29 Jun 2026 13:03:30 GMT",
+             "connection": "keep-alive",
+             "keep-alive": "timeout=5"
+           }
+
+Body:
+{"rating":4,"sentiment":"mixed","sentiment_detail":{"label":"mixed","score":-0.143,"positive":1.5,"negative":-2,"confidence":0.67,"token_count":7},"aspects":["general_positive","general_negative"],"risk_level":"auto_allowed","auto_reply_allowed":true,"requires_approval":false,"summary":"Customer gave 4★ with positive sentiment about general_positive, general_negative. Safe for auto-reply.","risk_detail":{"risk_level":"auto_allowed","auto_reply_allowed":true,"requires_approval":false,"reason":"4★ clean positive review — auto-reply safe","escalation_flags":[],"approval_flags":[]}}
+
+════════════════════════════════════════════════════════════════════════════════

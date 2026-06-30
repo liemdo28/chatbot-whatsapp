@@ -110,12 +110,11 @@ def _emit_event(client, event_type: str, result: ToastDownloadResult, payload: d
 
 
 def _default_playwright_runner(request: ToastDownloadRequest, download_dir: Path):
-    from services.download_reports_service import run_download
-    return run_download(
-        stores=[request.store],
-        date_start=request.business_date,
-        date_end=request.business_date,
-        report_types=[request.report_type],
+    from services.download_reports_service import run_playwright_download_request
+
+    return run_playwright_download_request(
+        request,
+        download_dir=download_dir,
     )
 
 

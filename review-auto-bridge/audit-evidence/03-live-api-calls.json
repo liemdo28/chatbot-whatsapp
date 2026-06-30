@@ -1,0 +1,387 @@
+{
+  "timestamp": "2026-06-29T13:44:09.721Z",
+  "calls": [
+    {
+      "case": "A",
+      "name": "Simple positive",
+      "input": {
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "Amazing ramen and great service.",
+        "reviewer_name": "Alice"
+      },
+      "http_status": 200,
+      "response": {
+        "ok": true,
+        "analysis": {
+          "rating": 5,
+          "sentiment": "positive",
+          "sentiment_detail": {
+            "label": "positive",
+            "score": 1,
+            "positive": 5,
+            "negative": 0,
+            "confidence": 0.67,
+            "token_count": 5
+          },
+          "aspects": [
+            "food_quality",
+            "service"
+          ],
+          "risk_level": "auto_allowed",
+          "auto_reply_allowed": true,
+          "requires_approval": false,
+          "summary": "Customer gave 5★ with positive sentiment about food_quality, service. Safe for auto-reply.",
+          "risk_detail": {
+            "risk_level": "auto_allowed",
+            "auto_reply_allowed": true,
+            "requires_approval": false,
+            "reason": "5★ clean positive review — auto-reply safe",
+            "escalation_flags": [],
+            "approval_flags": []
+          }
+        },
+        "draft_reply": "Hi Alice,\n\nAmazing to hear that. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "reason": "5★ positive review — auto-reply drafted (human tone, mentions specific items)",
+        "quality_check": {
+          "passed": true,
+          "issues": [],
+          "length": 187
+        },
+        "approval_id": null,
+        "approval_message": null,
+        "draft_id": 20,
+        "audit_id": 20
+      },
+      "expected": {
+        "auto_reply_allowed": true,
+        "sentiment": "positive"
+      },
+      "pass": true
+    },
+    {
+      "case": "B",
+      "name": "Positive with detail",
+      "input": {
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 5,
+        "review_text": "The spicy miso ramen was excellent and our server was super friendly.",
+        "reviewer_name": "Bob"
+      },
+      "http_status": 200,
+      "response": {
+        "ok": true,
+        "analysis": {
+          "rating": 5,
+          "sentiment": "positive",
+          "sentiment_detail": {
+            "label": "positive",
+            "score": 1,
+            "positive": 7.3,
+            "negative": 0,
+            "confidence": 0.83,
+            "token_count": 12
+          },
+          "aspects": [
+            "food_quality",
+            "service",
+            "staff_attitude",
+            "menu_item"
+          ],
+          "risk_level": "auto_allowed",
+          "auto_reply_allowed": true,
+          "requires_approval": false,
+          "summary": "Customer gave 5★ with positive sentiment about food_quality, service, staff_attitude. Safe for auto-reply.",
+          "risk_detail": {
+            "risk_level": "auto_allowed",
+            "auto_reply_allowed": true,
+            "requires_approval": false,
+            "reason": "5★ clean positive review — auto-reply safe",
+            "escalation_flags": [],
+            "approval_flags": []
+          }
+        },
+        "draft_reply": "Hi Bob,\n\nI'm really glad the spicy miso ramen and miso ramen hit the spot. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team",
+        "requires_approval": false,
+        "reason": "5★ positive review — auto-reply drafted (human tone, mentions specific items)",
+        "quality_check": {
+          "passed": true,
+          "issues": [],
+          "length": 229
+        },
+        "approval_id": null,
+        "approval_message": null,
+        "draft_id": 21,
+        "audit_id": 21
+      },
+      "expected": {
+        "auto_reply_allowed": true,
+        "sentiment": "positive",
+        "mentions_items": [
+          "spicy miso ramen"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "case": "C",
+      "name": "Mixed review",
+      "input": {
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 3,
+        "review_text": "Food was good but the ramen came out late and the server didn't check on us.",
+        "reviewer_name": "John"
+      },
+      "http_status": 200,
+      "response": {
+        "ok": true,
+        "analysis": {
+          "rating": 3,
+          "sentiment": "mixed",
+          "sentiment_detail": {
+            "label": "mixed",
+            "score": 0,
+            "positive": 1.5,
+            "negative": -1.5,
+            "confidence": 0.42,
+            "token_count": 16
+          },
+          "aspects": [
+            "food_quality",
+            "service",
+            "wait_time"
+          ],
+          "risk_level": "approval_required",
+          "auto_reply_allowed": false,
+          "requires_approval": true,
+          "summary": "Customer gave 3★ (mixed) about food_quality, service, wait_time. Mixed review — needs approval.",
+          "risk_detail": {
+            "risk_level": "approval_required",
+            "auto_reply_allowed": false,
+            "requires_approval": true,
+            "reason": "3-star mixed review — manager approval needed (has complaint keywords)",
+            "escalation_flags": [],
+            "approval_flags": [
+              "late"
+            ]
+          }
+        },
+        "draft_reply": "Hi John,\n\nThanks for being honest with us. We hope we get another chance to take better care of you next time.\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "reason": "3★ review with 0 complaint(s) detected — manager approval needed before sending",
+        "quality_check": {
+          "passed": true,
+          "issues": [],
+          "length": 132
+        },
+        "approval_id": 14,
+        "approval_message": "New Review Reply Needs Approval\nStore: bakudan_rim\nPlatform: google\nRating: 3 stars\nReviewer: John\nReview: \"Food was good but the ramen came out late and the server didn't check on us.\"\n\nDetected issues:\n- food_quality\n- service\n- wait_time\n\nSuggested reply:\n\"Hi John,\n\nThanks for being honest with us. We hope we get another chance to take better care of you next time.\n\n— Bakudan Ramen Team\"\n\nReply:\n1 = Approve\n2 = Edit\n3 = Reject\n4 = Escalate",
+        "draft_id": 22,
+        "audit_id": 22
+      },
+      "expected": {
+        "auto_reply_allowed": false,
+        "risk_level": "approval_required",
+        "sentiment": "mixed"
+      },
+      "pass": true
+    },
+    {
+      "case": "D",
+      "name": "Negative review",
+      "input": {
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 1,
+        "review_text": "Terrible service and dirty table.",
+        "reviewer_name": "Karen"
+      },
+      "http_status": 200,
+      "response": {
+        "ok": true,
+        "analysis": {
+          "rating": 1,
+          "sentiment": "negative",
+          "sentiment_detail": {
+            "label": "negative",
+            "score": -1,
+            "positive": 0,
+            "negative": -6,
+            "confidence": 0.67,
+            "token_count": 5
+          },
+          "aspects": [
+            "cleanliness",
+            "service"
+          ],
+          "risk_level": "escalation_required",
+          "auto_reply_allowed": false,
+          "requires_approval": true,
+          "summary": "Customer gave 1★ with concerns about cleanliness, service. Critical keywords detected.",
+          "risk_detail": {
+            "risk_level": "escalation_required",
+            "auto_reply_allowed": false,
+            "requires_approval": true,
+            "reason": "1★ review — low rating requires escalation",
+            "escalation_flags": [
+              "low_rating_1"
+            ],
+            "approval_flags": [
+              "dirty"
+            ]
+          }
+        },
+        "draft_reply": "Hi Karen,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "reason": "Escalation review — brief, human, defers to manager follow-up (no auto-post)",
+        "quality_check": {
+          "passed": true,
+          "issues": [],
+          "length": 272
+        },
+        "approval_id": 15,
+        "approval_message": "New Review Reply Needs Approval\nStore: bakudan_rim\nPlatform: google\nRating: 1 stars\nReviewer: Karen\nReview: \"Terrible service and dirty table.\"\n\nDetected issues:\n- cleanliness\n- service\n\nSuggested reply:\n\"Hi Karen,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team\"\n\nReply:\n1 = Approve\n2 = Edit\n3 = Reject\n4 = Escalate",
+        "draft_id": 23,
+        "audit_id": 23
+      },
+      "expected": {
+        "auto_reply_allowed": false,
+        "risk_level": "escalation_required"
+      },
+      "pass": true
+    },
+    {
+      "case": "E",
+      "name": "Sensitive review",
+      "input": {
+        "store_id": "bakudan_rim",
+        "platform": "google",
+        "rating": 2,
+        "review_text": "I got sick after eating here.",
+        "reviewer_name": "Anonymous"
+      },
+      "http_status": 200,
+      "response": {
+        "ok": true,
+        "analysis": {
+          "rating": 2,
+          "sentiment": "negative",
+          "sentiment_detail": {
+            "label": "negative",
+            "score": -1,
+            "positive": 0,
+            "negative": -3,
+            "confidence": 0.33,
+            "token_count": 6
+          },
+          "aspects": [
+            "food_safety"
+          ],
+          "risk_level": "escalation_required",
+          "auto_reply_allowed": false,
+          "requires_approval": true,
+          "summary": "Customer gave 2★ with concerns about food_safety. Critical keywords detected.",
+          "risk_detail": {
+            "risk_level": "escalation_required",
+            "auto_reply_allowed": false,
+            "requires_approval": true,
+            "reason": "Escalation: rating 2★ + critical keyword(s): got sick",
+            "escalation_flags": [
+              "got sick"
+            ],
+            "approval_flags": [
+              "sick"
+            ]
+          }
+        },
+        "draft_reply": "Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "reason": "Escalation review — brief, human, defers to manager follow-up (no auto-post)",
+        "quality_check": {
+          "passed": true,
+          "issues": [],
+          "length": 276
+        },
+        "approval_id": 16,
+        "approval_message": "New Review Reply Needs Approval\nStore: bakudan_rim\nPlatform: google\nRating: 2 stars\nReviewer: Anonymous\nReview: \"I got sick after eating here.\"\n\nDetected issues:\n- food_safety\n\nSuggested reply:\n\"Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team\"\n\nReply:\n1 = Approve\n2 = Edit\n3 = Reject\n4 = Escalate",
+        "draft_id": 24,
+        "audit_id": 24
+      },
+      "expected": {
+        "auto_reply_allowed": false,
+        "risk_level": "escalation_required"
+      },
+      "pass": true
+    },
+    {
+      "case": "F",
+      "name": "Delivery issue",
+      "input": {
+        "store_id": "bakudan_rim",
+        "platform": "doordash",
+        "rating": 2,
+        "review_text": "My DoorDash order was missing items and everything was cold.",
+        "reviewer_name": "Mike"
+      },
+      "http_status": 200,
+      "response": {
+        "ok": true,
+        "analysis": {
+          "rating": 2,
+          "sentiment": "negative",
+          "sentiment_detail": {
+            "label": "negative",
+            "score": -0.8,
+            "positive": 0,
+            "negative": -4,
+            "confidence": 0.67,
+            "token_count": 10
+          },
+          "aspects": [
+            "delivery",
+            "order_accuracy",
+            "food_quality"
+          ],
+          "risk_level": "escalation_required",
+          "auto_reply_allowed": false,
+          "requires_approval": true,
+          "summary": "Customer gave 2★ with concerns about delivery, order_accuracy, food_quality. Critical keywords detected.",
+          "risk_detail": {
+            "risk_level": "escalation_required",
+            "auto_reply_allowed": false,
+            "requires_approval": true,
+            "reason": "2★ review — low rating requires escalation",
+            "escalation_flags": [
+              "low_rating_2"
+            ],
+            "approval_flags": [
+              "missing item",
+              "doordash"
+            ]
+          }
+        },
+        "draft_reply": "Hi Mike,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team",
+        "requires_approval": true,
+        "reason": "Escalation review — brief, human, defers to manager follow-up (no auto-post)",
+        "quality_check": {
+          "passed": true,
+          "issues": [],
+          "length": 271
+        },
+        "approval_id": 17,
+        "approval_message": "New Review Reply Needs Approval\nStore: bakudan_rim\nPlatform: doordash\nRating: 2 stars\nReviewer: Mike\nReview: \"My DoorDash order was missing items and everything was cold.\"\n\nDetected issues:\n- delivery\n- order_accuracy\n- food_quality\n\nSuggested reply:\n\"Hi Mike,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team\"\n\nReply:\n1 = Approve\n2 = Edit\n3 = Reject\n4 = Escalate",
+        "draft_id": 25,
+        "audit_id": 25
+      },
+      "expected": {
+        "auto_reply_allowed": false,
+        "risk_level": "escalation_required"
+      },
+      "pass": true
+    }
+  ]
+}

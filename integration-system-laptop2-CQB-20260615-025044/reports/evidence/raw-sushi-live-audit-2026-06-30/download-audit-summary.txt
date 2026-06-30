@@ -1,0 +1,164 @@
+[03:09:59] Starting live Raw Sushi / Stockton download audit
+[03:09:59] Target dates: 2026-06-23, 2026-06-24, 2026-06-25, 2026-06-26, 2026-06-27, 2026-06-28, 2026-06-29
+[03:09:59] Report type: sales_summary
+[03:10:00] Starting Toast download: Stockton / 2026-06-23 / sales_summary...
+[03:10:01] Launching Toast browser via installed chrome channel...
+[03:10:02] Restoring session...
+[03:10:03] Opening Toast...
+[03:10:06] Session valid.
+[03:10:08] Current URL: https://www.toasttab.com/restaurants/admin/reports/sales/sales-summary
+[03:10:08] Downloading for 1 locations × 1 date(s) × 1 report type(s)
+[03:10:08] 
+[Location 1/1] Stockton
+[03:10:09]   Already on location: Stockton
+[03:10:11]   [1/1] Date: 06/23/2026
+[03:10:11]     Report: Sale Summary
+[03:10:11]     Opening report: Sale Summary
+[03:10:23]     Opened date picker: [Today | Jun 29, 2026 - Jun 29, 2026]
+[03:10:25]     Clicked 'Custom date' (selector)
+[03:10:27]     Start date: 06/23/2026
+[03:10:29]     End date: 06/23/2026
+[03:10:29]     Applied date: 06/23/2026
+[03:10:51]     Downloaded: 2026-06-23_SalesSummary_Stockton.xlsx [3cfe55f7c7d2]
+[03:10:51] Download audit saved -> C:\Ld-project\integration-system-laptop2-CQB-20260615-025044\desktop-app\audit-logs\download-reports\download-run-20260630-031051.json
+[03:10:52] 
+Done! 1/1 successful, 0 failed
+[03:10:52] Stockton / 2026-06-23 / sales_summary: downloaded -> C:\ProgramData\ToastPOSManager\toast-reports\Stockton\Sale Summary\2026-06-23_SalesSummary_Stockton.xlsx
+[03:10:52] Starting Toast download: Stockton / 2026-06-24 / sales_summary...
+[03:10:53] Launching Toast browser via installed chrome channel...
+[03:10:54] Restoring session...
+[03:10:55] Opening Toast...
+[03:10:58] Session valid.
+[03:11:00] Current URL: https://www.toasttab.com/restaurants/admin/reports/sales/sales-summary
+[03:11:00] Downloading for 1 locations × 1 date(s) × 1 report type(s)
+[03:11:00] 
+[Location 1/1] Stockton
+[03:11:00]   Already on location: Stockton
+[03:11:01]   [1/1] Date: 06/24/2026
+[03:11:01]     Report: Sale Summary
+[03:11:01]     Opening report: Sale Summary
+[03:11:09]     Opened date picker: [Custom | Jun 23, 2026 - Jun 23, 2026]
+[03:11:11]     Clicked 'Custom date' (selector)
+[03:11:14]     Start date: 06/24/2026
+[03:11:15]     End date: 06/24/2026
+[03:11:16]     Applied date: 06/24/2026
+[03:11:23]     Downloaded: 2026-06-24_SalesSummary_Stockton.xlsx [55324d1c7fc4]
+[03:11:24] Download audit saved -> C:\Ld-project\integration-system-laptop2-CQB-20260615-025044\desktop-app\audit-logs\download-reports\download-run-20260630-031124.json
+[03:11:25] 
+Done! 1/1 successful, 0 failed
+[03:11:25] Stockton / 2026-06-24 / sales_summary: downloaded -> C:\ProgramData\ToastPOSManager\toast-reports\Stockton\Sale Summary\2026-06-24_SalesSummary_Stockton.xlsx
+[03:11:25] Starting Toast download: Stockton / 2026-06-25 / sales_summary...
+[03:11:26] Launching Toast browser via installed chrome channel...
+[03:11:26] Restoring session...
+[03:11:28] Opening Toast...
+[03:11:31] Session valid.
+[03:11:33] Current URL: https://www.toasttab.com/restaurants/admin/reports/sales/sales-summary
+[03:11:33] Downloading for 1 locations × 1 date(s) × 1 report type(s)
+[03:11:33] 
+[Location 1/1] Stockton
+[03:11:33]   Already on location: Stockton
+[03:11:35]   [1/1] Date: 06/25/2026
+[03:11:35]     Report: Sale Summary
+[03:11:35]     Opening report: Sale Summary
+[03:11:44]     Opened date picker: [Custom | Jun 24, 2026 - Jun 24, 2026]
+[03:11:46]     Clicked 'Custom date' (selector)
+[03:11:48]     Start date: 06/25/2026
+[03:11:50]     End date: 06/25/2026
+[03:11:50]     Applied date: 06/25/2026
+[03:12:16]     Downloaded: 2026-06-25_SalesSummary_Stockton.xlsx [35ced85eee05]
+[03:12:17] Download audit saved -> C:\Ld-project\integration-system-laptop2-CQB-20260615-025044\desktop-app\audit-logs\download-reports\download-run-20260630-031217.json
+[03:12:18] 
+Done! 1/1 successful, 0 failed
+[03:12:18] Stockton / 2026-06-25 / sales_summary: downloaded -> C:\ProgramData\ToastPOSManager\toast-reports\Stockton\Sale Summary\2026-06-25_SalesSummary_Stockton.xlsx
+[03:12:18] Starting Toast download: Stockton / 2026-06-26 / sales_summary...
+[03:12:18] Launching Toast browser via installed chrome channel...
+[03:12:19] Restoring session...
+[03:12:20] Opening Toast...
+[03:12:23] Session valid.
+[03:12:26] Current URL: https://www.toasttab.com/restaurants/admin/reports/sales/sales-summary
+[03:12:26] Downloading for 1 locations × 1 date(s) × 1 report type(s)
+[03:12:26] 
+[Location 1/1] Stockton
+[03:12:26]   Already on location: Stockton
+[03:12:28]   [1/1] Date: 06/26/2026
+[03:12:28]     Report: Sale Summary
+[03:12:28]     Opening report: Sale Summary
+[03:12:39]     Opened date picker: [Custom | Jun 25, 2026 - Jun 25, 2026]
+[03:12:41]     Clicked 'Custom date' (selector)
+[03:12:43]     Start date: 06/26/2026
+[03:12:45]     End date: 06/26/2026
+[03:12:45]     Applied date: 06/26/2026
+[03:13:06]     Downloaded: 2026-06-26_SalesSummary_Stockton.xlsx [8e3521d80618]
+[03:13:07] Download audit saved -> C:\Ld-project\integration-system-laptop2-CQB-20260615-025044\desktop-app\audit-logs\download-reports\download-run-20260630-031307.json
+[03:13:08] 
+Done! 1/1 successful, 0 failed
+[03:13:08] Stockton / 2026-06-26 / sales_summary: downloaded -> C:\ProgramData\ToastPOSManager\toast-reports\Stockton\Sale Summary\2026-06-26_SalesSummary_Stockton.xlsx
+[03:13:08] Starting Toast download: Stockton / 2026-06-27 / sales_summary...
+[03:13:09] Launching Toast browser via installed chrome channel...
+[03:13:09] Restoring session...
+[03:13:10] Opening Toast...
+[03:13:14] Session valid.
+[03:13:16] Current URL: https://www.toasttab.com/restaurants/admin/reports/sales/sales-summary
+[03:13:16] Downloading for 1 locations × 1 date(s) × 1 report type(s)
+[03:13:16] 
+[Location 1/1] Stockton
+[03:13:16]   Already on location: Stockton
+[03:13:18]   [1/1] Date: 06/27/2026
+[03:13:18]     Report: Sale Summary
+[03:13:18]     Opening report: Sale Summary
+[03:13:27]     Opened date picker: [Custom | Jun 26, 2026 - Jun 26, 2026]
+[03:13:29]     Clicked 'Custom date' (selector)
+[03:13:31]     Start date: 06/27/2026
+[03:13:33]     End date: 06/27/2026
+[03:13:33]     Applied date: 06/27/2026
+[03:13:41]     Downloaded: 2026-06-27_SalesSummary_Stockton.xlsx [81381be18638]
+[03:13:41] Download audit saved -> C:\Ld-project\integration-system-laptop2-CQB-20260615-025044\desktop-app\audit-logs\download-reports\download-run-20260630-031341.json
+[03:13:43] 
+Done! 1/1 successful, 0 failed
+[03:13:43] Stockton / 2026-06-27 / sales_summary: downloaded -> C:\ProgramData\ToastPOSManager\toast-reports\Stockton\Sale Summary\2026-06-27_SalesSummary_Stockton.xlsx
+[03:13:43] Starting Toast download: Stockton / 2026-06-28 / sales_summary...
+[03:13:44] Launching Toast browser via installed chrome channel...
+[03:13:44] Restoring session...
+[03:13:46] Opening Toast...
+[03:13:49] Session valid.
+[03:13:52] Current URL: https://www.toasttab.com/restaurants/admin/reports/sales/sales-summary
+[03:13:52] Downloading for 1 locations × 1 date(s) × 1 report type(s)
+[03:13:52] 
+[Location 1/1] Stockton
+[03:13:52]   Already on location: Stockton
+[03:13:54]   [1/1] Date: 06/28/2026
+[03:13:54]     Report: Sale Summary
+[03:13:54]     Opening report: Sale Summary
+[03:14:04]     Opened date picker: [Custom | Jun 27, 2026 - Jun 27, 2026]
+[03:14:06]     Clicked 'Custom date' (selector)
+[03:14:08]     Start date: 06/28/2026
+[03:14:10]     End date: 06/28/2026
+[03:14:10]     Applied date: 06/28/2026
+[03:14:34]     Downloaded: 2026-06-28_SalesSummary_Stockton.xlsx [a1cc82631461]
+[03:14:34] Download audit saved -> C:\Ld-project\integration-system-laptop2-CQB-20260615-025044\desktop-app\audit-logs\download-reports\download-run-20260630-031434.json
+[03:14:35] 
+Done! 1/1 successful, 0 failed
+[03:14:36] Stockton / 2026-06-28 / sales_summary: downloaded -> C:\ProgramData\ToastPOSManager\toast-reports\Stockton\Sale Summary\2026-06-28_SalesSummary_Stockton.xlsx
+[03:14:36] Starting Toast download: Stockton / 2026-06-29 / sales_summary...
+[03:14:36] Launching Toast browser via installed chrome channel...
+[03:14:37] Restoring session...
+[03:14:38] Opening Toast...
+[03:14:41] Session valid.
+[03:14:43] Current URL: https://www.toasttab.com/restaurants/admin/reports/sales/sales-summary
+[03:14:43] Downloading for 1 locations × 1 date(s) × 1 report type(s)
+[03:14:43] 
+[Location 1/1] Stockton
+[03:14:44]   Already on location: Stockton
+[03:14:45]   [1/1] Date: 06/29/2026
+[03:14:45]     Report: Sale Summary
+[03:14:45]     Opening report: Sale Summary
+[03:14:54]     Opened date picker: [Yesterday | Jun 28, 2026 - Jun 28, 2026]
+[03:14:56]     Clicked 'Custom date' (selector)
+[03:14:58]     Start date: 06/29/2026
+[03:15:00]     End date: 06/29/2026
+[03:15:00]     Applied date: 06/29/2026
+[03:15:05]     Already exists locally for 2026-06-29: 2026-06-29_SalesSummary_Stockton.xlsx
+[03:15:05] Download audit saved -> C:\Ld-project\integration-system-laptop2-CQB-20260615-025044\desktop-app\audit-logs\download-reports\download-run-20260630-031505.json
+[03:15:06] 
+Done! 1/1 successful, 0 failed
+[03:15:06] Stockton / 2026-06-29 / sales_summary: downloaded -> C:\ProgramData\ToastPOSManager\toast-reports\Stockton\Sale Summary\2026-06-29_SalesSummary_Stockton.xlsx

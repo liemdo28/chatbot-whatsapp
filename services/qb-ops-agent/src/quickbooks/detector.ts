@@ -1,4 +1,5 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
+import { existsSync, readdirSync } from 'fs';
 import { logger } from '../storage/logs';
 
 export interface QuickBooksStatus {
@@ -8,28 +9,50 @@ export interface QuickBooksStatus {
   processName: string | null;
 }
 
-function safeExec(command: string): string {
+function safeExecFile(file: string, args: string[]): string {
   try {
-    return execSync(command, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    return execFileSync(file, args, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      windowsHide: true,
+    });
   } catch (error) {
-    logger.debug('Command failed during QuickBooks detection', { command, error: error instanceof Error ? error.message : String(error) });
+    logger.debug('Command failed during QuickBooks detection', {
+      command: [file, ...args].join(' '),
+      error: error instanceof Error ? error.message : String(error),
+    });
     return '';
   }
 }
 
+function hasQuickBooksInstallUnder(root: string): boolean {
+  try {
+    if (!existsSync(root)) return false;
+    return readdirSync(root, { withFileTypes: true }).some((entry) =>
+      entry.isDirectory() && entry.name.toLowerCase().startsWith('quickbooks')
+    );
+  } catch (error) {
+    logger.debug('QuickBooks path check failed', {
+      root,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return false;
+  }
+}
+
 export function isQuickBooksRunning(): boolean {
-  const output = safeExec('tasklist /FI "IMAGENAME eq QBW32.EXE"');
+  const output = safeExecFile('tasklist.exe', ['/FI', 'IMAGENAME eq QBW32.EXE']);
   return output.toLowerCase().includes('qbw32.exe');
 }
 
 export function detectInstalledQuickBooksVersion(): string | null {
   const commands = [
-    'reg query "HKLM\\SOFTWARE\\Intuit\\QuickBooks" /s',
-    'reg query "HKLM\\SOFTWARE\\WOW6432Node\\Intuit\\QuickBooks" /s',
+    ['query', 'HKLM\\SOFTWARE\\Intuit\\QuickBooks', '/s'],
+    ['query', 'HKLM\\SOFTWARE\\WOW6432Node\\Intuit\\QuickBooks', '/s'],
   ];
 
-  for (const command of commands) {
-    const output = safeExec(command);
+  for (const args of commands) {
+    const output = safeExecFile('reg.exe', args);
     if (!output) continue;
 
     const versionMatch = output.match(/QuickBooks[^\r\n]*?(20\d{2}|Enterprise Solutions \d+\.0|Desktop \d+)/i);
@@ -39,14 +62,13 @@ export function detectInstalledQuickBooksVersion(): string | null {
     if (yearMatch) return `QuickBooks ${yearMatch[1]}`;
   }
 
-  const pathChecks = [
-    'if exist "C:\\Program Files\\Intuit\\QuickBooks*" echo installed',
-    'if exist "C:\\Program Files (x86)\\Intuit\\QuickBooks*" echo installed',
+  const installRoots = [
+    'C:\\Program Files\\Intuit',
+    'C:\\Program Files (x86)\\Intuit',
   ];
 
-  for (const command of pathChecks) {
-    const output = safeExec(command);
-    if (output.toLowerCase().includes('installed')) return 'QuickBooks Desktop (version unknown)';
+  for (const root of installRoots) {
+    if (hasQuickBooksInstallUnder(root)) return 'QuickBooks Desktop (version unknown)';
   }
 
   return null;

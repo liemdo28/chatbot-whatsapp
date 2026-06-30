@@ -1,0 +1,23 @@
+════════════════════════════════════════════════════════════════════════════════
+  HTTP "SCREENSHOT" — 06-case-A-positive
+════════════════════════════════════════════════════════════════════════════════
+Request:
+  Method: POST
+  URL:    http://localhost:8788/api/reviews/reply-agent/run
+
+Response:
+  Status: 200
+  Headers: {
+             "x-powered-by": "Express",
+             "content-type": "application/json; charset=utf-8",
+             "content-length": "1047",
+             "etag": "W/\"417-9H3ZBVPFdXPUbvf6oUnQFnvFAFo\"",
+             "date": "Mon, 29 Jun 2026 13:03:30 GMT",
+             "connection": "keep-alive",
+             "keep-alive": "timeout=5"
+           }
+
+Body:
+{"ok":true,"analysis":{"rating":5,"sentiment":"positive","sentiment_detail":{"label":"positive","score":1,"positive":5,"negative":0,"confidence":0.67,"token_count":5},"aspects":["food_quality","service"],"risk_level":"auto_allowed","auto_reply_allowed":true,"requires_approval":false,"summary":"Customer gave 5★ with positive sentiment about food_quality, service. Safe for auto-reply.","risk_detail":{"risk_level":"auto_allowed","auto_reply_allowed":true,"requires_approval":false,"reason":"5★ clean positive review — auto-reply safe","escalation_flags":[],"approval_flags":[]}},"draft_reply":"Hi Alice,\n\nAmazing to hear that. Thanks for coming in and for the kind words.\n\nWe hope we get another chance to take care of you soon — come back and see us anytime.\n\n— Bakudan Ramen Team","requires_approval":false,"reason":"5★ positive review — auto-reply drafted (human tone, mentions specific items)","quality_check":{"passed":true,"issues":[],"length":187},"approval_id":null,"approval_message":null,"draft_id":10,"audit_id":10}
+
+════════════════════════════════════════════════════════════════════════════════

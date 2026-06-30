@@ -1,0 +1,169 @@
+{
+  "timestamp": "2026-06-29T13:44:09.720Z",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "id": "A",
+      "name": "Simple positive",
+      "pass": true,
+      "checks": [
+        {
+          "name": "auto_reply_allowed",
+          "pass": true,
+          "got": true,
+          "expected": true
+        },
+        {
+          "name": "sentiment",
+          "pass": true,
+          "got": "positive",
+          "expected": "positive"
+        },
+        {
+          "name": "quality_check",
+          "pass": true,
+          "got": "PASS",
+          "expected": "PASS"
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Positive with detail",
+      "pass": true,
+      "checks": [
+        {
+          "name": "auto_reply_allowed",
+          "pass": true,
+          "got": true,
+          "expected": true
+        },
+        {
+          "name": "sentiment",
+          "pass": true,
+          "got": "positive",
+          "expected": "positive"
+        },
+        {
+          "name": "mentions_items",
+          "pass": true,
+          "got": "spicy miso ramen,miso ramen",
+          "expected": "spicy miso ramen"
+        },
+        {
+          "name": "quality_check",
+          "pass": true,
+          "got": "PASS",
+          "expected": "PASS"
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Mixed review",
+      "pass": true,
+      "checks": [
+        {
+          "name": "auto_reply_allowed",
+          "pass": true,
+          "got": false,
+          "expected": false
+        },
+        {
+          "name": "risk_level",
+          "pass": true,
+          "got": "approval_required",
+          "expected": "approval_required"
+        },
+        {
+          "name": "sentiment",
+          "pass": true,
+          "got": "mixed",
+          "expected": "mixed"
+        },
+        {
+          "name": "quality_check",
+          "pass": true,
+          "got": "PASS",
+          "expected": "PASS"
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Negative review",
+      "pass": true,
+      "checks": [
+        {
+          "name": "auto_reply_allowed",
+          "pass": true,
+          "got": false,
+          "expected": false
+        },
+        {
+          "name": "risk_level",
+          "pass": true,
+          "got": "escalation_required",
+          "expected": "escalation_required"
+        },
+        {
+          "name": "quality_check",
+          "pass": true,
+          "got": "PASS",
+          "expected": "PASS"
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Sensitive review",
+      "pass": true,
+      "checks": [
+        {
+          "name": "auto_reply_allowed",
+          "pass": true,
+          "got": false,
+          "expected": false
+        },
+        {
+          "name": "risk_level",
+          "pass": true,
+          "got": "escalation_required",
+          "expected": "escalation_required"
+        },
+        {
+          "name": "quality_check",
+          "pass": true,
+          "got": "PASS",
+          "expected": "PASS"
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Delivery issue",
+      "pass": true,
+      "checks": [
+        {
+          "name": "auto_reply_allowed",
+          "pass": true,
+          "got": false,
+          "expected": false
+        },
+        {
+          "name": "risk_level",
+          "pass": true,
+          "got": "escalation_required",
+          "expected": "escalation_required"
+        },
+        {
+          "name": "quality_check",
+          "pass": true,
+          "got": "PASS",
+          "expected": "PASS"
+        }
+      ]
+    }
+  ]
+}

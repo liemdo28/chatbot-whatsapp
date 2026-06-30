@@ -1,0 +1,84 @@
+{
+  "started_at": "2026-06-30T03:09:59",
+  "finished_at": "2026-06-30T03:15:06",
+  "store": "Stockton",
+  "business_dates": [
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-27",
+    "2026-06-28",
+    "2026-06-29"
+  ],
+  "report_type": "sales_summary",
+  "ok": true,
+  "success_count": 7,
+  "fail_count": 0,
+  "total_count": 7,
+  "warnings": [],
+  "files": [
+    {
+      "store": "Stockton",
+      "date": "2026-06-23",
+      "report_type": "sales_summary",
+      "success": true,
+      "file_path": "C:\\ProgramData\\ToastPOSManager\\toast-reports\\Stockton\\Sale Summary\\2026-06-23_SalesSummary_Stockton.xlsx",
+      "error": ""
+    },
+    {
+      "store": "Stockton",
+      "date": "2026-06-24",
+      "report_type": "sales_summary",
+      "success": true,
+      "file_path": "C:\\ProgramData\\ToastPOSManager\\toast-reports\\Stockton\\Sale Summary\\2026-06-24_SalesSummary_Stockton.xlsx",
+      "error": ""
+    },
+    {
+      "store": "Stockton",
+      "date": "2026-06-25",
+      "report_type": "sales_summary",
+      "success": true,
+      "file_path": "C:\\ProgramData\\ToastPOSManager\\toast-reports\\Stockton\\Sale Summary\\2026-06-25_SalesSummary_Stockton.xlsx",
+      "error": ""
+    },
+    {
+      "store": "Stockton",
+      "date": "2026-06-26",
+      "report_type": "sales_summary",
+      "success": true,
+      "file_path": "C:\\ProgramData\\ToastPOSManager\\toast-reports\\Stockton\\Sale Summary\\2026-06-26_SalesSummary_Stockton.xlsx",
+      "error": ""
+    },
+    {
+      "store": "Stockton",
+      "date": "2026-06-27",
+      "report_type": "sales_summary",
+      "success": true,
+      "file_path": "C:\\ProgramData\\ToastPOSManager\\toast-reports\\Stockton\\Sale Summary\\2026-06-27_SalesSummary_Stockton.xlsx",
+      "error": ""
+    },
+    {
+      "store": "Stockton",
+      "date": "2026-06-28",
+      "report_type": "sales_summary",
+      "success": true,
+      "file_path": "C:\\ProgramData\\ToastPOSManager\\toast-reports\\Stockton\\Sale Summary\\2026-06-28_SalesSummary_Stockton.xlsx",
+      "error": ""
+    },
+    {
+      "store": "Stockton",
+      "date": "2026-06-29",
+      "report_type": "sales_summary",
+      "success": true,
+      "file_path": "C:\\ProgramData\\ToastPOSManager\\toast-reports\\Stockton\\Sale Summary\\2026-06-29_SalesSummary_Stockton.xlsx",
+      "error": ""
+    }
+  ],
+  "window_capture_counts": {
+    "qb": 29,
+    "chrome": 29,
+    "toast": 6
+  },
+  "error": ""
+}

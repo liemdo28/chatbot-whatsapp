@@ -1,0 +1,992 @@
+{
+  "runId": "5aa254fe-3b5e-4cb2-90bc-ed98db793edf",
+  "startedAt": "2026-06-27T12:56:49.854Z",
+  "completedAt": "2026-06-27T13:02:30.633Z",
+  "autonomousAdjustmentsEnabled": false,
+  "executionMode": "dry_run",
+  "liveExecutionEnabled": false,
+  "summary": {
+    "storesAudited": 4,
+    "storesPulled": 3,
+    "freshCampaignsPulled": 14,
+    "recommendationsGenerated": 14,
+    "approvalsQueued": 14,
+    "executionsAttempted": 0,
+    "executionsSubmitted": 0
+  },
+  "sessionsBefore": [
+    {
+      "storeId": "bakudan-the-rim",
+      "storeName": "Bakudan The Rim",
+      "sessionPath": "./data/sessions/bakudan-the-rim",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "bakudan-stone-oak",
+      "storeName": "Bakudan Stone Oak",
+      "sessionPath": "./data/sessions/bakudan-stone-oak",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": "2026-06-16 15:15:15",
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "bakudan-bandera",
+      "storeName": "Bakudan Bandera",
+      "sessionPath": "./data/sessions/bakudan-bandera",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "raw-sushi-bar",
+      "storeName": "Raw Sushi Bar",
+      "sessionPath": "./data/sessions/raw-sushi-bar",
+      "sessionStatus": "none",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    }
+  ],
+  "stores": [
+    {
+      "storeId": "bakudan-bandera",
+      "storeName": "Bakudan Bandera",
+      "pullSuccess": true,
+      "pullMessage": "Read 2 campaigns for bakudan-bandera. Snapshots saved.",
+      "campaignCount": 2,
+      "snapshotIds": [
+        "6672e224-b345-4f5b-ab4e-c4c9a53b844f",
+        "fc7178a7-4985-482a-9dbc-5fbcc5364219"
+      ],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-bandera\\campaigns-bakudan-bandera-2026-06-27T13-00-07-093Z.png"
+      ],
+      "qa": {
+        "ok": true,
+        "provider": "deterministic",
+        "risk": "low",
+        "pageUrl": "https://www.doordash.com/merchant/en-US/marketing/overview?store_id=24627783",
+        "title": "DoorDash Food Delivery | Merchant Portal",
+        "findings": [
+          "Campaign page readiness signals detected."
+        ],
+        "signals": [
+          "campaign_page_language",
+          "performance_metrics_language",
+          "merchant_domain"
+        ],
+        "checkedAt": "2026-06-27T13:00:07.275Z"
+      },
+      "campaigns": [
+        {
+          "id": "6672e224-b345-4f5b-ab4e-c4c9a53b844f",
+          "storeId": "bakudan-bandera",
+          "campaignName": "Discount for customers 5/35, June 9th, smart targeting",
+          "campaignType": "marketplace",
+          "status": "active",
+          "budget": null,
+          "spend": 227.62,
+          "sales": 1718.57,
+          "orders": null,
+          "roas": 7.55,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Discount for customers 5/35, June 9th, smart targeting Marketplace Active Jun 9, 2026 None $1,718.57 26 $227.62 7.55x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Discount for customers 5/35, June 9th, smart targeting\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 9, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$1,718.57\"},{\"label\":\"New customers\",\"value\":\"26\"},{\"label\":\"Spend\",\"value\":\"$227.62\"},{\"label\":\"ROAS\",\"value\":\"7.55x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-bandera\\campaigns-bakudan-bandera-2026-06-27T13-00-07-093Z.png"
+        },
+        {
+          "id": "fc7178a7-4985-482a-9dbc-5fbcc5364219",
+          "storeId": "bakudan-bandera",
+          "campaignName": "Advertise to customers $3 bid 147 weekly",
+          "campaignType": "marketplace",
+          "status": "active",
+          "budget": null,
+          "spend": 504,
+          "sales": 5498.1,
+          "orders": null,
+          "roas": 10.91,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Advertise to customers $3 bid 147 weekly Marketplace Active Apr 12, 2026 None $5,498.10 N/A $504.00 10.91x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Advertise to customers $3 bid 147 weekly\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Apr 12, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$5,498.10\"},{\"label\":\"New customers\",\"value\":\"N/A\"},{\"label\":\"Spend\",\"value\":\"$504.00\"},{\"label\":\"ROAS\",\"value\":\"10.91x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-bandera\\campaigns-bakudan-bandera-2026-06-27T13-00-07-093Z.png"
+        }
+      ],
+      "analyses": [
+        {
+          "id": "fc7178a7-4985-482a-9dbc-5fbcc5364219",
+          "storeId": "bakudan-bandera",
+          "campaignName": "Advertise to customers $3 bid 147 weekly",
+          "campaignType": "marketplace",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 504,
+          "currentSales": 5498.1,
+          "currentOrders": null,
+          "currentRoas": 10.91,
+          "estimatedProfit": 595.6200000000001,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "6672e224-b345-4f5b-ab4e-c4c9a53b844f",
+          "storeId": "bakudan-bandera",
+          "campaignName": "Discount for customers 5/35, June 9th, smart targeting",
+          "campaignType": "marketplace",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 227.62,
+          "currentSales": 1718.57,
+          "currentOrders": null,
+          "currentRoas": 7.55,
+          "estimatedProfit": 116.094,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        }
+      ],
+      "recommendations": [
+        {
+          "storeId": "bakudan-bandera",
+          "campaignSnapshotId": "fc7178a7-4985-482a-9dbc-5fbcc5364219",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 1.091,
+          "expectedProfitImpact": 119.12400000000002,
+          "reason": "Strong ROI (10.9x) and positive profit ($595.62). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "a82ac963-91ef-45dc-a4b7-1c1eb163a102"
+        },
+        {
+          "storeId": "bakudan-bandera",
+          "campaignSnapshotId": "6672e224-b345-4f5b-ab4e-c4c9a53b844f",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 0.755,
+          "expectedProfitImpact": 23.2188,
+          "reason": "Strong ROI (7.5x) and positive profit ($116.09). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "fcb2e6d1-c7f8-48af-b8ae-70a68ec41ae0"
+        }
+      ],
+      "approvals": [
+        {
+          "id": "6ab74892-1eb6-4089-bd9e-9ca3996e1f88",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "443f037e-36aa-44d6-ae40-b73b018865f6",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        }
+      ],
+      "executions": []
+    },
+    {
+      "storeId": "bakudan-stone-oak",
+      "storeName": "Bakudan Stone Oak",
+      "pullSuccess": false,
+      "pullMessage": "No campaign rows could be parsed from the current DoorDash page. Screenshot saved for selector review. QA risk: low.",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-stone-oak\\campaigns-bakudan-stone-oak-2026-06-27T12-59-06-792Z.png"
+      ],
+      "qa": {
+        "ok": true,
+        "provider": "deterministic",
+        "risk": "low",
+        "pageUrl": "https://www.doordash.com/merchant/en-US/marketing/campaigns?store_id=24437076",
+        "title": "DoorDash Food Delivery | Merchant Portal",
+        "findings": [
+          "Campaign page readiness signals detected."
+        ],
+        "signals": [
+          "campaign_page_language",
+          "performance_metrics_language",
+          "merchant_domain"
+        ],
+        "checkedAt": "2026-06-27T12:59:07.397Z"
+      },
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    },
+    {
+      "storeId": "bakudan-the-rim",
+      "storeName": "Bakudan The Rim",
+      "pullSuccess": true,
+      "pullMessage": "Read 4 campaigns for bakudan-the-rim. Snapshots saved.",
+      "campaignCount": 4,
+      "snapshotIds": [
+        "4e28e0e3-d4ac-46b0-968e-10175bfe4bac",
+        "bea553d0-9f9c-4e58-ac38-5fa89dff2a70",
+        "6adb0fb6-b0db-4ee2-9f70-c4357d886c5d",
+        "53f54d78-e74d-4aac-8530-a90f855805b2"
+      ],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-the-rim\\campaigns-bakudan-the-rim-2026-06-27T12-58-36-583Z.png"
+      ],
+      "qa": {
+        "ok": true,
+        "provider": "deterministic",
+        "risk": "low",
+        "pageUrl": "https://www.doordash.com/merchant/marketing/report?store_id=892048",
+        "title": "DoorDash Food Delivery | Merchant Portal",
+        "findings": [
+          "Campaign page readiness signals detected."
+        ],
+        "signals": [
+          "campaign_page_language",
+          "performance_metrics_language",
+          "merchant_domain"
+        ],
+        "checkedAt": "2026-06-27T12:58:37.935Z"
+      },
+      "campaigns": [
+        {
+          "id": "4e28e0e3-d4ac-46b0-968e-10175bfe4bac",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "Discount for customers June 9th, 7 of 47 Smart targeting.",
+          "campaignType": "marketplace",
+          "status": "active",
+          "budget": null,
+          "spend": 151.81,
+          "sales": 1179.64,
+          "orders": null,
+          "roas": 7.77,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Discount for customers June 9th, 7 of 47 Smart targeting. Marketplace Active Jun 9, 2026 None $1,179.64 11 $151.81 7.77x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Discount for customers June 9th, 7 of 47 Smart targeting.\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 9, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$1,179.64\"},{\"label\":\"New customers\",\"value\":\"11\"},{\"label\":\"Spend\",\"value\":\"$151.81\"},{\"label\":\"ROAS\",\"value\":\"7.77x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-the-rim\\campaigns-bakudan-the-rim-2026-06-27T12-58-36-583Z.png"
+        },
+        {
+          "id": "bea553d0-9f9c-4e58-ac38-5fa89dff2a70",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "Advertise to customers $3 June 9th",
+          "campaignType": "marketplace",
+          "status": "active",
+          "budget": null,
+          "spend": 237,
+          "sales": 2686.67,
+          "orders": null,
+          "roas": 11.34,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Advertise to customers $3 June 9th Marketplace Active Jun 9, 2026 None $2,686.67 N/A $237.00 11.34x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Advertise to customers $3 June 9th\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 9, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$2,686.67\"},{\"label\":\"New customers\",\"value\":\"N/A\"},{\"label\":\"Spend\",\"value\":\"$237.00\"},{\"label\":\"ROAS\",\"value\":\"11.34x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-the-rim\\campaigns-bakudan-the-rim-2026-06-27T12-58-36-583Z.png"
+        },
+        {
+          "id": "6adb0fb6-b0db-4ee2-9f70-c4357d886c5d",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "7 off 45 lapse customer, March 30th",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "budget": null,
+          "spend": 15.98,
+          "sales": 131.53,
+          "orders": null,
+          "roas": 8.23,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"7 off 45 lapse customer, March 30th Marketplace Ended Mar 30, 2026 Jun 9, 2026 $131.53 0 $15.98 8.23x\",\"fields\":[{\"label\":\"Name\",\"value\":\"7 off 45 lapse customer, March 30th\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Ended\"},{\"label\":\"Start date\",\"value\":\"Mar 30, 2026\"},{\"label\":\"End date\",\"value\":\"Jun 9, 2026\"},{\"label\":\"Sales\",\"value\":\"$131.53\"},{\"label\":\"New customers\",\"value\":\"0\"},{\"label\":\"Spend\",\"value\":\"$15.98\"},{\"label\":\"ROAS\",\"value\":\"8.23x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-the-rim\\campaigns-bakudan-the-rim-2026-06-27T12-58-36-583Z.png"
+        },
+        {
+          "id": "53f54d78-e74d-4aac-8530-a90f855805b2",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "7 off 45 new customers, March 31th",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "budget": null,
+          "spend": 15.98,
+          "sales": 94.13,
+          "orders": null,
+          "roas": 5.89,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"7 off 45 new customers, March 31th Marketplace Ended Mar 31, 2026 Jun 9, 2026 $94.13 2 $15.98 5.89x\",\"fields\":[{\"label\":\"Name\",\"value\":\"7 off 45 new customers, March 31th\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Ended\"},{\"label\":\"Start date\",\"value\":\"Mar 31, 2026\"},{\"label\":\"End date\",\"value\":\"Jun 9, 2026\"},{\"label\":\"Sales\",\"value\":\"$94.13\"},{\"label\":\"New customers\",\"value\":\"2\"},{\"label\":\"Spend\",\"value\":\"$15.98\"},{\"label\":\"ROAS\",\"value\":\"5.89x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-the-rim\\campaigns-bakudan-the-rim-2026-06-27T12-58-36-583Z.png"
+        }
+      ],
+      "analyses": [
+        {
+          "id": "6adb0fb6-b0db-4ee2-9f70-c4357d886c5d",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "7 off 45 lapse customer, March 30th",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "currentBudget": null,
+          "currentSpend": 15.98,
+          "currentSales": 131.53,
+          "currentOrders": null,
+          "currentRoas": 8.23,
+          "estimatedProfit": 10.326,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "53f54d78-e74d-4aac-8530-a90f855805b2",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "7 off 45 new customers, March 31th",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "currentBudget": null,
+          "currentSpend": 15.98,
+          "currentSales": 94.13,
+          "currentOrders": null,
+          "currentRoas": 5.89,
+          "estimatedProfit": 2.846,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "bea553d0-9f9c-4e58-ac38-5fa89dff2a70",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "Advertise to customers $3 June 9th",
+          "campaignType": "marketplace",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 237,
+          "currentSales": 2686.67,
+          "currentOrders": null,
+          "currentRoas": 11.34,
+          "estimatedProfit": 300.33400000000006,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "4e28e0e3-d4ac-46b0-968e-10175bfe4bac",
+          "storeId": "bakudan-the-rim",
+          "campaignName": "Discount for customers June 9th, 7 of 47 Smart targeting.",
+          "campaignType": "marketplace",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 151.81,
+          "currentSales": 1179.64,
+          "currentOrders": null,
+          "currentRoas": 7.77,
+          "estimatedProfit": 84.11800000000002,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        }
+      ],
+      "recommendations": [
+        {
+          "storeId": "bakudan-the-rim",
+          "campaignSnapshotId": "6adb0fb6-b0db-4ee2-9f70-c4357d886c5d",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 0.8230000000000001,
+          "expectedProfitImpact": 2.0652000000000004,
+          "reason": "Strong ROI (8.2x) and positive profit ($10.33). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "cddfe8f9-475c-4f2c-87f2-842632a4fc15"
+        },
+        {
+          "storeId": "bakudan-the-rim",
+          "campaignSnapshotId": "53f54d78-e74d-4aac-8530-a90f855805b2",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 0.589,
+          "expectedProfitImpact": 0.5692,
+          "reason": "Strong ROI (5.9x) and positive profit ($2.85). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "11e5eca2-4896-4e04-b9c9-22a041090ef7"
+        },
+        {
+          "storeId": "bakudan-the-rim",
+          "campaignSnapshotId": "bea553d0-9f9c-4e58-ac38-5fa89dff2a70",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 1.1340000000000001,
+          "expectedProfitImpact": 60.066800000000015,
+          "reason": "Strong ROI (11.3x) and positive profit ($300.33). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "e4ba9e28-feec-408a-b1bd-73962697c279"
+        },
+        {
+          "storeId": "bakudan-the-rim",
+          "campaignSnapshotId": "4e28e0e3-d4ac-46b0-968e-10175bfe4bac",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 0.777,
+          "expectedProfitImpact": 16.823600000000006,
+          "reason": "Strong ROI (7.8x) and positive profit ($84.12). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "6f64e876-31a0-4c19-b131-2e23c0651c41"
+        }
+      ],
+      "approvals": [
+        {
+          "id": "eceea5b7-08e2-4845-a7c8-9d1a04bc17f7",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "031a4e79-97aa-4af9-a24e-ad3df931e60e",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "4f5552db-2461-4b76-b19e-5d3a5ef642ac",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "c90b3b73-55f7-4ba3-bc40-c42b4d8e39eb",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        }
+      ],
+      "executions": []
+    },
+    {
+      "storeId": "raw-sushi-bar",
+      "storeName": "Raw Sushi Bar",
+      "pullSuccess": true,
+      "pullMessage": "Read 8 campaigns for raw-sushi-bar. Snapshots saved.",
+      "campaignCount": 8,
+      "snapshotIds": [
+        "c1e5a32e-d5d4-4b18-9dd4-0f6998c6dd24",
+        "db1d0196-522c-40e8-bbf0-61d6f6380551",
+        "8c77d94a-2cc9-4066-a860-f3faa2245e0c",
+        "25dacd43-73ad-4c29-8e38-35b5a3792395",
+        "0639cfd5-d7e7-4229-8de5-75e02c9deccf",
+        "9c098dc2-162f-4534-82b8-b27af2e1b584",
+        "07d10691-8222-4d37-a92f-14cd7129c9a3",
+        "b2e30c7f-10da-4ae1-b97a-81691218d0c3"
+      ],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+      ],
+      "qa": {
+        "ok": true,
+        "provider": "deterministic",
+        "risk": "low",
+        "pageUrl": "https://www.doordash.com/merchant/marketing/report?store_id=892006",
+        "title": "DoorDash Food Delivery | Merchant Portal",
+        "findings": [
+          "Campaign page readiness signals detected."
+        ],
+        "signals": [
+          "campaign_page_language",
+          "performance_metrics_language",
+          "merchant_domain"
+        ],
+        "checkedAt": "2026-06-27T13:02:29.032Z"
+      },
+      "campaigns": [
+        {
+          "id": "c1e5a32e-d5d4-4b18-9dd4-0f6998c6dd24",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Smart campaign 06/23/2026",
+          "campaignType": "marketplace",
+          "status": "active",
+          "budget": null,
+          "spend": 20.21,
+          "sales": 72.88,
+          "orders": null,
+          "roas": 3.61,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Smart campaign 06/23/2026 Marketplace Active Jun 24, 2026 None $72.88 2 $20.21 3.61x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Smart campaign 06/23/2026\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 24, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$72.88\"},{\"label\":\"New customers\",\"value\":\"2\"},{\"label\":\"Spend\",\"value\":\"$20.21\"},{\"label\":\"ROAS\",\"value\":\"3.61x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        },
+        {
+          "id": "db1d0196-522c-40e8-bbf0-61d6f6380551",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Buy 1, get 1 free promotion 06/19/2026",
+          "campaignType": "promotion",
+          "status": "active",
+          "budget": null,
+          "spend": 346.7,
+          "sales": 1988.89,
+          "orders": null,
+          "roas": 5.74,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Buy 1, get 1 free promotion 06/19/2026 Marketplace Active Jun 20, 2026 None $1,988.89 7 $346.70 5.74x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Buy 1, get 1 free promotion 06/19/2026\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 20, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$1,988.89\"},{\"label\":\"New customers\",\"value\":\"7\"},{\"label\":\"Spend\",\"value\":\"$346.70\"},{\"label\":\"ROAS\",\"value\":\"5.74x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        },
+        {
+          "id": "8c77d94a-2cc9-4066-a860-f3faa2245e0c",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Discount for customers Smart Customer 9 of 80",
+          "campaignType": "marketplace",
+          "status": "active",
+          "budget": null,
+          "spend": 169.83,
+          "sales": 1876.06,
+          "orders": null,
+          "roas": 11.05,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Discount for customers Smart Customer 9 of 80 Marketplace Active Jun 8, 2026 None $1,876.06 4 $169.83 11.05x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Discount for customers Smart Customer 9 of 80\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 8, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$1,876.06\"},{\"label\":\"New customers\",\"value\":\"4\"},{\"label\":\"Spend\",\"value\":\"$169.83\"},{\"label\":\"ROAS\",\"value\":\"11.05x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        },
+        {
+          "id": "25dacd43-73ad-4c29-8e38-35b5a3792395",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Sponsored Listing 06/03/2026",
+          "campaignType": "sponsored_listing",
+          "status": "active",
+          "budget": null,
+          "spend": 467.6,
+          "sales": 6855.93,
+          "orders": null,
+          "roas": 14.66,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Sponsored Listing 06/03/2026 Marketplace Active Jun 4, 2026 None $6,855.93 N/A $467.60 14.66x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Sponsored Listing 06/03/2026\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 4, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$6,855.93\"},{\"label\":\"New customers\",\"value\":\"N/A\"},{\"label\":\"Spend\",\"value\":\"$467.60\"},{\"label\":\"ROAS\",\"value\":\"14.66x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        },
+        {
+          "id": "0639cfd5-d7e7-4229-8de5-75e02c9deccf",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "New customers, $0 delivery fees 06/03/2026",
+          "campaignType": "marketplace",
+          "status": "active",
+          "budget": null,
+          "spend": 39.92,
+          "sales": 424.63,
+          "orders": null,
+          "roas": 10.64,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"New customers, $0 delivery fees 06/03/2026 Marketplace Active Jun 4, 2026 None $424.63 8 $39.92 10.64x\",\"fields\":[{\"label\":\"Name\",\"value\":\"New customers, $0 delivery fees 06/03/2026\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Active\"},{\"label\":\"Start date\",\"value\":\"Jun 4, 2026\"},{\"label\":\"End date\",\"value\":\"None\"},{\"label\":\"Sales\",\"value\":\"$424.63\"},{\"label\":\"New customers\",\"value\":\"8\"},{\"label\":\"Spend\",\"value\":\"$39.92\"},{\"label\":\"ROAS\",\"value\":\"10.64x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        },
+        {
+          "id": "9c098dc2-162f-4534-82b8-b27af2e1b584",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Smart campaign 06/03/2026",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "budget": null,
+          "spend": 449.12,
+          "sales": 1731.75,
+          "orders": null,
+          "roas": 3.86,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Smart campaign 06/03/2026 Marketplace Ended Jun 4, 2026 Jun 8, 2026 $1,731.75 13 $449.12 3.86x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Smart campaign 06/03/2026\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Ended\"},{\"label\":\"Start date\",\"value\":\"Jun 4, 2026\"},{\"label\":\"End date\",\"value\":\"Jun 8, 2026\"},{\"label\":\"Sales\",\"value\":\"$1,731.75\"},{\"label\":\"New customers\",\"value\":\"13\"},{\"label\":\"Spend\",\"value\":\"$449.12\"},{\"label\":\"ROAS\",\"value\":\"3.86x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        },
+        {
+          "id": "07d10691-8222-4d37-a92f-14cd7129c9a3",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Buy 1, get 1 free promotion 05/07/2026",
+          "campaignType": "promotion",
+          "status": "ended",
+          "budget": null,
+          "spend": 209.02,
+          "sales": 1466.9,
+          "orders": null,
+          "roas": 7.02,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"Buy 1, get 1 free promotion 05/07/2026 Marketplace Ended May 7, 2026 Jun 4, 2026 $1,466.90 0 $209.02 7.02x\",\"fields\":[{\"label\":\"Name\",\"value\":\"Buy 1, get 1 free promotion 05/07/2026\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Ended\"},{\"label\":\"Start date\",\"value\":\"May 7, 2026\"},{\"label\":\"End date\",\"value\":\"Jun 4, 2026\"},{\"label\":\"Sales\",\"value\":\"$1,466.90\"},{\"label\":\"New customers\",\"value\":\"0\"},{\"label\":\"Spend\",\"value\":\"$209.02\"},{\"label\":\"ROAS\",\"value\":\"7.02x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        },
+        {
+          "id": "b2e30c7f-10da-4ae1-b97a-81691218d0c3",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "may 7th $3 everyone",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "budget": null,
+          "spend": 126,
+          "sales": 2405.27,
+          "orders": null,
+          "roas": 19.09,
+          "startDate": null,
+          "endDate": null,
+          "currency": "USD",
+          "rawData": "{\"source\":\"table\",\"text\":\"may 7th $3 everyone Marketplace Ended May 7, 2026 Jun 4, 2026 $2,405.27 N/A $126.00 19.09x\",\"fields\":[{\"label\":\"Name\",\"value\":\"may 7th $3 everyone\"},{\"label\":\"Channel\",\"value\":\"Marketplace\"},{\"label\":\"Status\",\"value\":\"Ended\"},{\"label\":\"Start date\",\"value\":\"May 7, 2026\"},{\"label\":\"End date\",\"value\":\"Jun 4, 2026\"},{\"label\":\"Sales\",\"value\":\"$2,405.27\"},{\"label\":\"New customers\",\"value\":\"N/A\"},{\"label\":\"Spend\",\"value\":\"$126.00\"},{\"label\":\"ROAS\",\"value\":\"19.09x\"},{\"label\":\"column_10\",\"value\":\"\"}]}",
+          "screenshotPath": "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-27T13-02-28-445Z.png"
+        }
+      ],
+      "analyses": [
+        {
+          "id": "07d10691-8222-4d37-a92f-14cd7129c9a3",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Buy 1, get 1 free promotion 05/07/2026",
+          "campaignType": "promotion",
+          "status": "ended",
+          "currentBudget": null,
+          "currentSpend": 209.02,
+          "currentSales": 1466.9,
+          "currentOrders": null,
+          "currentRoas": 7.02,
+          "estimatedProfit": 84.36000000000004,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "db1d0196-522c-40e8-bbf0-61d6f6380551",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Buy 1, get 1 free promotion 06/19/2026",
+          "campaignType": "promotion",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 346.7,
+          "currentSales": 1988.89,
+          "currentOrders": null,
+          "currentRoas": 5.74,
+          "estimatedProfit": 51.07800000000003,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "8c77d94a-2cc9-4066-a860-f3faa2245e0c",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Discount for customers Smart Customer 9 of 80",
+          "campaignType": "marketplace",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 169.83,
+          "currentSales": 1876.06,
+          "currentOrders": null,
+          "currentRoas": 11.05,
+          "estimatedProfit": 205.38199999999998,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "0639cfd5-d7e7-4229-8de5-75e02c9deccf",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "New customers, $0 delivery fees 06/03/2026",
+          "campaignType": "marketplace",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 39.92,
+          "currentSales": 424.63,
+          "currentOrders": null,
+          "currentRoas": 10.64,
+          "estimatedProfit": 45.006,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "9c098dc2-162f-4534-82b8-b27af2e1b584",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Smart campaign 06/03/2026",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "currentBudget": null,
+          "currentSpend": 449.12,
+          "currentSales": 1731.75,
+          "currentOrders": null,
+          "currentRoas": 3.86,
+          "estimatedProfit": -102.76999999999998,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "c1e5a32e-d5d4-4b18-9dd4-0f6998c6dd24",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Smart campaign 06/23/2026",
+          "campaignType": "marketplace",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 20.21,
+          "currentSales": 72.88,
+          "currentOrders": null,
+          "currentRoas": 3.61,
+          "estimatedProfit": -5.634,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "25dacd43-73ad-4c29-8e38-35b5a3792395",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "Sponsored Listing 06/03/2026",
+          "campaignType": "sponsored_listing",
+          "status": "active",
+          "currentBudget": null,
+          "currentSpend": 467.6,
+          "currentSales": 6855.93,
+          "currentOrders": null,
+          "currentRoas": 14.66,
+          "estimatedProfit": 903.5860000000001,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        },
+        {
+          "id": "b2e30c7f-10da-4ae1-b97a-81691218d0c3",
+          "storeId": "raw-sushi-bar",
+          "campaignName": "may 7th $3 everyone",
+          "campaignType": "marketplace",
+          "status": "ended",
+          "currentBudget": null,
+          "currentSpend": 126,
+          "currentSales": 2405.27,
+          "currentOrders": null,
+          "currentRoas": 19.09,
+          "estimatedProfit": 355.05400000000003,
+          "profitMargin": 0.2,
+          "trendVsPrevious": "no_data",
+          "previousPeriodSpend": null,
+          "previousPeriodSales": null
+        }
+      ],
+      "recommendations": [
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "07d10691-8222-4d37-a92f-14cd7129c9a3",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 0.702,
+          "expectedProfitImpact": 16.87200000000001,
+          "reason": "Strong ROI (7.0x) and positive profit ($84.36). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "96817863-24d8-4823-a3c1-2d46825bca1d"
+        },
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "db1d0196-522c-40e8-bbf0-61d6f6380551",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 0.5740000000000001,
+          "expectedProfitImpact": 10.215600000000007,
+          "reason": "Strong ROI (5.7x) and positive profit ($51.08). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "2f45107c-c181-4bcf-a952-9485da80b95a"
+        },
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "8c77d94a-2cc9-4066-a860-f3faa2245e0c",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 1.1050000000000002,
+          "expectedProfitImpact": 41.0764,
+          "reason": "Strong ROI (11.1x) and positive profit ($205.38). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "e9f5b233-8753-4c66-a28c-01afd0914d62"
+        },
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "0639cfd5-d7e7-4229-8de5-75e02c9deccf",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 1.064,
+          "expectedProfitImpact": 9.0012,
+          "reason": "Strong ROI (10.6x) and positive profit ($45.01). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "4c423c28-eeda-4d45-a696-e2e4f3b3cfbc"
+        },
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "9c098dc2-162f-4534-82b8-b27af2e1b584",
+          "confidence": 0.8,
+          "risk": "low",
+          "recommendationType": "PAUSE",
+          "currentSetting": "Active, $449.12/week spend",
+          "proposedSetting": "Pause",
+          "expectedRoiImpact": 0,
+          "expectedProfitImpact": 102.76999999999998,
+          "reason": "Campaign is spending $449.12 but losing $102.77 per period. Pause to stop bleed.",
+          "rollbackPlan": "Resume campaign with original budget of $0/week after reviewing cost structure.",
+          "id": "9d4c703f-48c5-4b30-8ecb-44ed8f40dbb2"
+        },
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "c1e5a32e-d5d4-4b18-9dd4-0f6998c6dd24",
+          "confidence": 0.8,
+          "risk": "low",
+          "recommendationType": "PAUSE",
+          "currentSetting": "Active, $20.21/week spend",
+          "proposedSetting": "Pause",
+          "expectedRoiImpact": 0,
+          "expectedProfitImpact": 5.634,
+          "reason": "Campaign is spending $20.21 but losing $5.63 per period. Pause to stop bleed.",
+          "rollbackPlan": "Resume campaign with original budget of $0/week after reviewing cost structure.",
+          "id": "a4a215ad-4538-4c0c-a0ba-3e9b268b29e1"
+        },
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "25dacd43-73ad-4c29-8e38-35b5a3792395",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 1.4660000000000002,
+          "expectedProfitImpact": 180.71720000000005,
+          "reason": "Strong ROI (14.7x) and positive profit ($903.59). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "546872eb-e71a-4935-b11e-e2626e5cb205"
+        },
+        {
+          "storeId": "raw-sushi-bar",
+          "campaignSnapshotId": "b2e30c7f-10da-4ae1-b97a-81691218d0c3",
+          "confidence": 0.75,
+          "risk": "low",
+          "recommendationType": "INCREASE",
+          "currentSetting": "$0/week",
+          "proposedSetting": "$0/week (20% increase)",
+          "expectedRoiImpact": 1.909,
+          "expectedProfitImpact": 71.0108,
+          "reason": "Strong ROI (19.1x) and positive profit ($355.05). Increasing budget to capture more revenue.",
+          "rollbackPlan": "Revert budget to $0/week within 48 hours if ROAS drops below 2.0x.",
+          "id": "dd6b067c-56e1-4f34-897e-3e93d4836366"
+        }
+      ],
+      "approvals": [
+        {
+          "id": "7a1f86c3-70a1-4022-9620-e4b6c203d7f8",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "8edb8faf-7998-48df-9266-5389baedbaf0",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "2ac1285b-a380-4412-a39a-b9879dba85a5",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "c7f8f919-2fae-4647-8c9e-385d9c7b6014",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "2c23a3bb-052b-4f08-8307-524321b3b408",
+          "actionType": "pause_campaign",
+          "proposedValue": "pause",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "1a8dc33e-cced-4ab9-977f-56fce5e8a834",
+          "actionType": "pause_campaign",
+          "proposedValue": "pause",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "f4894f5f-aa80-49a8-96f5-418b14da6dda",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        },
+        {
+          "id": "d54d1a0e-3613-4e24-93d9-2be1396fa9c4",
+          "actionType": "edit_budget",
+          "proposedValue": "0",
+          "status": "pending",
+          "existing": false
+        }
+      ],
+      "executions": []
+    }
+  ],
+  "reportPaths": {
+    "json": "C:\\Ld-project\\doordash-campaign-agent\\data\\audit-reports\\campaign-audit-2026-06-27T12-56-49-854Z.json",
+    "markdown": "C:\\Ld-project\\doordash-campaign-agent\\data\\audit-reports\\campaign-audit-2026-06-27T12-56-49-854Z.md"
+  }
+}

@@ -69,6 +69,16 @@ async function runCheck() {
         for (const alert of missing) {
             try {
                 const result = await sendAlert(alert);
+                if (alert.dedup_key && alert.business_date && alert.shift && (result.sent || result.suppressed)) {
+                    db.markReminderSent(
+                        alert.dedup_key,
+                        alert.store_code,
+                        alert.store_name,
+                        alert.business_date,
+                        alert.shift,
+                        "whatsapp"
+                    );
+                }
                 results.push({
                     store_id: alert.store_id,
                     label: alert.label,
@@ -143,7 +153,7 @@ async function runPeerMissingCheck(submittedStoreCode, now = new Date()) {
         };
         const alert = buildAlertMessage(group, expected, now);
         alert.issue = "peer_missing_submission";
-        alert.action_needed = `Another log group (${submittedStoreCode}) submitted. This store still needs its valid Food Safety form.`;
+        alert.action_needed = `Another log group (${submittedStoreCode}) submitted. This store still needs its numeric temperature submission.`;
         try {
             const result = await sendAlert(alert, group);
             results.push({ store_code: group.store_code, ...result });

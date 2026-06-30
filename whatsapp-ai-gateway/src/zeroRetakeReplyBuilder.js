@@ -113,11 +113,7 @@ function buildSmartConfirmationMessage(opts) {
 
     const lines = [];
 
-    if (isES) {
-        lines.push("Formulario Food Safety detectado.");
-    } else {
-        lines.push("Food Safety form detected.");
-    }
+    lines.push("Food Safety numeric submission review.");
     lines.push("");
     lines.push(`Store: ${storeName} / ${storeCode}`);
     lines.push(`Template: ${storeInfo.templateId || "N/A"}`);
@@ -195,7 +191,7 @@ function buildSmartConfirmationMessage(opts) {
     }
 
     if (needsRetake) {
-        lines.push(isES ? "RETAKE = foto más clara" : "RETAKE = clearer photo");
+        lines.push("3 = re-enter all values");
     }
     lines.push("MANUAL = enter all values");
     lines.push("MANAGER = send to manager");
@@ -204,9 +200,9 @@ function buildSmartConfirmationMessage(opts) {
     if (needsRetake) {
         lines.push("");
         if (isES) {
-            lines.push("⚠️ Demasiados campos sin leer. Intenta una foto más clara del formulario completo.");
+            lines.push("Too many fields need review. Please type /agent and enter the 19 temperature readings.");
         } else {
-            lines.push("⚠️ Too many fields unreadable. Try a clearer photo of the complete form.");
+            lines.push("Too many fields need review. Please type /agent and enter the 19 temperature readings.");
         }
     }
 

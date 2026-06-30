@@ -52,6 +52,19 @@ function normalizeConfidence(confidence) {
     return value > 1 ? value / 100 : value;
 }
 
+function buildNumericMissingSubmissionMessage(storeName, storeCode, expectedSubmission) {
+    return [
+        "Food Safety submission is missing.",
+        "",
+        `Store: ${storeName} / ${storeCode}`,
+        `Expected submission: ${expectedSubmission}`,
+        "Status: No numeric temperature submission received.",
+        "",
+        "Please type /agent and enter the 19 temperature readings.",
+        "Paper forms should still be completed and kept for records.",
+    ].join("\n");
+}
+
 // ─── Escalation Thresholds ───────────────────────────────────────────────────
 
 const CONFIDENCE_THRESHOLD = 0.60;   // Escalate below this vision confidence
@@ -238,8 +251,8 @@ async function escalateMissingForm(storeName, expectedDate, lang = "ES") {
     const managerName = getManagerName(storeGroup);
     const isES = lang !== "EN";
 
-    const messageEs = `ALERTA FOOD SAFETY - ${storeName}\n\nNo se recibio el formulario de hoy (${expectedDate}).\n\nPor favor completa y envia el formulario de Food Safety lo antes posible.`;
-    const messageEn = `FOOD SAFETY ALERT - ${storeName}\n\nDaily form not received for ${expectedDate}.\n\nPlease complete and submit the Food Safety form as soon as possible.`;
+    const messageEs = buildNumericMissingSubmissionMessage(storeName, storeGroup, expectedDate);
+    const messageEn = buildNumericMissingSubmissionMessage(storeName, storeGroup, expectedDate);
 
     logger.warn("[Escalation] Missing form alert", {
         storeGroup,
@@ -251,7 +264,7 @@ async function escalateMissingForm(storeName, expectedDate, lang = "ES") {
         store_id: STORE_GROUP_TO_ID[storeGroup],
         label: "missing_daily_form",
         issue: "missing_submission",
-        action_needed: "Ask store group to upload the completed Food Safety form.",
+        action_needed: "Food Safety submission is missing. No numeric temperature submission received. Ask store group to type /agent and enter the 19 temperature readings.",
         deadline: new Date().toISOString(),
         detected_at: new Date().toISOString(),
         store_name: storeName,
@@ -272,7 +285,7 @@ async function escalateMissingForm(storeName, expectedDate, lang = "ES") {
 
     return {
         escalated: sent,
-        reason: "missing_form",
+        reason: "missing_submission",
         managerName,
         storeGroup,
         expectedDate,

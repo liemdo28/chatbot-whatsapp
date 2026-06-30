@@ -272,18 +272,13 @@ async function checkMinimumImageSize(imagePath, templateInfo = {}) {
 
         if (reasons.length > 0) {
             const message = [
-                "The form photo is too small or compressed to read safely.",
+                "Food Safety photo processing is retired for this pilot.",
                 "",
-                "Please retake the photo:",
-                "- Use full-size/original photo",
-                "- Do not crop too tightly",
-                "- Keep the phone closer but include all 4 corners",
-                "- Make sure numbers are clear",
+                "Please type /agent and enter the 19 temperature readings.",
+                "Paper forms should still be completed and kept for records.",
                 "",
                 `Current: ${width}x${height}px, estimated cell height: ${estimatedRowHeight.toFixed(0)}px`,
                 `Required: ${MIN_IMAGE_WIDTH}x${MIN_IMAGE_HEIGHT}px minimum, cell height >= ${MIN_CELL_CROP_HEIGHT}px`,
-                "",
-                "Reply RETAKE after uploading a clearer photo.",
             ].join("\n");
 
             logger.warn("[IMAGE_SIZE_GATE] RETAKE_REQUIRED", {

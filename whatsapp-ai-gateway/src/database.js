@@ -97,6 +97,29 @@ function initTables() {
     );
   `);
   try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN trace_id TEXT`); } catch (_) { /* already exists */ }
+  // Numeric text workflow columns (CEO Directive Option C, STEP 13)
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN raw_values TEXT`); } catch (_) { /* already exists */ }
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN mapped_values TEXT`); } catch (_) { /* already exists */ }
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN validation_result TEXT`); } catch (_) { /* already exists */ }
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN editor_history TEXT`); } catch (_) { /* already exists */ }
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN sheetsync_status TEXT DEFAULT 'PENDING'`); } catch (_) { /* already exists */ }
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN sheetsync_attempts INTEGER DEFAULT 0`); } catch (_) { /* already exists */ }
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN sheetsync_last_error TEXT`); } catch (_) { /* already exists */ }
+  try { db.run(`ALTER TABLE food_safety_submissions ADD COLUMN sheetsync_last_attempt TEXT`); } catch (_) { /* already exists */ }
+
+  // Sheet sync retry queue (CEO Directive STEP 14)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS google_sheet_retry_queue (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      submission_id INTEGER NOT NULL,
+      last_error TEXT,
+      attempts INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'PENDING',
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+  `);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_sheet_retry_status ON google_sheet_retry_queue(status, attempts);`);
   db.run(`
     CREATE TABLE IF NOT EXISTS food_safety_edits (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -383,6 +406,60 @@ function initTables() {
   } catch (err) {
     // Indexes may already exist
   }
+
+  // ─── Reminder Dedup Tables (CEO LOCKDOWN) ──────────────────────────────
+  db.run(`
+    CREATE TABLE IF NOT EXISTS food_safety_reminder_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      dedup_key TEXT NOT NULL UNIQUE,
+      store_code TEXT NOT NULL,
+      store_name TEXT,
+      business_date TEXT NOT NULL,
+      shift TEXT NOT NULL,
+      timezone TEXT DEFAULT 'America/Chicago',
+      sent_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      channel TEXT,
+      status TEXT DEFAULT 'SENT'
+    )
+  `);
+  try {
+    db.run(`CREATE INDEX IF NOT EXISTS idx_fsrl_dedup ON food_safety_reminder_log(dedup_key)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_fsrl_store_date ON food_safety_reminder_log(store_code, business_date, shift)`);
+  } catch (err) {
+    // Indexes may already exist
+  }
+}
+
+// ─── Reminder Dedup Functions (CEO LOCKDOWN) ───────────────────────────
+function wasReminderSentToday(dedupKey) {
+  const row = getOne(
+    `SELECT id FROM food_safety_reminder_log WHERE dedup_key = ? AND status = 'SENT'`,
+    [dedupKey]
+  );
+  return !!row;
+}
+
+function markReminderSent(dedupKey, storeCode, storeName, businessDate, shift, channel) {
+  try {
+    run(
+      `INSERT OR IGNORE INTO food_safety_reminder_log
+         (dedup_key, store_code, store_name, business_date, shift, timezone, channel, status)
+       VALUES (?, ?, ?, ?, ?, 'America/Chicago', ?, 'SENT')`,
+      [dedupKey, storeCode, storeName || '', businessDate, shift, channel || 'whatsapp']
+    );
+    saveDb();
+    return true;
+  } catch (err) {
+    logger.error("[DB] Failed to mark reminder sent", { dedupKey, error: err.message });
+    return false;
+  }
+}
+
+function getRemindersSentToday(businessDate) {
+  return getAll(
+    `SELECT * FROM food_safety_reminder_log WHERE business_date = ? ORDER BY sent_at DESC`,
+    [businessDate]
+  );
 }
 
 function getAll(sql, params = []) {
@@ -410,13 +487,18 @@ function run(sql, params = []) {
 function insertSubmission(data) {
   db.run(
     `INSERT INTO food_safety_submissions
-       (store_name, phone_number, employee_name, message_id, trace_id, image_path, ocr_raw_text, ocr_json, ocr_confidence, detected_items, status, language)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (store_name, phone_number, employee_name, message_id, trace_id, image_path,
+        ocr_raw_text, ocr_json, ocr_confidence, detected_items, status, language,
+        raw_values, mapped_values, validation_result, editor_history, sheetsync_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       data.store_name, data.phone_number, data.employee_name,
       data.message_id, data.trace_id || null, data.image_path, data.ocr_raw_text,
       data.ocr_json, data.ocr_confidence, data.detected_items,
       data.status, data.language,
+      data.raw_values || null, data.mapped_values || null,
+      data.validation_result || null, data.editor_history || null,
+      data.sheetsync_status || 'PENDING',
     ]
   );
   const rows = getAll("SELECT last_insert_rowid() as id");
@@ -424,6 +506,70 @@ function insertSubmission(data) {
   saveDb();
   logger.info("Submission inserted", { id, store: data.store_name });
   return id;
+}
+
+function enqueueSheetRetry(submissionId, errorMsg) {
+  try {
+    const existing = getOne(
+      `SELECT id FROM google_sheet_retry_queue WHERE submission_id = ? AND status = 'PENDING'`,
+      [submissionId]
+    );
+    if (existing) {
+      run(
+        `UPDATE google_sheet_retry_queue SET last_error = ?, attempts = attempts + 1, updated_at = datetime('now')
+         WHERE id = ?`,
+        [String(errorMsg || "").slice(0, 500), existing.id]
+      );
+    } else {
+      run(
+        `INSERT INTO google_sheet_retry_queue (submission_id, last_error, attempts, status)
+         VALUES (?, ?, 1, 'PENDING')`,
+        [submissionId, String(errorMsg || "").slice(0, 500)]
+      );
+    }
+    // Update submission status
+    run(
+      `UPDATE food_safety_submissions
+       SET sheetsync_status = 'RETRY_QUEUED',
+           sheetsync_last_error = ?,
+           google_sheet_sync_error = ?,
+           sheetsync_last_attempt = datetime('now'),
+           google_sheet_synced = 0
+       WHERE id = ?`,
+      [String(errorMsg || "").slice(0, 500), String(errorMsg || "").slice(0, 500), submissionId]
+    );
+    saveDb();
+    logger.info("[SHEET_RETRY] Queued retry for submission", { submissionId, error: errorMsg });
+  } catch (err) {
+    logger.error("[SHEET_RETRY] Failed to enqueue retry", { submissionId, error: err.message });
+  }
+}
+
+function markSheetSyncSuccess(submissionId) {
+  try {
+    run(
+      `UPDATE food_safety_submissions
+       SET sheetsync_status = 'SYNCED',
+           google_sheet_synced = 1,
+           google_sheet_sync_error = NULL,
+           sheetsync_last_error = NULL,
+           sheetsync_last_attempt = datetime('now'),
+           updated_at = datetime('now')
+       WHERE id = ?`,
+      [submissionId]
+    );
+    saveDb();
+  } catch (err) {
+    logger.error("[SHEET_SYNC] Failed to mark sync success", { submissionId, error: err.message });
+  }
+}
+
+function updateSubmissionEditHistory(id, editorHistory) {
+  run(
+    `UPDATE food_safety_submissions SET editor_history = ?, updated_at = datetime('now') WHERE id = ?`,
+    [JSON.stringify(editorHistory), id]
+  );
+  saveDb();
 }
 
 function updateSubmissionStatus(id, status) {
@@ -515,6 +661,13 @@ module.exports = {
   getWhatsAppSessionStatus,
   logMessage,
   saveDb,
+  enqueueSheetRetry,
+  markSheetSyncSuccess,
+  updateSubmissionEditHistory,
+  // Reminder dedup (CEO LOCKDOWN)
+  wasReminderSentToday,
+  markReminderSent,
+  getRemindersSentToday,
   // Sync helpers (work after first getDb() call)
   getAll,
   getOne,

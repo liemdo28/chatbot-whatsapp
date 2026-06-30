@@ -1,0 +1,23 @@
+════════════════════════════════════════════════════════════════════════════════
+  HTTP "SCREENSHOT" — 10-case-E-sensitive
+════════════════════════════════════════════════════════════════════════════════
+Request:
+  Method: POST
+  URL:    http://localhost:8788/api/reviews/reply-agent/run
+
+Response:
+  Status: 200
+  Headers: {
+             "x-powered-by": "Express",
+             "content-type": "application/json; charset=utf-8",
+             "content-length": "1711",
+             "etag": "W/\"6af-vU5LFGni+c5YPn9SsHN2s2tujOI\"",
+             "date": "Mon, 29 Jun 2026 13:03:30 GMT",
+             "connection": "keep-alive",
+             "keep-alive": "timeout=5"
+           }
+
+Body:
+{"ok":true,"analysis":{"rating":2,"sentiment":"negative","sentiment_detail":{"label":"negative","score":-1,"positive":0,"negative":-3,"confidence":0.33,"token_count":6},"aspects":["general_positive"],"risk_level":"escalation_required","auto_reply_allowed":false,"requires_approval":true,"summary":"Customer gave 2★ with concerns about general_positive. Critical keywords detected.","risk_detail":{"risk_level":"escalation_required","auto_reply_allowed":false,"requires_approval":true,"reason":"Escalation: rating 2★ + critical keyword(s): got sick","escalation_flags":["got sick"],"approval_flags":["sick"]}},"draft_reply":"Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team","requires_approval":true,"reason":"Escalation review — brief, human, defers to manager follow-up (no auto-post)","quality_check":{"passed":true,"issues":[],"length":276},"approval_id":8,"approval_message":"New Review Reply Needs Approval\nStore: bakudan_rim\nPlatform: google\nRating: 2 stars\nReviewer: Anonymous\nReview: \"I got sick after eating here.\"\n\nDetected issues:\n- general_positive\n\nSuggested reply:\n\"Hi Anonymous,\n\nThank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right — could you reach out to us directly so we can follow up personally?\n\n— Bakudan Ramen Team\"\n\nReply:\n1 = Approve\n2 = Edit\n3 = Reject\n4 = Escalate","draft_id":14,"audit_id":14}
+
+════════════════════════════════════════════════════════════════════════════════

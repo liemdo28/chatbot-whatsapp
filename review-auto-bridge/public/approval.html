@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEO Approval Queue — Review Auto-Bridge</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f4f6f8;
+            color: #1a1a1a;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .links a {
+            margin-left: 16px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .stat-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat-pill.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stat-pill.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .stat-pill.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stat-pill.total {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .queue-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .rating {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .r1,
+        .r2 {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .r3 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .r4 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .r5 {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .platform {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .platform.google {
+            background: #4285f4;
+            color: white;
+        }
+
+        .platform.yelp {
+            background: #d32323;
+            color: white;
+        }
+
+        .risk-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .review-text {
+            background: #f9fafb;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 12px;
+            border-left: 3px solid #e5e7eb;
+        }
+
+        .suggested {
+            background: #eff6ff;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .suggested-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #2563eb;
+            margin-bottom: 4px;
+        }
+
+        .suggested-text {
+            font-size: 14px;
+            color: #1e40af;
+            line-height: 1.5;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+
+        .decision-reason {
+            font-size: 13px;
+            color: #92400e;
+            background: #fef3c7;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .sentiment-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .sentiment-badge.positive {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .sentiment-badge.mixed {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .sentiment-badge.negative {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        button.approve {
+            background: #10b981;
+            color: white;
+        }
+
+        button.approve:hover {
+            background: #059669;
+        }
+
+        button.reject {
+            background: #ef4444;
+            color: white;
+        }
+
+        button.reject:hover {
+            background: #dc2626;
+        }
+
+        button.edit-btn {
+            background: #f59e0b;
+            color: white;
+        }
+
+        button.edit-btn:hover {
+            background: #d97706;
+        }
+
+        button.save-edit {
+            background: #2563eb;
+            color: white;
+        }
+
+        button.cancel-edit {
+            background: #6b7280;
+            color: white;
+        }
+
+        .approved-overlay,
+        .rejected-overlay {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .approved-stamp {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .rejected-stamp {
+            display: inline-block;
+            background: #ef4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 10px;
+            color: #888;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            display: none;
+            z-index: 9999;
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div>
+            <h1>✅ CEO Approval Queue</h1>
+            <div style="color: #666; font-size: 13px; margin-top: 4px;">Reviews awaiting your decision</div>
+        </div>
+        <div class="links">
+            <a href="/">← Dashboard</a>
+        </div>
+    </div>
+
+    <div class="stat-bar" id="stat-bar">
+        <div class="stat-pill total" id="pill-total">Total: 0</div>
+        <div class="stat-pill pending" id="pill-pending">Pending: 0</div>
+        <div class="stat-pill approved" id="pill-approved">Approved: 0</div>
+        <div class="stat-pill rejected" id="pill-rejected">Rejected: 0</div>
+    </div>
+
+    <div id="queue-container">
+        <div class="empty">Loading...</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `toast ${type}`;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+
+        async function fetchQueue() {
+            const r = await fetch('/api/approval-queue');
+            return r.json();
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+            }[ch]));
+        }
+
+        function safeClassToken(value, fallback = 'unknown') {
+            return String(value ?? '').replace(/[^a-z0-9_-]/gi, '') || fallback;
+        }
+
+        function ratingClass(r) {
+            const rating = Number(r);
+            return Number.isInteger(rating) && rating >= 1 && rating <= 5 ? `r${rating}` : 'r0';
+        }
+
+        function renderCard(item) {
+            const isApproved = item.status === 'approved';
+            const isRejected = item.status === 'rejected';
+            const overlayClass = isApproved ? 'approved-overlay' : isRejected ? 'rejected-overlay' : '';
+            const id = Number(item.id);
+            const safeId = Number.isInteger(id) ? id : 0;
+            const platform = String(item.platform || 'unknown');
+            const sentimentClass = safeClassToken(item.sentiment || 'mixed', 'mixed');
+            const actionButtons = isApproved || isRejected ? '' : `
+                <button class="approve" onclick="approve(${safeId})">✅ Approve & Post</button>
+                <button class="reject" onclick="reject(${safeId})">❌ Reject</button>
+            `;
+            const stamp = isApproved ? '<span class="approved-stamp">APPROVED</span>' : isRejected ? '<span class="rejected-stamp">REJECTED</span>' : '';
+            const riskTags = (item.risk_flags || []).map(f => `<span class="risk-tag">⚠ ${escapeHtml(f)}</span>`).join('');
+
+            return `
+            <div class="queue-card ${overlayClass}" id="card-${safeId}">
+                <div class="card-header">
+                    <div class="card-meta">
+                        <span class="rating ${ratingClass(item.rating)}">${escapeHtml(item.rating)}★</span>
+                        <span class="platform ${safeClassToken(platform)}">${escapeHtml(platform)}</span>
+                        <span style="font-weight: 600;">${escapeHtml(item.reviewer_name || 'Anonymous')}</span>
+                        <span style="color: #888;">${escapeHtml(item.location || 'Unknown')}</span>
+                        <span class="sentiment-badge ${sentimentClass}">${escapeHtml(item.sentiment || 'unknown')}</span>
+                        ${riskTags}
+                    </div>
+                    ${stamp}
+                </div>
+                ${item.decision_reason ? `<div class="decision-reason">📋 Reason: ${escapeHtml(item.decision_reason)}</div>` : ''}
+                <div class="review-text">"${escapeHtml(item.review_text || 'No written text')}"</div>
+                <div class="suggested">
+                    <div class="suggested-label">💬 Suggested Reply</div>
+                    <div class="suggested-text" id="reply-display-${safeId}">${escapeHtml(item.suggested_reply || '')}</div>
+                    ${!isApproved && !isRejected ? `
+                    <textarea id="reply-edit-${safeId}" style="display:none; margin-top:8px;" placeholder="Edit reply here...">${escapeHtml(item.suggested_reply || '')}</textarea>
+                    ` : ''}
+                </div>
+                <div class="card-actions">
+                    ${!isApproved && !isRejected ? `
+                    <button class="edit-btn" onclick="toggleEdit(${safeId})" id="btn-edit-${safeId}">✏️ Edit Reply</button>
+                    <button class="save-edit" onclick="saveEdit(${safeId})" id="btn-save-${safeId}" style="display:none;">💾 Save Edit</button>
+                    <button class="cancel-edit" onclick="cancelEdit(${safeId})" id="btn-cancel-${safeId}" style="display:none;">Cancel</button>
+                    ` : ''}
+                    ${actionButtons}
+                </div>
+                <div style="font-size: 11px; color: #888; margin-top: 8px;">
+                    Submitted: ${item.submitted_at ? escapeHtml(new Date(item.submitted_at).toLocaleString()) : '—'}
+                    ${item.approved_at ? ` · Approved: ${escapeHtml(new Date(item.approved_at).toLocaleString())} by ${escapeHtml(item.approved_by)}` : ''}
+                    ${item.rejected_at ? ` · Rejected: ${escapeHtml(new Date(item.rejected_at).toLocaleString())} by ${escapeHtml(item.rejected_by)}` : ''}
+                </div>
+            </div>`;
+        }
+
+        function toggleEdit(id) {
+            const display = document.getElementById(`reply-display-${id}`);
+            const editArea = document.getElementById(`reply-edit-${id}`);
+            const editBtn = document.getElementById(`btn-edit-${id}`);
+            const saveBtn = document.getElementById(`btn-save-${id}`);
+            const cancelBtn = document.getElementById(`btn-cancel-${id}`);
+            if (editArea.style.display === 'none') {
+                editArea.style.display = 'block';
+                display.style.display = 'none';
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+                cancelBtn.style.display = 'inline-block';
+            }
+        }
+
+        function cancelEdit(id) {
+            const display = document.getElementById(`reply-display-${id}`);
+            const editArea = document.getElementById(`reply-edit-${id}`);
+            const editBtn = document.getElementById(`btn-edit-${id}`);
+            const saveBtn = document.getElementById(`btn-save-${id}`);
+            const cancelBtn = document.getElementById(`btn-cancel-${id}`);
+            editArea.style.display = 'none';
+            display.style.display = 'block';
+            editBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+        }
+
+        async function saveEdit(id) {
+            const reply = document.getElementById(`reply-edit-${id}`).value;
+            const r = await fetch(`/api/approval/${id}/edit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reply })
+            });
+            const d = await r.json();
+            if (d.status === 'edited') {
+                document.getElementById(`reply-display-${id}`).textContent = reply;
+                cancelEdit(id);
+                showToast('Reply updated');
+            } else {
+                showToast('Edit failed: ' + (d.error || 'Unknown error'), 'error');
+            }
+        }
+
+        async function approve(id) {
+            const reply = document.getElementById('reply-edit-' + id)?.value || document.getElementById('reply-display-' + id)?.textContent;
+            const r = await fetch('/api/approval/' + id + '/approve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reply, actor: 'ceo' })
+            });
+            const d = await r.json();
+            if (d.status === 'approved') {
+                document.getElementById('card-' + id)?.classList.add('approved-overlay');
+                showToast('Review approved and queued for posting');
+                setTimeout(refresh, 500);
+            } else {
+                showToast('Approval failed: ' + (d.error || 'Unknown error'), 'error');
+            }
+        }
+
+        async function reject(id) {
+            const reason = prompt('Reason for rejection (optional):') || '';
+            const r = await fetch('/api/approval/' + id + '/reject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason, actor: 'ceo' })
+            });
+            const d = await r.json();
+            if (d.status === 'rejected') {
+                document.getElementById('card-' + id)?.classList.add('rejected-overlay');
+                showToast('Review rejected');
+                setTimeout(refresh, 500);
+            } else {
+                showToast('Rejection failed: ' + (d.error || 'Unknown error'), 'error');
+            }
+        }
+
+        async function refresh() {
+            const data = await fetchQueue();
+            const queue = data.queue || [];
+            const pending = queue.filter(item => item.status === 'pending');
+            const approved = queue.filter(item => item.status === 'approved');
+            const rejected = queue.filter(item => item.status === 'rejected');
+
+            document.getElementById('pill-total').textContent = 'Total: ' + queue.length;
+            document.getElementById('pill-pending').textContent = 'Pending: ' + pending.length;
+            document.getElementById('pill-approved').textContent = 'Approved: ' + approved.length;
+            document.getElementById('pill-rejected').textContent = 'Rejected: ' + rejected.length;
+
+            const container = document.getElementById('queue-container');
+            if (queue.length === 0) {
+                container.innerHTML = '<div class="empty">No items in approval queue. Run a cycle from the dashboard first.</div>';
+                return;
+            }
+
+            const allItems = [...pending, ...approved, ...rejected];
+            container.innerHTML = allItems.map(item => renderCard(item)).join('');
+        }
+
+        refresh();
+        setInterval(refresh, 8000);
+    </script>
+</body>
+
+</html>

@@ -91,14 +91,62 @@ function getStoreGroup(storeIdOrCode) {
     });
 }
 
+// San Antonio, Texas uses the America/Chicago timezone database entry.
+const STORE_TIMEZONE = process.env.FOOD_SAFETY_TIMEZONE || "America/Chicago";
+
+/**
+ * Get the current date/time in America/Chicago timezone.
+ */
+function nowInChicago() {
+    const now = new Date();
+    const chicagoStr = now.toLocaleString("en-US", { timeZone: STORE_TIMEZONE });
+    return new Date(chicagoStr);
+}
+
+/**
+ * Get the business date in America/Chicago timezone (YYYY-MM-DD).
+ */
+function getBusinessDateChicago(date = new Date()) {
+    return date.toLocaleDateString("en-CA", { timeZone: STORE_TIMEZONE }); // YYYY-MM-DD
+}
+
+/**
+ * Get the current hour:minute in America/Chicago timezone.
+ */
+function getChicagoHourMinute(date = new Date()) {
+    const parts = date.toLocaleTimeString("en-US", {
+        timeZone: STORE_TIMEZONE,
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: false,
+    });
+    const [h, m] = parts.split(":").map(Number);
+    return { hour: h, minute: m };
+}
+
+/**
+ * Build a deadline Date in America/Chicago timezone for a given date + HH:MM.
+ * Returns a Date object whose UTC value represents that Chicago local time.
+ */
+function buildDeadlineInChicago(date, hours, minutes) {
+    // Format the date parts in Chicago timezone
+    const chicagoNow = date.toLocaleString("en-US", { timeZone: STORE_TIMEZONE });
+    const chicagoDate = new Date(chicagoNow);
+    chicagoDate.setHours(hours, minutes, 0, 0);
+    return chicagoDate;
+}
+
+/**
+ * Get expected submissions for a store, with deadlines calculated in America/Chicago timezone.
+ * Each deadline is a Date object representing the Chicago-local time.
+ */
 function getExpectedSubmissions(storeId, date = new Date()) {
     const group = getStoreGroup(storeId);
     if (!group) return [];
 
     return group.expected_submissions.map((sub) => {
         const [hours, minutes] = sub.time.split(":").map(Number);
-        const deadline = new Date(date);
-        deadline.setHours(hours, minutes, 0, 0);
+        const deadline = buildDeadlineInChicago(date, hours, minutes);
         return {
             label: sub.label,
             deadline,
@@ -107,13 +155,51 @@ function getExpectedSubmissions(storeId, date = new Date()) {
     });
 }
 
+/**
+ * Check whether a submission row represents a valid form submission.
+ *
+ * CEO DIRECTIVE — Food Safety Source Cleanup & Legacy Workflow Removal:
+ *   Only CONFIRMED numeric text submissions (Option C) may cancel a
+ *   reminder. SUPERSEDED_LEGACY, SUPERSEDED, CANCELLED, PENDING rows and
+ *   any row from a legacy OCR/Vision pipeline are NEVER valid for the
+ *   reminder-cancellation check.
+ */
 function isValidFormSubmission(submission) {
     if (!submission) return false;
+
+    // CEO-LOCKED status allow-list — only confirmed numeric records pass.
     const validStatuses = ["CONFIRMED", "MANAGER_REVIEW", "SAVED", "AUTO_CONFIRMED"];
     if (!validStatuses.includes(submission.status)) return false;
+
+    // Legacy rows are NEVER valid even if their status was somehow preserved.
+    if (submission.status === "SUPERSEDED_LEGACY" || submission.status === "SUPERSEDED") return false;
+
+    // ── Numeric Text Workflow (Option C) ──
+    // These submissions have raw_values/mapped_values or runtime_pipeline = numeric_text_entry.
+    // They are the ONLY acceptable kind for reminder cancellation.
+    if (submission.raw_values || submission.mapped_values) {
+        return true;
+    }
+
     if (!submission.ocr_json) return false;
     try {
         const ocrData = JSON.parse(submission.ocr_json);
+
+        // Numeric text submission embedded in ocr_json (rare; numeric usually writes raw_values)
+        if (ocrData.runtime_pipeline === "numeric_text_entry") {
+            return true;
+        }
+
+        // Hard reject ANY OCR/Vision pipeline — even if status slipped through.
+        const legacyPipelines = [
+            "python_vision_llm_pipeline",
+            "gpt4o_vision_primary",
+            "gpt4o_vision_fallback",
+            "legacy_ocr_explicit",
+            "manual_entry",
+        ];
+        if (legacyPipelines.includes(ocrData.runtime_pipeline)) return false;
+
         if (ocrData.is_form === false || ocrData.classification === "EVIDENCE_ONLY") return false;
         if (!ocrData.items || ocrData.items.length === 0) return false;
         if ((ocrData.confidence || 0) < 70 && submission.status !== "MANAGER_REVIEW") return false;
@@ -130,4 +216,9 @@ module.exports = {
     getExpectedSubmissions,
     isValidFormSubmission,
     DEFAULT_STORE_GROUPS,
+    STORE_TIMEZONE,
+    nowInChicago,
+    getBusinessDateChicago,
+    getChicagoHourMinute,
+    buildDeadlineInChicago,
 };

@@ -1,0 +1,38 @@
+═══════════════════════════════════════════════════════════════════════════════
+  HTTP SCREENSHOTS — LIVE API RESPONSES
+  Generated: 2026-06-29T13:03:30.908Z
+  Service: review-reply-agent on localhost:8788
+═══════════════════════════════════════════════════════════════════════════════
+
+Total captures: 12
+Successful:     12
+Failed:         0
+
+CAPTURES:
+  01-health-endpoint: HTTP 200 ✅
+  02-service-info: HTTP 200 ✅
+  03-audit-log: HTTP 200 ✅
+  04-approvals-queue: HTTP 200 ✅
+  05-stores-list: HTTP 200 ✅
+  06-case-A-positive: HTTP 200 ✅
+  07-case-B-positive-with-detail: HTTP 200 ✅
+  08-case-C-mixed: HTTP 200 ✅
+  09-case-D-negative: HTTP 200 ✅
+  10-case-E-sensitive: HTTP 200 ✅
+  11-case-F-delivery: HTTP 200 ✅
+  12-analyze-only: HTTP 200 ✅
+
+FILES:
+  audit-evidence/screenshots/01-health-endpoint.txt
+  audit-evidence/screenshots/02-service-info.txt
+  audit-evidence/screenshots/03-audit-log.txt
+  audit-evidence/screenshots/04-approvals-queue.txt
+  audit-evidence/screenshots/05-stores-list.txt
+  audit-evidence/screenshots/06-case-A-positive.txt
+  audit-evidence/screenshots/07-case-B-positive-with-detail.txt
+  audit-evidence/screenshots/08-case-C-mixed.txt
+  audit-evidence/screenshots/09-case-D-negative.txt
+  audit-evidence/screenshots/10-case-E-sensitive.txt
+  audit-evidence/screenshots/11-case-F-delivery.txt
+  audit-evidence/screenshots/12-analyze-only.txt
+═══════════════════════════════════════════════════════════════════════════════

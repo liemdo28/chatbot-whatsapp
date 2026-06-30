@@ -1,0 +1,198 @@
+﻿ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  REVIEW REPLY AGENT ΓÇö LIVE AUDIT & EVIDENCE COLLECTION
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+[1/5] Health check...
+   Γ£à Saved: 01-health-check.json (1 checks)
+
+[2/5] Running unit test suite (Case A-F)...
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  REVIEW REPLY AGENT ΓÇö TEST SUITE
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+
+ΓöîΓöÇ Case A: Simple positive
+Γöé  Input: 5Γÿà "Amazing ramen and great service...."
+Γöé  Reviewer: Alice
+Γöé
+Γöé  Sentiment: positive (1)
+Γöé  Aspects:   food_quality, service
+Γöé  Risk:      auto_allowed
+Γöé  Auto OK:   true
+Γöé  Quality:   Γ£à PASS (length=187)
+Γöé  Mentions:  (none)
+Γöé
+Γöé  Draft reply:
+Γöé    Hi Alice,
+Γöé    
+Γöé    Amazing to hear that. Thanks for coming in and for the kind words.
+Γöé    
+Γöé    ...
+Γöé
+Γöé  Checks:
+Γöé    Γ£à auto_reply_allowed: got "true" expected "true"
+Γöé    Γ£à sentiment: got "positive" expected "positive"
+Γöé    Γ£à quality_check: got "PASS" expected "PASS"
+Γöé
+ΓööΓöÇ Result: Γ£à PASS
+
+ΓöîΓöÇ Case B: Positive with detail
+Γöé  Input: 5Γÿà "The spicy miso ramen was excellent and our server was super ..."
+Γöé  Reviewer: Bob
+Γöé
+Γöé  Sentiment: positive (1)
+Γöé  Aspects:   food_quality, service, staff_attitude, menu_item
+Γöé  Risk:      auto_allowed
+Γöé  Auto OK:   true
+Γöé  Quality:   Γ£à PASS (length=229)
+Γöé  Mentions:  spicy miso ramen, miso ramen
+Γöé
+Γöé  Draft reply:
+Γöé    Hi Bob,
+Γöé    
+Γöé    I'm really glad the spicy miso ramen and miso ramen hit the spot. Thanks for coming in and for the kind words.
+Γöé    
+Γöé    ...
+Γöé
+Γöé  Checks:
+Γöé    Γ£à auto_reply_allowed: got "true" expected "true"
+Γöé    Γ£à sentiment: got "positive" expected "positive"
+Γöé    Γ£à mentions_items: got "spicy miso ramen,miso ramen" expected "spicy miso ramen"
+Γöé    Γ£à quality_check: got "PASS" expected "PASS"
+Γöé
+ΓööΓöÇ Result: Γ£à PASS
+
+ΓöîΓöÇ Case C: Mixed review
+Γöé  Input: 3Γÿà "Food was good but the ramen came out late and the server did..."
+Γöé  Reviewer: John
+Γöé
+Γöé  Sentiment: mixed (0)
+Γöé  Aspects:   food_quality, service, wait_time
+Γöé  Risk:      approval_required
+Γöé  Auto OK:   false
+Γöé  Quality:   Γ£à PASS (length=132)
+Γöé  Mentions:  (none)
+Γöé
+Γöé  Draft reply:
+Γöé    Hi John,
+Γöé    
+Γöé    Thanks for being honest with us. We hope we get another chance to take better care of you next time.
+Γöé    
+Γöé    ...
+Γöé
+Γöé  Checks:
+Γöé    Γ£à auto_reply_allowed: got "false" expected "false"
+Γöé    Γ£à risk_level: got "approval_required" expected "approval_required"
+Γöé    Γ£à sentiment: got "mixed" expected "mixed"
+Γöé    Γ£à quality_check: got "PASS" expected "PASS"
+Γöé
+ΓööΓöÇ Result: Γ£à PASS
+
+ΓöîΓöÇ Case D: Negative review
+Γöé  Input: 1Γÿà "Terrible service and dirty table...."
+Γöé  Reviewer: Karen
+Γöé
+Γöé  Sentiment: negative (-1)
+Γöé  Aspects:   cleanliness, service
+Γöé  Risk:      escalation_required
+Γöé  Auto OK:   false
+Γöé  Quality:   Γ£à PASS (length=272)
+Γöé  Mentions:  (none)
+Γöé
+Γöé  Draft reply:
+Γöé    Hi Karen,
+Γöé    
+Γöé    Thank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right ΓÇö could you reach out to us directly so we can follow up personally?
+Γöé    
+Γöé    ...
+Γöé
+Γöé  Checks:
+Γöé    Γ£à auto_reply_allowed: got "false" expected "false"
+Γöé    Γ£à risk_level: got "escalation_required" expected "escalation_required"
+Γöé    Γ£à quality_check: got "PASS" expected "PASS"
+Γöé
+ΓööΓöÇ Result: Γ£à PASS
+
+ΓöîΓöÇ Case E: Sensitive review
+Γöé  Input: 2Γÿà "I got sick after eating here...."
+Γöé  Reviewer: Anonymous
+Γöé
+Γöé  Sentiment: negative (-1)
+Γöé  Aspects:   general_positive
+Γöé  Risk:      escalation_required
+Γöé  Auto OK:   false
+Γöé  Quality:   Γ£à PASS (length=276)
+Γöé  Mentions:  (none)
+Γöé
+Γöé  Draft reply:
+Γöé    Hi Anonymous,
+Γöé    
+Γöé    Thank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right ΓÇö could you reach out to us directly so we can follow up personally?
+Γöé    
+Γöé    ...
+Γöé
+Γöé  Checks:
+Γöé    Γ£à auto_reply_allowed: got "false" expected "false"
+Γöé    Γ£à risk_level: got "escalation_required" expected "escalation_required"
+Γöé    Γ£à quality_check: got "PASS" expected "PASS"
+Γöé
+ΓööΓöÇ Result: Γ£à PASS
+
+ΓöîΓöÇ Case F: Delivery issue
+Γöé  Input: 2Γÿà "My DoorDash order was missing items and everything was cold...."
+Γöé  Reviewer: Mike
+Γöé
+Γöé  Sentiment: negative (-0.8)
+Γöé  Aspects:   delivery, order_accuracy, food_quality
+Γöé  Risk:      escalation_required
+Γöé  Auto OK:   false
+Γöé  Quality:   Γ£à PASS (length=271)
+Γöé  Mentions:  (none)
+Γöé
+Γöé  Draft reply:
+Γöé    Hi Mike,
+Γöé    
+Γöé    Thank you for letting us know about this. This isn't the experience we want anyone to have, and we take it seriously. We'd like the chance to learn more and make it right ΓÇö could you reach out to us directly so we can follow up personally?
+Γöé    
+Γöé    ...
+Γöé
+Γöé  Checks:
+Γöé    Γ£à auto_reply_allowed: got "false" expected "false"
+Γöé    Γ£à risk_level: got "escalation_required" expected "escalation_required"
+Γöé    Γ£à quality_check: got "PASS" expected "PASS"
+Γöé
+ΓööΓöÇ Result: Γ£à PASS
+
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  SUMMARY
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  6/6 test cases passed
+    Γ£à Case A: Simple positive
+    Γ£à Case B: Positive with detail
+    Γ£à Case C: Mixed review
+    Γ£à Case D: Negative review
+    Γ£à Case E: Sensitive review
+    Γ£à Case F: Delivery issue
+   Γ£à Saved: 02-unit-test-results.json (6/6 PASS)
+
+[3/5] Live API calls (server on :8788)...
+   Γ£à Saved: 03-live-api-calls.json (6/6 PASS)
+
+[4/5] Audit log + approvals + drafts...
+   Γ£à Saved: 04-audit-and-approvals.json
+
+[5/5] Computing stats...
+   Γ£à Saved: 05-stats.json
+
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  AUDIT COMPLETE
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+  Unit tests: 6/6 PASS
+  Live API:   6/6 PASS
+  Audit log:  9 entries
+  Approvals:  5 entries
+  Stores:     4 registered
+  Evidence:   C:\Ld-project\review-auto-bridge\audit-evidence
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+
+≡ƒôï Summary written to 00-AUDIT-SUMMARY.txt

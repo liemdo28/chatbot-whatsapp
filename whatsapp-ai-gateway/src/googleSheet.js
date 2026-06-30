@@ -8,22 +8,27 @@ const logger = require("./logger");
 let googleAuth = null;
 let sheetsApi = null;
 
-const SHEET_ID = process.env.GOOGLE_SHEET_ID || "";
-const SERVICE_ACCOUNT_PATH = process.env.GOOGLE_SERVICE_ACCOUNT_PATH || "";
+function getConfig() {
+    return {
+        sheetId: process.env.GOOGLE_SHEET_ID || "",
+        serviceAccountPath: process.env.GOOGLE_SERVICE_ACCOUNT_PATH || process.env.GOOGLE_APPLICATION_CREDENTIALS || "",
+    };
+}
 
 async function initGoogleSheets() {
     try {
-        if (!SERVICE_ACCOUNT_PATH || !SHEET_ID) {
+        const { sheetId, serviceAccountPath } = getConfig();
+        if (!serviceAccountPath || !sheetId) {
             logger.warn("Google Sheets not configured - sync will be queued but not executed", {
-                sheetId: SHEET_ID ? "SET" : "NOT SET",
-                serviceAccount: SERVICE_ACCOUNT_PATH ? "SET" : "NOT SET",
+                sheetId: sheetId ? "SET" : "NOT SET",
+                serviceAccount: serviceAccountPath ? "SET" : "NOT SET",
             });
             return false;
         }
 
         const { google } = require("googleapis");
         const auth = new google.auth.GoogleAuth({
-            keyFile: SERVICE_ACCOUNT_PATH,
+            keyFile: serviceAccountPath,
             scopes: ["https://www.googleapis.com/auth/spreadsheets"],
         });
 
@@ -40,11 +45,14 @@ async function initGoogleSheets() {
 async function syncSubmission(submissionId, subData) {
     try {
         if (!sheetsApi) {
-            logger.info("Google Sheets not initialized - skipping sync (safe failure)", { submissionId });
-            // Mark as pending sync
-            return { status: "PENDING", message: "Google Sheets not configured" };
+            const initialized = await initGoogleSheets();
+            if (!initialized || !sheetsApi) {
+                logger.info("Google Sheets not initialized - queueing sync retry", { submissionId });
+                return { status: "PENDING", message: "Google Sheets not configured or initialization failed" };
+            }
         }
 
+        const { sheetId } = getConfig();
         const parsed = subData.parsed;
         const row = [
             subData.storeName,
@@ -57,7 +65,7 @@ async function syncSubmission(submissionId, subData) {
         ];
 
         await sheetsApi.spreadsheets.values.append({
-            spreadsheetId: SHEET_ID,
+            spreadsheetId: sheetId,
             range: "FoodSafety!A:Z",
             valueInputOption: "USER_ENTERED",
             resource: { values: [row] },

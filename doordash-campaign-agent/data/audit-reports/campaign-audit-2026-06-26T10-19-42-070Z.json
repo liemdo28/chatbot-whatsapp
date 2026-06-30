@@ -1,0 +1,129 @@
+{
+  "runId": "e99ce8c7-d29d-4150-94a1-70bcb4c4bfe6",
+  "startedAt": "2026-06-26T10:19:42.070Z",
+  "completedAt": "2026-06-26T10:20:55.913Z",
+  "autonomousAdjustmentsEnabled": false,
+  "executionMode": "dry_run",
+  "liveExecutionEnabled": false,
+  "summary": {
+    "storesAudited": 4,
+    "storesPulled": 0,
+    "freshCampaignsPulled": 0,
+    "recommendationsGenerated": 0,
+    "approvalsQueued": 0,
+    "executionsAttempted": 0,
+    "executionsSubmitted": 0
+  },
+  "sessionsBefore": [
+    {
+      "storeId": "bakudan-the-rim",
+      "storeName": "Bakudan The Rim",
+      "sessionPath": "./data/sessions/bakudan-the-rim",
+      "sessionStatus": "active",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "bakudan-stone-oak",
+      "storeName": "Bakudan Stone Oak",
+      "sessionPath": "./data/sessions/bakudan-stone-oak",
+      "sessionStatus": "active",
+      "lastLoginAt": null,
+      "lastLogoutAt": "2026-06-16 15:15:15",
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "bakudan-bandera",
+      "storeName": "Bakudan Bandera",
+      "sessionPath": "./data/sessions/bakudan-bandera",
+      "sessionStatus": "active",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    },
+    {
+      "storeId": "raw-sushi-bar",
+      "storeName": "Raw Sushi Bar",
+      "sessionPath": "./data/sessions/raw-sushi-bar",
+      "sessionStatus": "active",
+      "lastLoginAt": null,
+      "lastLogoutAt": null,
+      "twoFaStatus": "none",
+      "browserConnected": false
+    }
+  ],
+  "stores": [
+    {
+      "storeId": "bakudan-bandera",
+      "storeName": "Bakudan Bandera",
+      "pullSuccess": false,
+      "pullMessage": "Campaign read error: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:303:30), <anonymous>:1:88)\n    at UtilityScript.evaluate (<anonymous>:305:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-bandera\\campaigns-bakudan-bandera-2026-06-26T10-20-22-379Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    },
+    {
+      "storeId": "bakudan-stone-oak",
+      "storeName": "Bakudan Stone Oak",
+      "pullSuccess": false,
+      "pullMessage": "Campaign read error: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:303:30), <anonymous>:1:88)\n    at UtilityScript.evaluate (<anonymous>:305:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-stone-oak\\campaigns-bakudan-stone-oak-2026-06-26T10-20-03-263Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    },
+    {
+      "storeId": "bakudan-the-rim",
+      "storeName": "Bakudan The Rim",
+      "pullSuccess": false,
+      "pullMessage": "Campaign read error: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:303:30), <anonymous>:1:88)\n    at UtilityScript.evaluate (<anonymous>:305:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\bakudan-the-rim\\campaigns-bakudan-the-rim-2026-06-26T10-19-56-762Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    },
+    {
+      "storeId": "raw-sushi-bar",
+      "storeName": "Raw Sushi Bar",
+      "pullSuccess": false,
+      "pullMessage": "Campaign read error: page.evaluate: ReferenceError: __name is not defined\n    at eval (eval at evaluate (:303:30), <anonymous>:1:88)\n    at UtilityScript.evaluate (<anonymous>:305:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "campaignCount": 0,
+      "snapshotIds": [],
+      "screenshotPaths": [
+        "C:\\Ld-project\\doordash-campaign-agent\\data\\screenshots\\raw-sushi-bar\\campaigns-raw-sushi-bar-2026-06-26T10-20-54-272Z.png"
+      ],
+      "campaigns": [],
+      "analyses": [],
+      "recommendations": [],
+      "approvals": [],
+      "executions": []
+    }
+  ],
+  "reportPaths": {
+    "json": "C:\\Ld-project\\doordash-campaign-agent\\data\\audit-reports\\campaign-audit-2026-06-26T10-19-42-070Z.json",
+    "markdown": "C:\\Ld-project\\doordash-campaign-agent\\data\\audit-reports\\campaign-audit-2026-06-26T10-19-42-070Z.md"
+  }
+}
