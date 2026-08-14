@@ -40,13 +40,6 @@ function randomSchemaName(): string {
     return `dd_prod_test_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 }
 
-function databaseUrlForSchema(databaseUrl: string, schemaName: string): string {
-    const url = new URL(databaseUrl);
-    // Avoid a space after -c so URL encoding cannot turn it into "+" and break libpq parsing in CI.
-    url.searchParams.set('options', `-csearch_path=${schemaName},public`);
-    return url.toString();
-}
-
 function countQuery(schemaName: string, tableName: string): string {
     return `SELECT COUNT(*)::int AS count FROM "${schemaName}"."${tableName}"`;
 }
@@ -74,14 +67,16 @@ function createConfig(schemaName: string, databaseUrl: string): ProductionWorkfl
         reportInboxLabel: 'INBOX',
         diagnosticsDir: path.resolve('artifacts', 'weekly-production', schemaName),
         sqliteDbPath: '',
-        postgresDatabaseUrl: databaseUrlForSchema(databaseUrl, schemaName),
+        postgresDatabaseUrl: databaseUrl,
         fixtureReportDir: path.resolve('data/fixtures/reports'),
     };
 }
 
 function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTransaction: boolean = false): PostgresProductionStorage {
     return new PostgresProductionStorage(databaseUrl, {
-        poolConfig: {},
+        poolConfig: {
+            options: `-c search_path=${schemaName},public`,
+        },
         hooks: shouldFailMidTransaction
             ? {
                 async beforePersistIngestionRecord() {
@@ -106,8 +101,8 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
         const config = createConfig(primarySchemaName, databaseUrl);
         const provider = new FakeCampaignAnalysisProvider();
 
-        const migrationStorageA = createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName);
-        const migrationStorageB = createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName);
+        const migrationStorageA = createStorage(databaseUrl, primarySchemaName);
+        const migrationStorageB = createStorage(databaseUrl, primarySchemaName);
         await Promise.all([migrationStorageA.initialize(), migrationStorageB.initialize()]);
         await Promise.all([migrationStorageA.close(), migrationStorageB.close()]);
 
@@ -121,7 +116,7 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
             weekEndExclusive: '2026-07-20',
             configOverride: config,
             providerOverride: provider,
-            storageOverride: createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName),
+            storageOverride: createStorage(databaseUrl, primarySchemaName),
         });
         assert.equal(first.success, true);
         assert.equal(first.stores.length, 1);
@@ -134,7 +129,7 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
             weekEndExclusive: '2026-07-20',
             configOverride: config,
             providerOverride: new FakeCampaignAnalysisProvider(),
-            storageOverride: createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName),
+            storageOverride: createStorage(databaseUrl, primarySchemaName),
         });
         assert.equal(second.success, true);
         assert.equal(second.stores[0].alreadyProcessed, true);
@@ -144,8 +139,8 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
         assert.equal(await readCount(adminPool, primarySchemaName, 'ingestion_idempotency'), 1);
 
         const concurrentConfig = createConfig(concurrentSchemaName, databaseUrl);
-        const concurrentStorageA = createStorage(databaseUrlForSchema(databaseUrl, concurrentSchemaName), concurrentSchemaName);
-        const concurrentStorageB = createStorage(databaseUrlForSchema(databaseUrl, concurrentSchemaName), concurrentSchemaName);
+        const concurrentStorageA = createStorage(databaseUrl, concurrentSchemaName);
+        const concurrentStorageB = createStorage(databaseUrl, concurrentSchemaName);
 
         const concurrentResults = await Promise.all([
             runWeeklyProductionWorkflow({
@@ -178,6 +173,9 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
         assert.equal(Number(postConcurrentIdempotency.rows[0]?.count || 0), 1);
 
         const rollbackConfig = createConfig(rollbackSchemaName, databaseUrl);
+        const rollbackMigrationStorage = createStorage(databaseUrl, rollbackSchemaName);
+        await rollbackMigrationStorage.initialize();
+        await rollbackMigrationStorage.close();
         const beforeRollbackSnapshots = await adminPool.query<{ count: number }>(
             `SELECT COUNT(*)::int AS count FROM "${rollbackSchemaName}".campaign_snapshots WHERE week_start = $1`,
             ['2026-07-13'],
@@ -191,7 +189,7 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
             weekEndExclusive: '2026-07-20',
             configOverride: rollbackConfig,
             providerOverride: new FakeCampaignAnalysisProvider(),
-            storageOverride: createStorage(databaseUrlForSchema(databaseUrl, rollbackSchemaName), rollbackSchemaName, true),
+            storageOverride: createStorage(databaseUrl, rollbackSchemaName, true),
         });
         assert.equal(rollbackResult.success, false);
         const rollbackError = rollbackResult.errors.join(' | ');

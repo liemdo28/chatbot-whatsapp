@@ -266,7 +266,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'fk_workflow_steps_run'
+                        WHERE conrelid = 'automation_workflow_steps'::regclass
+                          AND conname = 'fk_workflow_steps_run'
                     ) THEN
                         ALTER TABLE automation_workflow_steps
                         ADD CONSTRAINT fk_workflow_steps_run
@@ -282,7 +283,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'fk_campaign_snapshots_store'
+                        WHERE conrelid = 'campaign_snapshots'::regclass
+                          AND conname = 'fk_campaign_snapshots_store'
                     ) THEN
                         ALTER TABLE campaign_snapshots
                         ADD CONSTRAINT fk_campaign_snapshots_store
@@ -298,7 +300,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'fk_recommendations_store'
+                        WHERE conrelid = 'recommendations'::regclass
+                          AND conname = 'fk_recommendations_store'
                     ) THEN
                         ALTER TABLE recommendations
                         ADD CONSTRAINT fk_recommendations_store
@@ -314,7 +317,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'fk_recommendations_snapshot'
+                        WHERE conrelid = 'recommendations'::regclass
+                          AND conname = 'fk_recommendations_snapshot'
                     ) THEN
                         ALTER TABLE recommendations
                         ADD CONSTRAINT fk_recommendations_snapshot
@@ -330,7 +334,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'fk_ingestion_store'
+                        WHERE conrelid = 'ingestion_idempotency'::regclass
+                          AND conname = 'fk_ingestion_store'
                     ) THEN
                         ALTER TABLE ingestion_idempotency
                         ADD CONSTRAINT fk_ingestion_store
@@ -346,7 +351,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'uq_campaign_snapshots_store_week_campaign'
+                        WHERE conrelid = 'campaign_snapshots'::regclass
+                          AND conname = 'uq_campaign_snapshots_store_week_campaign'
                     ) THEN
                         ALTER TABLE campaign_snapshots
                         ADD CONSTRAINT uq_campaign_snapshots_store_week_campaign
@@ -360,7 +366,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'uq_ingestion_identity_message_attachment_store_week'
+                        WHERE conrelid = 'ingestion_idempotency'::regclass
+                          AND conname = 'uq_ingestion_identity_message_attachment_store_week'
                     ) THEN
                         ALTER TABLE ingestion_idempotency
                         ADD CONSTRAINT uq_ingestion_identity_message_attachment_store_week
@@ -374,7 +381,8 @@ const migrations: PostgresMigration[] = [
                     IF NOT EXISTS (
                         SELECT 1
                         FROM pg_constraint
-                        WHERE conname = 'uq_recommendations_idempotent'
+                        WHERE conrelid = 'recommendations'::regclass
+                          AND conname = 'uq_recommendations_idempotent'
                     ) THEN
                         ALTER TABLE recommendations
                         ADD CONSTRAINT uq_recommendations_idempotent
