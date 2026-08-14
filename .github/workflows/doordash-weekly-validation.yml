@@ -14,10 +14,32 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: doordash_validation
+          POSTGRES_USER: validator
+          POSTGRES_PASSWORD: validator_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U validator -d doordash_validation"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         shell: bash
         working-directory: doordash-campaign-agent
+    env:
+      DD_EXECUTION_ENV: test
+      DD_ANALYSIS_PROVIDER: openai
+      DD_REPORT_SOURCE: fixture
+      DD_STORAGE_BACKEND: postgres
+      OPENAI_API_KEY: sk-test-validation
+      OPENAI_MODEL: gpt-test
+      DATABASE_URL: postgres://validator:validator_password@127.0.0.1:5432/doordash_validation
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
 
@@ -33,9 +55,12 @@ jobs:
       - name: Validate build and tests
         run: |
           npm run build
+          npm run validate:production-store-config
           npm run test:weekly-window
+          npm run test:production-sanitization
           npm run test:production-storage
           npm run test:production-openai
           npm run test:production-ingestion
+          npm run test:production-postgres
           npm run test:production-runner
           npm run test:workflow-validation

@@ -13,7 +13,7 @@ import { SqliteProductionStorage } from '../src/production/storage/sqlite-produc
 
     const stores = await storage.listActiveStores(['raw-sushi-bar']);
     assert.equal(stores.length, 1);
-    assert.equal(stores[0].doorDashAccountId, '900001');
+    assert.equal(stores[0].doorDashAccountId, '892006');
 
     const run = await storage.createWorkflowRun({
         workflowName: 'test-run',

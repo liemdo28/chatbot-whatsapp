@@ -30,6 +30,7 @@ jobs:
     outputs:
       pending_external_data: ${{ steps.workflow_run.outputs.pending_external_data }}
       failure_category: ${{ steps.workflow_run.outputs.failure_category }}
+      failure_summary: ${{ steps.workflow_run.outputs.failure_summary }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -55,10 +56,13 @@ jobs:
 
       - name: Run validation suite
         run: |
+          npm run validate:production-store-config
           npm run test:weekly-window
+          npm run test:production-sanitization
           npm run test:production-storage
           npm run test:production-openai
           npm run test:production-ingestion
+          npm run test:production-postgres
           npm run test:production-runner
           npm run test:workflow-validation
 
@@ -119,6 +123,7 @@ jobs:
       - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
         env:
           FAILURE_CATEGORY: ${{ needs.weekly-production.outputs.failure_category }}
+          FAILURE_SUMMARY: ${{ needs.weekly-production.outputs.failure_summary }}
         with:
           script: |
             const title = 'DoorDash weekly production workflow failed';
@@ -130,6 +135,7 @@ jobs:
               `Workflow: ${context.workflow}`,
               `Date: ${runDate}`,
               `Failure category: ${process.env.FAILURE_CATEGORY || 'hard_failure'}`,
+              `Failure summary: ${process.env.FAILURE_SUMMARY || 'Sanitized diagnostics uploaded.'}`,
               '',
               'Sanitized diagnostics were uploaded as a workflow artifact.',
             ].join('\n');

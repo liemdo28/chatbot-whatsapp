@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { runWeeklyProductionWorkflow } from '../src/production/run-weekly-production.js';
+import { sanitizeErrorMessage, sanitizeSecretString, sanitizeSecrets } from '../src/production/security/error-sanitizer.js';
 
 function parseArgs(argv: string[]): { trigger: string; storeIds: string[]; weekStart?: string; weekEndExclusive?: string } {
     const result: { trigger: string; storeIds: string[]; weekStart?: string; weekEndExclusive?: string } = {
@@ -34,6 +35,14 @@ function writeGithubOutputs(result: Awaited<ReturnType<typeof runWeeklyProductio
 
     fs.appendFileSync(outputPath, `pending_external_data=${result.pendingExternalData ? 'true' : 'false'}\n`);
     fs.appendFileSync(outputPath, `failure_category=${result.failureCategory}\n`);
+    fs.appendFileSync(outputPath, `failure_summary=${sanitizeSecretString(result.summary)}\n`);
+}
+
+function writeGithubFailureAnnotation(message: string): void {
+    if (!process.env['GITHUB_ACTIONS']) {
+        return;
+    }
+    console.error(`::error::${sanitizeSecretString(message)}`);
 }
 
 (async () => {
@@ -45,11 +54,14 @@ function writeGithubOutputs(result: Awaited<ReturnType<typeof runWeeklyProductio
         weekEndExclusive: args.weekEndExclusive,
     });
     writeGithubOutputs(result);
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(sanitizeSecrets(result), null, 2));
     if (!result.success) {
+        writeGithubFailureAnnotation(result.errors.join(' | ') || result.summary);
         process.exitCode = 1;
     }
 })().catch((error) => {
-    console.error(error instanceof Error ? error.message : error);
+    const message = sanitizeErrorMessage(error);
+    writeGithubFailureAnnotation(message);
+    console.error(message);
     process.exit(1);
 });

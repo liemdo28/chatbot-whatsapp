@@ -43,6 +43,18 @@ export interface WeeklyReportIngestionResult {
     alreadyProcessed: boolean;
 }
 
+export interface PreparedWeeklyReportIngestion {
+    attachmentHash: string;
+    idempotencyKey: string;
+    matchedCampaigns: ParsedMarketingCampaign[];
+    messageId: string;
+    parsedReport: ParsedMarketingReport;
+    reportPath: string;
+    snapshots: WeeklyCampaignSnapshot[];
+    sourceRef: string;
+    storeId: string;
+}
+
 const MAX_REPORT_ATTACHMENT_BYTES = 15 * 1024 * 1024;
 const REPORT_LINK_TIMEOUT_MS = 15_000;
 const SUPPORTED_ATTACHMENT_EXTENSIONS = new Set(['.zip', '.csv', '.xlsx', '.xls']);
@@ -179,10 +191,14 @@ function buildIdempotencyKey(messageId: string, attachmentHash: string, storeId:
         .digest('hex');
 }
 
+function campaignIdentityToken(campaign: ParsedMarketingCampaign): string {
+    return campaign.campaignId || normalizeValue(campaign.campaignName).replace(/[^a-z0-9]+/g, '_');
+}
+
 function buildSnapshotId(storeId: string, weekStart: string, campaign: ParsedMarketingCampaign, sourceRef: string): string {
     return crypto
         .createHash('sha256')
-        .update([storeId, weekStart, campaign.campaignId, campaign.campaignName, sourceRef].join('|'))
+        .update([storeId, weekStart, campaignIdentityToken(campaign)].join('|'))
         .digest('hex')
         .slice(0, 24);
 }
@@ -302,14 +318,13 @@ async function locateCandidateMessages(config: ProductionWorkflowConfig): Promis
     }
 }
 
-export async function ingestWeeklyReportForStore(input: {
-    storage: ProductionStorage;
+export async function prepareWeeklyReportForStore(input: {
     config: ProductionWorkflowConfig;
     store: ProductionStore;
     window: WeeklyWindow;
     messages?: GmailInboxMessage[];
     now?: Date;
-}): Promise<WeeklyReportIngestionResult> {
+}): Promise<PreparedWeeklyReportIngestion> {
     const messages = input.messages || await locateCandidateMessages(input.config);
     const candidates = messages.filter(message => subjectLooksRelevant(message, input.store, input.config));
 
@@ -334,36 +349,8 @@ export async function ingestWeeklyReportForStore(input: {
             const parsedReport = parseMarketingReportFile(artifact.filePath);
             const matchedCampaigns = validateParsedReport(parsedReport, input.store, input.window);
             const idempotencyKey = buildIdempotencyKey(message.messageId, artifact.hash, input.store.id, input.window.weekStart);
-            const alreadyProcessed = await input.storage.hasIngestionRecord(idempotencyKey);
             const sourceRef = path.basename(artifact.filePath);
-
-            if (alreadyProcessed) {
-                return {
-                    storeId: input.store.id,
-                    reportPath: artifact.filePath,
-                    messageId: message.messageId,
-                    sourceRef,
-                    idempotencyKey,
-                    parsedReport,
-                    matchedCampaigns,
-                    upsert: { created: 0, updated: 0, unchanged: matchedCampaigns.length },
-                    alreadyProcessed: true,
-                };
-            }
-
             const snapshots = toWeeklySnapshots(input.store, input.window, parsedReport, matchedCampaigns, sourceRef);
-            const upsert = await input.storage.upsertSnapshots(snapshots);
-            const record: IngestionIdempotencyRecord = {
-                idempotencyKey,
-                messageId: message.messageId,
-                attachmentHash: artifact.hash,
-                storeId: input.store.id,
-                weekStart: input.window.weekStart,
-                sourceRef,
-                createdAt: new Date().toISOString(),
-            };
-            await input.storage.saveIngestionRecord(record);
-
             return {
                 storeId: input.store.id,
                 reportPath: artifact.filePath,
@@ -372,8 +359,8 @@ export async function ingestWeeklyReportForStore(input: {
                 idempotencyKey,
                 parsedReport,
                 matchedCampaigns,
-                upsert,
-                alreadyProcessed: false,
+                snapshots,
+                attachmentHash: artifact.hash,
             };
         } catch (error) {
             lastError = error as Error;
@@ -381,4 +368,58 @@ export async function ingestWeeklyReportForStore(input: {
     }
 
     throw lastError || new Error(`No usable report artifact was found for store ${input.store.id}.`);
+}
+
+export async function ingestWeeklyReportForStore(input: {
+    storage: ProductionStorage;
+    config: ProductionWorkflowConfig;
+    store: ProductionStore;
+    window: WeeklyWindow;
+    messages?: GmailInboxMessage[];
+    now?: Date;
+}): Promise<WeeklyReportIngestionResult> {
+    const prepared = await prepareWeeklyReportForStore({
+        config: input.config,
+        store: input.store,
+        window: input.window,
+        messages: input.messages,
+        now: input.now,
+    });
+    const record: IngestionIdempotencyRecord = {
+        idempotencyKey: prepared.idempotencyKey,
+        messageId: prepared.messageId,
+        attachmentHash: prepared.attachmentHash,
+        storeId: input.store.id,
+        weekStart: input.window.weekStart,
+        sourceRef: prepared.sourceRef,
+        createdAt: new Date().toISOString(),
+    };
+    const alreadyProcessed = await input.storage.hasIngestionRecord(prepared.idempotencyKey);
+    if (alreadyProcessed) {
+        return {
+            storeId: prepared.storeId,
+            reportPath: prepared.reportPath,
+            messageId: prepared.messageId,
+            sourceRef: prepared.sourceRef,
+            idempotencyKey: prepared.idempotencyKey,
+            parsedReport: prepared.parsedReport,
+            matchedCampaigns: prepared.matchedCampaigns,
+            upsert: { created: 0, updated: 0, unchanged: prepared.matchedCampaigns.length },
+            alreadyProcessed: true,
+        };
+    }
+
+    const upsert = await input.storage.upsertSnapshots(prepared.snapshots);
+    await input.storage.saveIngestionRecord(record);
+    return {
+        storeId: prepared.storeId,
+        reportPath: prepared.reportPath,
+        messageId: prepared.messageId,
+        sourceRef: prepared.sourceRef,
+        idempotencyKey: prepared.idempotencyKey,
+        parsedReport: prepared.parsedReport,
+        matchedCampaigns: prepared.matchedCampaigns,
+        upsert,
+        alreadyProcessed: false,
+    };
 }

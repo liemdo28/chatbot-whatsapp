@@ -24,13 +24,24 @@ Run build and verification:
 
 ```bash
 npm run build
+npm run validate:production-store-config
 npm run test:weekly-window
+npm run test:production-sanitization
 npm run test:production-storage
 npm run test:production-openai
 npm run test:production-ingestion
+npm run test:production-postgres
 npm run test:production-runner
 npm run test:workflow-validation
 ```
+
+First-time Postgres setup is automatic. Point `DATABASE_URL` at the target database, keep `DD_STORAGE_BACKEND=postgres`, then run:
+
+```bash
+npm run validate:production-store-config
+```
+
+That command runs migrations, bootstraps the configured stores with non-destructive upserts, and verifies that `raw-sushi-bar` is mapped to DoorDash Store ID `892006` before a production run.
 
 Run the weekly production workflow locally against fixture reports:
 
@@ -74,7 +85,7 @@ GitHub Actions workflow `doordash-weekly-production` expects these repository se
 - `DD_REPORT_ALLOWED_SENDERS` is mandatory. Only exact allowed senders are considered valid report sources.
 - Supported report artifacts are limited to `.zip`, `.csv`, `.xlsx`, and `.xls`, with a 15 MB attachment/download cap.
 - ZIP reports are parsed in memory only, reject unsafe paths such as `../...`, and cap total file count and uncompressed size before parsing.
-- Workflow diagnostics store run summaries and file basenames only; mailbox bodies, attachment bytes, and credentials are not written to diagnostic artifacts.
+- Workflow diagnostics store run summaries and file basenames only; mailbox bodies, attachment bytes, and credentials are not written to diagnostic artifacts, and production errors are sanitized before console logs, GitHub annotations, persisted workflow state, or uploaded artifacts.
 - IMAP access uses explicit connection, greeting, and socket timeouts, and authentication failures are surfaced separately from "report not arrived yet".
 
 ## What is still intentionally excluded

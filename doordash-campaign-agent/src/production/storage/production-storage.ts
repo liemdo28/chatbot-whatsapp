@@ -23,6 +23,26 @@ export interface CreateWorkflowRunInput {
     metadataJson: string | null;
 }
 
+export interface PersistStoreBundleInput {
+    analyzeAttempt: number;
+    analyzeDetail: string;
+    analyzeMetricsJson: string | null;
+    ingestAttempt: number;
+    ingestDetail: string;
+    ingestMetricsJson: string | null;
+    ingestionRecord: IngestionIdempotencyRecord;
+    recommendations: CampaignRecommendationRecord[];
+    snapshots: WeeklyCampaignSnapshot[];
+    store: ProductionStore;
+    workflowRunId: string;
+}
+
+export interface PersistStoreBundleResult {
+    alreadyProcessed: boolean;
+    recommendationCount: number;
+    upsert: SnapshotUpsertResult;
+}
+
 export interface ProductionStorage {
     initialize(): Promise<void>;
     close(): Promise<void>;
@@ -37,4 +57,5 @@ export interface ProductionStorage {
     listSnapshotsForWeek(storeId: string, weekStart: string): Promise<WeeklyCampaignSnapshot[]>;
     listMostRecentSnapshotsBeforeWeek(storeId: string, weekStart: string): Promise<WeeklyCampaignSnapshot[]>;
     saveRecommendation(record: CampaignRecommendationRecord): Promise<void>;
+    persistStoreBundle(input: PersistStoreBundleInput): Promise<PersistStoreBundleResult>;
 }

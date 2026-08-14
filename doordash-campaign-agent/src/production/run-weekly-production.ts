@@ -14,9 +14,11 @@ import type {
     WeeklyCampaignSnapshot,
     WorkflowStepStatus,
 } from './types.js';
-import { ingestWeeklyReportForStore, type WeeklyReportIngestionResult } from './reporting/report-ingestion-service.js';
+import { prepareWeeklyReportForStore, type PreparedWeeklyReportIngestion } from './reporting/report-ingestion-service.js';
 import { isRetryableReportIngestionError } from './reporting/report-ingestion-errors.js';
 import type { GmailInboxMessage } from '../integrations/email/gmail-inbox-client.js';
+import type { ProductionStorage } from './storage/production-storage.js';
+import { sanitizeErrorMessage, sanitizeSecrets } from './security/error-sanitizer.js';
 
 export interface WeeklyProductionWorkflowOptions {
     trigger?: string;
@@ -26,6 +28,7 @@ export interface WeeklyProductionWorkflowOptions {
     fixtureMessagesByStore?: Record<string, GmailInboxMessage[]>;
     configOverride?: ProductionWorkflowConfig;
     providerOverride?: CampaignAnalysisProvider;
+    storageOverride?: ProductionStorage;
     now?: Date;
 }
 
@@ -82,7 +85,7 @@ function buildRecommendationRecord(
 ): CampaignRecommendationRecord {
     const createdAt = nowIso();
     return {
-        id: stableId('recommendation', `${snapshot.id}|${providerName}|${snapshot.weekStart}|${recommendation.recommendationType}|${recommendation.proposedSetting}`),
+        id: stableId('recommendation', `${store.id}|${snapshot.weekStart}|${snapshot.campaignId}|${providerName}|${recommendation.recommendationType}|${recommendation.proposedSetting}`),
         storeId: store.id,
         campaignSnapshotId: snapshot.id,
         weekStart: snapshot.weekStart,
@@ -154,7 +157,7 @@ function providerForConfig(config: ProductionWorkflowConfig): CampaignAnalysisPr
 }
 
 async function recordStep(
-    storage: ReturnType<typeof createProductionStorage>,
+    storage: ProductionStorage,
     runId: string,
     stepKey: string,
     attempt: number,
@@ -183,14 +186,14 @@ function pickPreviousSnapshot(previousSnapshots: WeeklyCampaignSnapshot[], curre
 
 function writeDiagnostics(result: WeeklyProductionWorkflowResult): void {
     ensureDir(path.dirname(result.diagnosticsPath));
-    fs.writeFileSync(result.diagnosticsPath, JSON.stringify(result, null, 2));
+    fs.writeFileSync(result.diagnosticsPath, JSON.stringify(sanitizeSecrets(result), null, 2));
 }
 
 export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkflowOptions = {}): Promise<WeeklyProductionWorkflowResult> {
     const config = options.configOverride || readProductionWorkflowConfig();
     assertProductionWorkflowConfig(config);
     ensureDir(config.diagnosticsDir);
-    const storage = createProductionStorage(config);
+    const storage = options.storageOverride || createProductionStorage(config);
     await storage.initialize();
 
     const window = options.weekStart
@@ -220,11 +223,12 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
         await recordStep(storage, workflowRun.id, 'load_stores', 1, 'success', `Loaded ${stores.length} active stores.`, { stores: stores.map(store => store.id) });
 
         for (const store of stores) {
-            let ingestionResult: WeeklyReportIngestionResult;
+            let prepared: PreparedWeeklyReportIngestion;
+            let ingestAttempt = 0;
             try {
-                ingestionResult = await runWithRetry(async () => {
-                    return ingestWeeklyReportForStore({
-                        storage,
+                prepared = await runWithRetry(async () => {
+                    ingestAttempt += 1;
+                    return prepareWeeklyReportForStore({
                         config,
                         store,
                         window,
@@ -238,12 +242,8 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                     }, context.error.message);
                 });
 
-                await recordStep(storage, workflowRun.id, `ingest_${store.id}`, 1, 'success', `Ingested ${ingestionResult.matchedCampaigns.length} campaign(s) from ${ingestionResult.sourceRef}.`, {
-                    alreadyProcessed: ingestionResult.alreadyProcessed,
-                    upsert: ingestionResult.upsert,
-                });
             } catch (error) {
-                const message = `${store.id}: ${(error as Error).message}`;
+                const message = `${store.id}: ${sanitizeErrorMessage(error)}`;
                 errors.push(message);
                 if (isRetryableReportIngestionError(error)) {
                     encounteredPendingExternalData = true;
@@ -254,11 +254,11 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                 continue;
             }
 
-            const currentSnapshots = await storage.listSnapshotsForWeek(store.id, window.weekStart);
             const previousSnapshots = await storage.listMostRecentSnapshotsBeforeWeek(store.id, window.weekStart);
-            let recommendationCount = 0;
+            const recommendations: CampaignRecommendationRecord[] = [];
+            let recommendationFailure: string | null = null;
 
-            for (const snapshot of currentSnapshots) {
+            for (const snapshot of prepared.snapshots) {
                 try {
                     const recommendation = await provider.analyzeCampaign({
                         store,
@@ -275,32 +275,71 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                         config.openAiModel || 'development-browser',
                         recommendation,
                     );
-                    await storage.saveRecommendation(record);
-                    recommendationCount += 1;
+                    recommendations.push(record);
                 } catch (error) {
-                    const message = `${store.id}/${snapshot.campaignName}: ${(error as Error).message}`;
-                    errors.push(message);
-                    encounteredHardFailure = true;
+                    recommendationFailure = `${store.id}/${snapshot.campaignName}: ${sanitizeErrorMessage(error)}`;
+                    break;
                 }
             }
 
+            if (!recommendationFailure && recommendations.length === 0) {
+                recommendationFailure = `${store.id}: no recommendations were produced for week ${window.weekStart}.`;
+            }
+
+            if (recommendationFailure) {
+                const message = recommendationFailure;
+                errors.push(message);
+                encounteredHardFailure = true;
+                await recordStep(storage, workflowRun.id, `analyze_${store.id}`, 1, 'failed', message, undefined, message);
+                continue;
+            }
+
+            try {
+                const persisted = await storage.persistStoreBundle({
+                    workflowRunId: workflowRun.id,
+                    store,
+                    snapshots: prepared.snapshots,
+                    recommendations,
+                    ingestionRecord: {
+                        idempotencyKey: prepared.idempotencyKey,
+                        messageId: prepared.messageId,
+                        attachmentHash: prepared.attachmentHash,
+                        storeId: store.id,
+                        weekStart: window.weekStart,
+                        sourceRef: prepared.sourceRef,
+                        createdAt: new Date().toISOString(),
+                    },
+                    ingestAttempt: Math.max(1, ingestAttempt),
+                    ingestDetail: `Ingested ${prepared.matchedCampaigns.length} campaign(s) from ${prepared.sourceRef}.`,
+                    ingestMetricsJson: JSON.stringify({
+                        matchedCampaigns: prepared.matchedCampaigns.length,
+                        snapshotsCreated: prepared.snapshots.length,
+                    }),
+                    analyzeAttempt: 1,
+                    analyzeDetail: `Persisted ${recommendations.length} recommendation(s).`,
+                    analyzeMetricsJson: JSON.stringify({ recommendations: recommendations.length }),
+                });
+
+                storeSummaries.push({
+                    storeId: store.id,
+                    reportPath: prepared.sourceRef,
+                    recommendationCount: persisted.recommendationCount,
+                    alreadyProcessed: persisted.alreadyProcessed,
+                });
+            } catch (error) {
+                const message = `${store.id}: ${sanitizeErrorMessage(error)}`;
+                errors.push(message);
+                encounteredHardFailure = true;
+                await recordStep(storage, workflowRun.id, `ingest_${store.id}`, Math.max(1, ingestAttempt), 'failed', message, undefined, message);
+                continue;
+            }
+
+            const recommendationCount = recommendations.length;
             if (recommendationCount === 0) {
                 const message = `${store.id}: no recommendations were produced for week ${window.weekStart}.`;
                 errors.push(message);
                 encounteredHardFailure = true;
-                await recordStep(storage, workflowRun.id, `analyze_${store.id}`, 1, 'failed', message, undefined, message);
-            } else {
-                await recordStep(storage, workflowRun.id, `analyze_${store.id}`, 1, 'success', `Persisted ${recommendationCount} recommendation(s).`, {
-                    recommendations: recommendationCount,
-                });
             }
-
-            storeSummaries.push({
-                storeId: store.id,
-                reportPath: ingestionResult.sourceRef,
-                recommendationCount,
-                alreadyProcessed: ingestionResult.alreadyProcessed,
-            });
         }
 
         const success = errors.length === 0;
@@ -320,14 +359,14 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                     : `Weekly production workflow failed for ${window.label}.`,
             diagnosticsPath: path.resolve(config.diagnosticsDir, `${workflowRun.id}.json`),
             stores: storeSummaries,
-            errors,
+            errors: errors.map(error => sanitizeErrorMessage(error)),
         };
         writeDiagnostics(result);
 
         if (success) {
-            await storage.completeWorkflowRun(workflowRun.id, result.summary, JSON.stringify(result));
+            await storage.completeWorkflowRun(workflowRun.id, sanitizeErrorMessage(result.summary), JSON.stringify(result));
         } else {
-            await storage.failWorkflowRun(workflowRun.id, errors.join(' | '), JSON.stringify(result));
+            await storage.failWorkflowRun(workflowRun.id, errors.map(error => sanitizeErrorMessage(error)).join(' | '), JSON.stringify(result));
         }
 
         return result;

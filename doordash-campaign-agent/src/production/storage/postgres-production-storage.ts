@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { Pool } from 'pg';
+import { Pool, type PoolClient, type PoolConfig } from 'pg';
 import type {
     CampaignRecommendationRecord,
     IngestionIdempotencyRecord,
@@ -8,7 +8,16 @@ import type {
     WorkflowRunRecord,
     WorkflowStepRecord,
 } from '../types.js';
-import type { CreateWorkflowRunInput, ProductionStorage, SnapshotUpsertResult } from './production-storage.js';
+import { sanitizeErrorMessage, sanitizeJsonString } from '../security/error-sanitizer.js';
+import { configuredProductionStores, validateProductionStoreCatalog } from '../store-catalog.js';
+import type {
+    CreateWorkflowRunInput,
+    PersistStoreBundleInput,
+    PersistStoreBundleResult,
+    ProductionStorage,
+    SnapshotUpsertResult,
+} from './production-storage.js';
+import { runPostgresMigrations } from './postgres-migrations.js';
 
 function nowIso(): string {
     return new Date().toISOString();
@@ -18,116 +27,39 @@ function stableId(prefix: string, input: string): string {
     return `${prefix}-${crypto.createHash('sha256').update(input).digest('hex').slice(0, 24)}`;
 }
 
+function encodeJson(value: string | null): string | null {
+    return value && value.trim() ? value : null;
+}
+
+export interface PostgresProductionStorageHooks {
+    beforePersistIngestionRecord?(client: PoolClient, input: PersistStoreBundleInput): Promise<void>;
+}
+
+export interface PostgresProductionStorageOptions {
+    poolConfig?: Partial<PoolConfig>;
+    hooks?: PostgresProductionStorageHooks;
+}
+
 export class PostgresProductionStorage implements ProductionStorage {
     private readonly databaseUrl: string;
+    private readonly options: PostgresProductionStorageOptions;
     private pool: Pool | null = null;
 
-    constructor(databaseUrl: string) {
+    constructor(databaseUrl: string, options: PostgresProductionStorageOptions = {}) {
         this.databaseUrl = databaseUrl;
+        this.options = options;
     }
 
     async initialize(): Promise<void> {
-        this.pool = new Pool({ connectionString: this.databaseUrl, max: 4 });
-        await this.pool.query(`
-            CREATE TABLE IF NOT EXISTS stores (
-                id TEXT PRIMARY KEY,
-                name TEXT NOT NULL,
-                email TEXT NOT NULL,
-                "doorDashAccountId" TEXT,
-                active BOOLEAN DEFAULT TRUE,
-                created_at TIMESTAMPTZ DEFAULT NOW(),
-                updated_at TIMESTAMPTZ DEFAULT NOW()
-            );
-
-            CREATE TABLE IF NOT EXISTS campaign_snapshots (
-                id TEXT PRIMARY KEY,
-                store_id TEXT NOT NULL,
-                campaign_name TEXT NOT NULL,
-                campaign_type TEXT NOT NULL,
-                status TEXT NOT NULL,
-                budget DOUBLE PRECISION,
-                spend DOUBLE PRECISION NOT NULL,
-                sales DOUBLE PRECISION NOT NULL,
-                orders INTEGER NOT NULL,
-                roas DOUBLE PRECISION NOT NULL,
-                start_date TEXT,
-                end_date TEXT,
-                currency TEXT DEFAULT 'USD',
-                raw_data TEXT NOT NULL,
-                snapshot_date TIMESTAMPTZ NOT NULL,
-                week_start TEXT NOT NULL,
-                created_at TIMESTAMPTZ NOT NULL,
-                snapshot_source TEXT NOT NULL,
-                source_ref TEXT NOT NULL,
-                batch_id TEXT NOT NULL,
-                report_start_date TEXT NOT NULL,
-                report_end_date TEXT NOT NULL,
-                data_completeness INTEGER NOT NULL,
-                updated_at TIMESTAMPTZ NOT NULL,
-                observed_date_start TEXT NOT NULL,
-                observed_date_end TEXT NOT NULL
-            );
-
-            CREATE TABLE IF NOT EXISTS recommendations (
-                id TEXT PRIMARY KEY,
-                store_id TEXT NOT NULL,
-                campaign_snapshot_id TEXT NOT NULL,
-                recommendation_type TEXT NOT NULL,
-                current_setting TEXT NOT NULL,
-                proposed_setting TEXT NOT NULL,
-                expected_roi_impact DOUBLE PRECISION,
-                expected_profit_impact DOUBLE PRECISION,
-                confidence DOUBLE PRECISION NOT NULL,
-                risk TEXT NOT NULL,
-                reason TEXT NOT NULL,
-                rollback_plan TEXT NOT NULL,
-                status TEXT NOT NULL,
-                created_at TIMESTAMPTZ NOT NULL,
-                provider TEXT NOT NULL,
-                provider_model TEXT NOT NULL,
-                week_start TEXT NOT NULL,
-                raw_response_json TEXT NOT NULL
-            );
-
-            CREATE TABLE IF NOT EXISTS automation_workflow_runs (
-                id TEXT PRIMARY KEY,
-                workflow_name TEXT NOT NULL,
-                trigger TEXT NOT NULL,
-                mode TEXT NOT NULL,
-                timezone TEXT NOT NULL,
-                week_start TEXT NOT NULL,
-                week_end_exclusive TEXT NOT NULL,
-                status TEXT NOT NULL,
-                summary TEXT,
-                error_message TEXT,
-                metadata_json TEXT,
-                started_at TIMESTAMPTZ NOT NULL,
-                completed_at TIMESTAMPTZ
-            );
-
-            CREATE TABLE IF NOT EXISTS automation_workflow_steps (
-                id TEXT PRIMARY KEY,
-                run_id TEXT NOT NULL,
-                step_key TEXT NOT NULL,
-                attempt INTEGER NOT NULL,
-                status TEXT NOT NULL,
-                started_at TIMESTAMPTZ NOT NULL,
-                completed_at TIMESTAMPTZ,
-                detail TEXT,
-                error_message TEXT,
-                metrics_json TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS ingestion_idempotency (
-                idempotency_key TEXT PRIMARY KEY,
-                message_id TEXT NOT NULL,
-                attachment_hash TEXT NOT NULL,
-                store_id TEXT NOT NULL,
-                week_start TEXT NOT NULL,
-                source_ref TEXT NOT NULL,
-                created_at TIMESTAMPTZ NOT NULL
-            );
-        `);
+        this.pool = new Pool({
+            connectionString: this.databaseUrl,
+            max: 6,
+            allowExitOnIdle: true,
+            application_name: 'doordash-weekly-production',
+            ...this.options.poolConfig,
+        });
+        await runPostgresMigrations(this.pool);
+        await this.syncConfiguredStores();
     }
 
     async close(): Promise<void> {
@@ -138,20 +70,61 @@ export class PostgresProductionStorage implements ProductionStorage {
     }
 
     private requirePool(): Pool {
-        if (!this.pool) throw new Error('Postgres storage has not been initialized.');
+        if (!this.pool) {
+            throw new Error('Postgres storage has not been initialized.');
+        }
         return this.pool;
+    }
+
+    private async withClient<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
+        const client = await this.requirePool().connect();
+        try {
+            return await fn(client);
+        } finally {
+            client.release();
+        }
+    }
+
+    private async syncConfiguredStores(): Promise<void> {
+        const stores = validateProductionStoreCatalog();
+        await this.withClient(async (client) => {
+            const timestamp = nowIso();
+            for (const store of stores) {
+                await this.upsertStore(client, store, timestamp);
+            }
+        });
+    }
+
+    private async upsertStore(client: PoolClient, store: ProductionStore, timestamp: string): Promise<void> {
+        await client.query(`
+            INSERT INTO stores (id, name, email, "doorDashAccountId", active, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $6)
+            ON CONFLICT (id) DO UPDATE SET
+                name = COALESCE(NULLIF(stores.name, ''), EXCLUDED.name),
+                email = COALESCE(NULLIF(stores.email, ''), EXCLUDED.email),
+                "doorDashAccountId" = COALESCE(NULLIF(stores."doorDashAccountId", ''), EXCLUDED."doorDashAccountId"),
+                active = stores.active,
+                updated_at = EXCLUDED.updated_at
+        `, [
+            store.id,
+            store.name,
+            store.email,
+            store.doorDashAccountId,
+            store.active,
+            timestamp,
+        ]);
     }
 
     async listActiveStores(storeIds?: string[]): Promise<ProductionStore[]> {
         const pool = this.requirePool();
         if (storeIds && storeIds.length > 0) {
-            const rows = await pool.query(`
+            const result = await pool.query(`
                 SELECT id, name, email, "doorDashAccountId", active
                 FROM stores
                 WHERE active = TRUE AND id = ANY($1::text[])
                 ORDER BY name
             `, [storeIds]);
-            return rows.rows.map(row => ({
+            return result.rows.map(row => ({
                 id: row.id,
                 name: row.name,
                 email: row.email,
@@ -159,13 +132,14 @@ export class PostgresProductionStorage implements ProductionStorage {
                 active: row.active === true,
             }));
         }
-        const rows = await pool.query(`
+
+        const result = await pool.query(`
             SELECT id, name, email, "doorDashAccountId", active
             FROM stores
             WHERE active = TRUE
             ORDER BY name
         `);
-        return rows.rows.map(row => ({
+        return result.rows.map(row => ({
             id: row.id,
             name: row.name,
             email: row.email,
@@ -175,14 +149,23 @@ export class PostgresProductionStorage implements ProductionStorage {
     }
 
     async createWorkflowRun(input: CreateWorkflowRunInput): Promise<WorkflowRunRecord> {
-        const pool = this.requirePool();
         const id = stableId('workflow-run', `${input.workflowName}|${input.trigger}|${input.weekStart}|${Date.now()}`);
         const startedAt = nowIso();
-        await pool.query(`
+        await this.requirePool().query(`
             INSERT INTO automation_workflow_runs (
-                id, workflow_name, trigger, mode, timezone, week_start, week_end_exclusive, status, metadata_json, started_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, 'running', $8, $9)
-        `, [id, input.workflowName, input.trigger, input.mode, input.timezone, input.weekStart, input.weekEndExclusive, input.metadataJson, startedAt]);
+                id, workflow_name, trigger, scope, mode, timezone, week_start, week_end_exclusive, status, metadata_json, started_at
+            ) VALUES ($1, $2, $3, 'weekly_production', $4, $5, $6, $7, 'running', $8, $9)
+        `, [
+            id,
+            input.workflowName,
+            input.trigger,
+            input.mode,
+            input.timezone,
+            input.weekStart,
+            input.weekEndExclusive,
+            sanitizeJsonString(encodeJson(input.metadataJson)),
+            startedAt,
+        ]);
         return {
             id,
             workflowName: input.workflowName,
@@ -194,7 +177,7 @@ export class PostgresProductionStorage implements ProductionStorage {
             status: 'running',
             summary: null,
             errorMessage: null,
-            metadataJson: input.metadataJson,
+            metadataJson: sanitizeJsonString(encodeJson(input.metadataJson)),
             startedAt,
             completedAt: null,
         };
@@ -213,30 +196,52 @@ export class PostgresProductionStorage implements ProductionStorage {
             step.status,
             step.startedAt,
             step.completedAt,
-            step.detail,
-            step.errorMessage,
-            step.metricsJson,
+            step.detail ? sanitizeErrorMessage(step.detail) : null,
+            step.errorMessage ? sanitizeErrorMessage(step.errorMessage) : null,
+            sanitizeJsonString(encodeJson(step.metricsJson)),
         ]);
     }
 
     async completeWorkflowRun(runId: string, summary: string, metadataJson: string | null): Promise<void> {
         await this.requirePool().query(`
             UPDATE automation_workflow_runs
-            SET status = 'success', summary = $1, error_message = NULL, completed_at = $2, metadata_json = COALESCE($3, metadata_json)
+            SET status = 'success',
+                summary = $1,
+                error_message = NULL,
+                completed_at = $2,
+                metadata_json = COALESCE($3, metadata_json)
             WHERE id = $4
-        `, [summary, nowIso(), metadataJson, runId]);
+        `, [
+            sanitizeErrorMessage(summary),
+            nowIso(),
+            sanitizeJsonString(encodeJson(metadataJson)),
+            runId,
+        ]);
     }
 
     async failWorkflowRun(runId: string, errorMessage: string, metadataJson: string | null): Promise<void> {
+        const sanitized = sanitizeErrorMessage(errorMessage);
         await this.requirePool().query(`
             UPDATE automation_workflow_runs
-            SET status = 'failed', summary = $1, error_message = $2, completed_at = $3, metadata_json = COALESCE($4, metadata_json)
-            WHERE id = $5
-        `, [errorMessage, errorMessage, nowIso(), metadataJson, runId]);
+            SET status = 'failed',
+                summary = $1,
+                error_message = $1,
+                completed_at = $2,
+                metadata_json = COALESCE($3, metadata_json)
+            WHERE id = $4
+        `, [
+            sanitized,
+            nowIso(),
+            sanitizeJsonString(encodeJson(metadataJson)),
+            runId,
+        ]);
     }
 
     async hasIngestionRecord(idempotencyKey: string): Promise<boolean> {
-        const result = await this.requirePool().query('SELECT idempotency_key FROM ingestion_idempotency WHERE idempotency_key = $1', [idempotencyKey]);
+        const result = await this.requirePool().query(
+            'SELECT idempotency_key FROM ingestion_idempotency WHERE idempotency_key = $1',
+            [idempotencyKey],
+        );
         return (result.rowCount || 0) > 0;
     }
 
@@ -245,32 +250,52 @@ export class PostgresProductionStorage implements ProductionStorage {
             INSERT INTO ingestion_idempotency (
                 idempotency_key, message_id, attachment_hash, store_id, week_start, source_ref, created_at
             ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-            ON CONFLICT (idempotency_key) DO UPDATE SET created_at = EXCLUDED.created_at
-        `, [record.idempotencyKey, record.messageId, record.attachmentHash, record.storeId, record.weekStart, record.sourceRef, record.createdAt]);
+            ON CONFLICT (message_id, attachment_hash, store_id, week_start) DO UPDATE SET
+                idempotency_key = EXCLUDED.idempotency_key,
+                source_ref = EXCLUDED.source_ref,
+                created_at = EXCLUDED.created_at
+        `, [
+            record.idempotencyKey,
+            record.messageId,
+            record.attachmentHash,
+            record.storeId,
+            record.weekStart,
+            record.sourceRef,
+            record.createdAt,
+        ]);
     }
 
-    async upsertSnapshots(snapshots: WeeklyCampaignSnapshot[]): Promise<SnapshotUpsertResult> {
-        const pool = this.requirePool();
+    private async upsertSnapshotsWithClient(client: PoolClient, snapshots: WeeklyCampaignSnapshot[]): Promise<SnapshotUpsertResult> {
         const result: SnapshotUpsertResult = { created: 0, updated: 0, unchanged: 0 };
+
         for (const snapshot of snapshots) {
-            const existing = await pool.query('SELECT orders, sales, spend, roas, raw_data FROM campaign_snapshots WHERE id = $1', [snapshot.id]);
-            await pool.query(`
+            const existing = await client.query(`
+                SELECT id, orders, sales, spend, roas, raw_data
+                FROM campaign_snapshots
+                WHERE store_id = $1 AND week_start = $2 AND campaign_id = $3
+            `, [snapshot.storeId, snapshot.weekStart, snapshot.campaignId]);
+            const existingRow = existing.rows[0];
+
+            await client.query(`
                 INSERT INTO campaign_snapshots (
-                    id, store_id, campaign_name, campaign_type, status, budget, spend, sales, orders, roas, start_date, end_date,
+                    id, store_id, campaign_id, campaign_name, campaign_type, status, budget, spend, sales, orders, roas, start_date, end_date,
                     currency, raw_data, snapshot_date, week_start, created_at, snapshot_source, source_ref, batch_id, report_start_date,
                     report_end_date, data_completeness, updated_at, observed_date_start, observed_date_end
                 ) VALUES (
-                    $1, $2, $3, $4, $5, NULL, $6, $7, $8, $9, $10, $11, 'USD', $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24
+                    $1, $2, $3, $4, $5, $6, NULL, $7, $8, $9, $10, $11, $12, 'USD', $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25
                 )
-                ON CONFLICT (id) DO UPDATE SET
+                ON CONFLICT (store_id, week_start, campaign_id) DO UPDATE SET
+                    campaign_name = EXCLUDED.campaign_name,
+                    campaign_type = EXCLUDED.campaign_type,
                     status = EXCLUDED.status,
                     spend = EXCLUDED.spend,
                     sales = EXCLUDED.sales,
                     orders = EXCLUDED.orders,
                     roas = EXCLUDED.roas,
+                    start_date = EXCLUDED.start_date,
+                    end_date = EXCLUDED.end_date,
                     raw_data = EXCLUDED.raw_data,
                     snapshot_date = EXCLUDED.snapshot_date,
-                    week_start = EXCLUDED.week_start,
                     snapshot_source = EXCLUDED.snapshot_source,
                     source_ref = EXCLUDED.source_ref,
                     batch_id = EXCLUDED.batch_id,
@@ -283,6 +308,7 @@ export class PostgresProductionStorage implements ProductionStorage {
             `, [
                 snapshot.id,
                 snapshot.storeId,
+                snapshot.campaignId,
                 snapshot.campaignName,
                 snapshot.campaignType,
                 snapshot.status,
@@ -306,39 +332,69 @@ export class PostgresProductionStorage implements ProductionStorage {
                 snapshot.observedDateStart,
                 snapshot.observedDateEnd,
             ]);
-            if (existing.rowCount === 0) {
+
+            if (!existingRow) {
                 result.created += 1;
+                continue;
+            }
+
+            if (
+                Number(existingRow.orders) === snapshot.orders
+                && Number(existingRow.sales) === snapshot.sales
+                && Number(existingRow.spend) === snapshot.spend
+                && Number(existingRow.roas) === snapshot.roas
+                && String(existingRow.raw_data || '') === snapshot.rawDataJson
+            ) {
+                result.unchanged += 1;
             } else {
-                const row = existing.rows[0];
-                if (
-                    Number(row.orders) === snapshot.orders
-                    && Number(row.sales) === snapshot.sales
-                    && Number(row.spend) === snapshot.spend
-                    && Number(row.roas) === snapshot.roas
-                    && String(row.raw_data || '') === snapshot.rawDataJson
-                ) {
-                    result.unchanged += 1;
-                } else {
-                    result.updated += 1;
-                }
+                result.updated += 1;
             }
         }
+
         return result;
     }
 
+    async upsertSnapshots(snapshots: WeeklyCampaignSnapshot[]): Promise<SnapshotUpsertResult> {
+        return this.withClient(client => this.upsertSnapshotsWithClient(client, snapshots));
+    }
+
     async listSnapshotsForWeek(storeId: string, weekStart: string): Promise<WeeklyCampaignSnapshot[]> {
-        const rows = await this.requirePool().query(`
-            SELECT id, store_id, campaign_name, campaign_type, status, week_start, report_end_date, snapshot_source, source_ref, batch_id,
-                   report_start_date, report_end_date, observed_date_start, observed_date_end, orders, sales, spend, roas,
-                   start_date, end_date, data_completeness, raw_data, snapshot_date, updated_at
+        const result = await this.requirePool().query(`
+            SELECT
+                id,
+                store_id,
+                campaign_id,
+                campaign_name,
+                campaign_type,
+                status,
+                week_start,
+                report_end_date,
+                snapshot_source,
+                source_ref,
+                batch_id,
+                report_start_date,
+                report_end_date,
+                observed_date_start,
+                observed_date_end,
+                orders,
+                sales,
+                spend,
+                roas,
+                start_date,
+                end_date,
+                data_completeness,
+                raw_data,
+                snapshot_date,
+                updated_at
             FROM campaign_snapshots
             WHERE store_id = $1 AND week_start = $2
             ORDER BY campaign_name
         `, [storeId, weekStart]);
-        return rows.rows.map(row => ({
+
+        return result.rows.map(row => ({
             id: row.id,
             storeId: row.store_id,
-            campaignId: this.readCampaignId(row.raw_data, row.id),
+            campaignId: row.campaign_id,
             campaignName: row.campaign_name,
             campaignType: row.campaign_type,
             status: row.status,
@@ -376,8 +432,8 @@ export class PostgresProductionStorage implements ProductionStorage {
         return priorWeek ? this.listSnapshotsForWeek(storeId, priorWeek) : [];
     }
 
-    async saveRecommendation(record: CampaignRecommendationRecord): Promise<void> {
-        await this.requirePool().query(`
+    private async saveRecommendationWithClient(client: PoolClient, record: CampaignRecommendationRecord): Promise<void> {
+        await client.query(`
             INSERT INTO recommendations (
                 id, store_id, campaign_snapshot_id, recommendation_type, current_setting, proposed_setting,
                 expected_roi_impact, expected_profit_impact, confidence, risk, reason, rollback_plan, status,
@@ -385,7 +441,18 @@ export class PostgresProductionStorage implements ProductionStorage {
             ) VALUES (
                 $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
             )
-            ON CONFLICT (id) DO UPDATE SET raw_response_json = EXCLUDED.raw_response_json
+            ON CONFLICT (campaign_snapshot_id, provider, week_start, recommendation_type, proposed_setting) DO UPDATE SET
+                current_setting = EXCLUDED.current_setting,
+                expected_roi_impact = EXCLUDED.expected_roi_impact,
+                expected_profit_impact = EXCLUDED.expected_profit_impact,
+                confidence = EXCLUDED.confidence,
+                risk = EXCLUDED.risk,
+                reason = EXCLUDED.reason,
+                rollback_plan = EXCLUDED.rollback_plan,
+                status = EXCLUDED.status,
+                created_at = EXCLUDED.created_at,
+                provider_model = EXCLUDED.provider_model,
+                raw_response_json = EXCLUDED.raw_response_json
         `, [
             record.id,
             record.storeId,
@@ -404,16 +471,147 @@ export class PostgresProductionStorage implements ProductionStorage {
             record.provider,
             record.model,
             record.weekStart,
-            record.rawResponseJson,
+            sanitizeJsonString(record.rawResponseJson),
         ]);
     }
 
-    private readCampaignId(rawDataJson: string, fallbackId: string): string {
-        try {
-            const parsed = JSON.parse(rawDataJson) as { campaign?: { campaignId?: string } };
-            return parsed.campaign?.campaignId || fallbackId;
-        } catch {
-            return fallbackId;
-        }
+    async saveRecommendation(record: CampaignRecommendationRecord): Promise<void> {
+        await this.withClient(client => this.saveRecommendationWithClient(client, record));
+    }
+
+    async persistStoreBundle(input: PersistStoreBundleInput): Promise<PersistStoreBundleResult> {
+        return this.withClient(async (client) => {
+            const result: PersistStoreBundleResult = {
+                alreadyProcessed: false,
+                recommendationCount: input.recommendations.length,
+                upsert: { created: 0, updated: 0, unchanged: 0 },
+            };
+
+            const configuredStore = configuredProductionStores().find(store => store.id === input.store.id) || input.store;
+            const stepTimestamp = nowIso();
+
+            try {
+                await client.query('BEGIN');
+                await this.upsertStore(client, configuredStore, stepTimestamp);
+
+                const insertedIdempotency = await client.query(`
+                    INSERT INTO ingestion_idempotency (
+                        idempotency_key, message_id, attachment_hash, store_id, week_start, source_ref, created_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    ON CONFLICT (message_id, attachment_hash, store_id, week_start) DO NOTHING
+                    RETURNING idempotency_key
+                `, [
+                    input.ingestionRecord.idempotencyKey,
+                    input.ingestionRecord.messageId,
+                    input.ingestionRecord.attachmentHash,
+                    input.ingestionRecord.storeId,
+                    input.ingestionRecord.weekStart,
+                    input.ingestionRecord.sourceRef,
+                    input.ingestionRecord.createdAt,
+                ]);
+
+                if ((insertedIdempotency.rowCount || 0) === 0) {
+                    result.alreadyProcessed = true;
+                    await this.insertStepWithClient(client, {
+                        runId: input.workflowRunId,
+                        stepKey: `ingest_${input.store.id}`,
+                        attempt: input.ingestAttempt,
+                        status: 'success',
+                        startedAt: stepTimestamp,
+                        completedAt: stepTimestamp,
+                        detail: `Report ${input.ingestionRecord.sourceRef} was already processed for ${input.store.id}.`,
+                        errorMessage: null,
+                        metricsJson: JSON.stringify({ alreadyProcessed: true }),
+                    });
+                    await this.insertStepWithClient(client, {
+                        runId: input.workflowRunId,
+                        stepKey: `analyze_${input.store.id}`,
+                        attempt: input.analyzeAttempt,
+                        status: 'skipped',
+                        startedAt: stepTimestamp,
+                        completedAt: stepTimestamp,
+                        detail: `Recommendation persistence skipped because ${input.store.id} was already processed for ${input.ingestionRecord.weekStart}.`,
+                        errorMessage: null,
+                        metricsJson: JSON.stringify({ alreadyProcessed: true }),
+                    });
+                    await client.query('COMMIT');
+                    return result;
+                }
+
+                result.upsert = await this.upsertSnapshotsWithClient(client, input.snapshots);
+
+                const snapshotRows = await client.query(`
+                    SELECT id, campaign_id
+                    FROM campaign_snapshots
+                    WHERE store_id = $1 AND week_start = $2
+                `, [input.store.id, input.ingestionRecord.weekStart]);
+                const snapshotIdByCampaignId = new Map<string, string>(
+                    snapshotRows.rows.map(row => [row.campaign_id, row.id]),
+                );
+
+                for (const recommendation of input.recommendations) {
+                    const sourceSnapshot = input.snapshots.find(snapshot => snapshot.id === recommendation.campaignSnapshotId);
+                    const persistedSnapshotId = sourceSnapshot
+                        ? snapshotIdByCampaignId.get(sourceSnapshot.campaignId) || recommendation.campaignSnapshotId
+                        : recommendation.campaignSnapshotId;
+                    await this.saveRecommendationWithClient(client, {
+                        ...recommendation,
+                        campaignSnapshotId: persistedSnapshotId,
+                    });
+                }
+
+                if (this.options.hooks?.beforePersistIngestionRecord) {
+                    await this.options.hooks.beforePersistIngestionRecord(client, input);
+                }
+
+                await this.insertStepWithClient(client, {
+                    runId: input.workflowRunId,
+                    stepKey: `ingest_${input.store.id}`,
+                    attempt: input.ingestAttempt,
+                    status: 'success',
+                    startedAt: stepTimestamp,
+                    completedAt: stepTimestamp,
+                    detail: sanitizeErrorMessage(input.ingestDetail),
+                    errorMessage: null,
+                    metricsJson: input.ingestMetricsJson,
+                });
+                await this.insertStepWithClient(client, {
+                    runId: input.workflowRunId,
+                    stepKey: `analyze_${input.store.id}`,
+                    attempt: input.analyzeAttempt,
+                    status: 'success',
+                    startedAt: stepTimestamp,
+                    completedAt: stepTimestamp,
+                    detail: sanitizeErrorMessage(input.analyzeDetail),
+                    errorMessage: null,
+                    metricsJson: input.analyzeMetricsJson,
+                });
+
+                await client.query('COMMIT');
+                return result;
+            } catch (error) {
+                await client.query('ROLLBACK');
+                throw error;
+            }
+        });
+    }
+
+    private async insertStepWithClient(client: PoolClient, step: WorkflowStepRecord): Promise<void> {
+        await client.query(`
+            INSERT INTO automation_workflow_steps (
+                id, run_id, step_key, attempt, status, started_at, completed_at, detail, error_message, metrics_json
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `, [
+            stableId('workflow-step', `${step.runId}|${step.stepKey}|${step.attempt}|${step.startedAt}`),
+            step.runId,
+            step.stepKey,
+            step.attempt,
+            step.status,
+            step.startedAt,
+            step.completedAt,
+            step.detail ? sanitizeErrorMessage(step.detail) : null,
+            step.errorMessage ? sanitizeErrorMessage(step.errorMessage) : null,
+            sanitizeJsonString(encodeJson(step.metricsJson)),
+        ]);
     }
 }

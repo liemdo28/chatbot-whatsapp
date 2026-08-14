@@ -11,11 +11,13 @@ const validation = YAML.parse(fs.readFileSync(validationPath, 'utf8')) as any;
 const productionSteps = workflow.jobs['weekly-production'].steps as any[];
 const validationSteps = validation.jobs.validate.steps as any[];
 const productionRunStep = productionSteps.find((step: any) => step.id === 'workflow_run');
+const validationServices = validation.jobs.validate.services;
 
 assert.equal(workflow.on.schedule[0].cron, '5 18 * * 0');
 assert.ok(workflow.on.workflow_dispatch);
 assert.equal(workflow.jobs['weekly-production']['runs-on'], 'ubuntu-latest');
 assert.equal(workflow.jobs['weekly-production']['timeout-minutes'], 30);
+assert.equal(workflow.jobs['weekly-production'].outputs.failure_summary, '${{ steps.workflow_run.outputs.failure_summary }}');
 assert.equal(workflow.concurrency['cancel-in-progress'], false);
 assert.equal(workflow.permissions.contents, 'read');
 assert.equal(workflow.jobs['weekly-production'].permissions.contents, 'read');
@@ -36,13 +38,23 @@ assert.equal(productionRunStep.env.OPENAI_API_KEY, '${{ secrets.OPENAI_API_KEY }
 assert.equal(productionRunStep.env.DATABASE_URL, '${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}');
 assert.equal(productionRunStep.env.IMAP_USER, '${{ secrets.IMAP_USER }}');
 assert.equal(productionRunStep.env.IMAP_PASS, '${{ secrets.IMAP_PASS }}');
+assert.ok(workflow.jobs['create-production-issue'].steps[0].env.FAILURE_SUMMARY);
 
 assert.equal(validation.jobs.validate['runs-on'], 'ubuntu-latest');
 assert.ok(validation.on.pull_request);
 assert.ok(validation.on.push);
+assert.equal(validation.jobs.validate.env.DD_STORAGE_BACKEND, 'postgres');
+assert.equal(validation.jobs.validate.env.DATABASE_URL, 'postgres://validator:validator_password@127.0.0.1:5432/doordash_validation');
+assert.equal(validationServices.postgres.image, 'postgres:16-alpine');
+assert.equal(validationServices.postgres.env.POSTGRES_DB, 'doordash_validation');
+assert.equal(validationServices.postgres.env.POSTGRES_USER, 'validator');
+assert.equal(validationServices.postgres.env.POSTGRES_PASSWORD, 'validator_password');
 assert.equal(validationSteps[0].uses, 'actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09');
 assert.equal(validationSteps[1].uses, 'actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444');
 assert.equal(validationSteps.find((step: any) => step.name === 'Install dependencies').run.trim(), 'npm ci');
 assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run test:production-runner'));
+assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run validate:production-store-config'));
+assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run test:production-sanitization'));
+assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run test:production-postgres'));
 
 console.log('workflow-validation tests passed');

@@ -6,9 +6,12 @@
     "scripts": {
         "build": "tsc",
         "automation:weekly:production": "tsx scripts/run-weekly-production.ts",
+        "validate:production-store-config": "tsx scripts/validate-production-store-config.ts",
         "test:weekly-window": "tsx scripts/test-weekly-window.ts",
+        "test:production-sanitization": "tsx scripts/test-production-sanitization.ts",
         "test:production-openai": "tsx scripts/test-production-openai-provider.ts",
         "test:production-ingestion": "tsx scripts/test-production-report-ingestion.ts",
+        "test:production-postgres": "tsx scripts/test-production-postgres.ts",
         "test:production-runner": "tsx scripts/test-production-runner.ts",
         "test:production-storage": "tsx scripts/test-production-storage.ts",
         "test:workflow-validation": "tsx scripts/validate-production-workflow.ts",
