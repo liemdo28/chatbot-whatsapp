@@ -42,7 +42,8 @@ function randomSchemaName(): string {
 
 function databaseUrlForSchema(databaseUrl: string, schemaName: string): string {
     const url = new URL(databaseUrl);
-    url.searchParams.set('options', `-c search_path=${schemaName},public`);
+    // Avoid a space after -c so URL encoding cannot turn it into "+" and break libpq parsing in CI.
+    url.searchParams.set('options', `-csearch_path=${schemaName},public`);
     return url.toString();
 }
 
