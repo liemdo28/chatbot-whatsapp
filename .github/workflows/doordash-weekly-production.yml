@@ -54,17 +54,32 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run validation suite
-        run: |
-          npm run validate:production-store-config
-          npm run test:weekly-window
-          npm run test:production-sanitization
-          npm run test:production-storage
-          npm run test:production-openai
-          npm run test:production-ingestion
-          npm run test:production-postgres
-          npm run test:production-runner
-          npm run test:workflow-validation
+      - name: Validate production store config
+        run: npm run validate:production-store-config
+
+      - name: Test weekly window
+        run: npm run test:weekly-window
+
+      - name: Test production sanitization
+        run: npm run test:production-sanitization
+
+      - name: Test production storage
+        run: npm run test:production-storage
+
+      - name: Test production OpenAI provider
+        run: npm run test:production-openai
+
+      - name: Test production ingestion
+        run: npm run test:production-ingestion
+
+      - name: Test production Postgres
+        run: npm run test:production-postgres
+
+      - name: Test production runner
+        run: npm run test:production-runner
+
+      - name: Validate workflow definitions
+        run: npm run test:workflow-validation
 
       - name: Execute weekly production workflow
         id: workflow_run

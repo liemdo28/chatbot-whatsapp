@@ -12,6 +12,7 @@ const productionSteps = workflow.jobs['weekly-production'].steps as any[];
 const validationSteps = validation.jobs.validate.steps as any[];
 const productionRunStep = productionSteps.find((step: any) => step.id === 'workflow_run');
 const validationServices = validation.jobs.validate.services;
+const stepByName = (steps: any[], name: string) => steps.find((step: any) => step.name === name);
 
 assert.equal(workflow.on.schedule[0].cron, '5 18 * * 0');
 assert.ok(workflow.on.workflow_dispatch);
@@ -27,7 +28,15 @@ assert.equal(productionSteps[1].uses, 'actions/setup-node@a0853c24544627f65ddf25
 assert.ok(productionSteps.some((step: any) => step.uses === 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'));
 assert.equal(workflow.jobs['create-production-issue'].steps[0].uses, 'actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd');
 assert.equal(productionSteps.find((step: any) => step.name === 'Install dependencies').run.trim(), 'npm ci');
-assert.ok(productionSteps.find((step: any) => step.name === 'Run validation suite').run.includes('npm run test:production-runner'));
+assert.equal(stepByName(productionSteps, 'Validate production store config').run.trim(), 'npm run validate:production-store-config');
+assert.equal(stepByName(productionSteps, 'Test weekly window').run.trim(), 'npm run test:weekly-window');
+assert.equal(stepByName(productionSteps, 'Test production sanitization').run.trim(), 'npm run test:production-sanitization');
+assert.equal(stepByName(productionSteps, 'Test production storage').run.trim(), 'npm run test:production-storage');
+assert.equal(stepByName(productionSteps, 'Test production OpenAI provider').run.trim(), 'npm run test:production-openai');
+assert.equal(stepByName(productionSteps, 'Test production ingestion').run.trim(), 'npm run test:production-ingestion');
+assert.equal(stepByName(productionSteps, 'Test production Postgres').run.trim(), 'npm run test:production-postgres');
+assert.equal(stepByName(productionSteps, 'Test production runner').run.trim(), 'npm run test:production-runner');
+assert.equal(stepByName(productionSteps, 'Validate workflow definitions').run.trim(), 'npm run test:workflow-validation');
 assert.equal(productionRunStep.env.OPENAI_MODEL, '${{ vars.OPENAI_MODEL }}');
 assert.equal(productionRunStep.env.DD_REPORT_ALLOWED_SENDERS, '${{ vars.DD_REPORT_ALLOWED_SENDERS }}');
 assert.equal(productionRunStep.env.IMAP_HOST, '${{ vars.IMAP_HOST }}');
@@ -52,9 +61,15 @@ assert.equal(validationServices.postgres.env.POSTGRES_PASSWORD, 'validator_passw
 assert.equal(validationSteps[0].uses, 'actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09');
 assert.equal(validationSteps[1].uses, 'actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444');
 assert.equal(validationSteps.find((step: any) => step.name === 'Install dependencies').run.trim(), 'npm ci');
-assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run test:production-runner'));
-assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run validate:production-store-config'));
-assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run test:production-sanitization'));
-assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run test:production-postgres'));
+assert.equal(stepByName(validationSteps, 'Build').run.trim(), 'npm run build');
+assert.equal(stepByName(validationSteps, 'Validate production store config').run.trim(), 'npm run validate:production-store-config');
+assert.equal(stepByName(validationSteps, 'Test weekly window').run.trim(), 'npm run test:weekly-window');
+assert.equal(stepByName(validationSteps, 'Test production sanitization').run.trim(), 'npm run test:production-sanitization');
+assert.equal(stepByName(validationSteps, 'Test production storage').run.trim(), 'npm run test:production-storage');
+assert.equal(stepByName(validationSteps, 'Test production OpenAI provider').run.trim(), 'npm run test:production-openai');
+assert.equal(stepByName(validationSteps, 'Test production ingestion').run.trim(), 'npm run test:production-ingestion');
+assert.equal(stepByName(validationSteps, 'Test production Postgres').run.trim(), 'npm run test:production-postgres');
+assert.equal(stepByName(validationSteps, 'Test production runner').run.trim(), 'npm run test:production-runner');
+assert.equal(stepByName(validationSteps, 'Validate workflow definitions').run.trim(), 'npm run test:workflow-validation');
 
 console.log('workflow-validation tests passed');
