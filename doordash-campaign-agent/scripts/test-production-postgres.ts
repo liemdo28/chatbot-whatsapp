@@ -40,6 +40,12 @@ function randomSchemaName(): string {
     return `dd_prod_test_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 }
 
+function databaseUrlForSchema(databaseUrl: string, schemaName: string): string {
+    const url = new URL(databaseUrl);
+    url.searchParams.set('options', `-c search_path=${schemaName},public`);
+    return url.toString();
+}
+
 function countQuery(schemaName: string, tableName: string): string {
     return `SELECT COUNT(*)::int AS count FROM "${schemaName}"."${tableName}"`;
 }
@@ -67,16 +73,14 @@ function createConfig(schemaName: string, databaseUrl: string): ProductionWorkfl
         reportInboxLabel: 'INBOX',
         diagnosticsDir: path.resolve('artifacts', 'weekly-production', schemaName),
         sqliteDbPath: '',
-        postgresDatabaseUrl: databaseUrl,
+        postgresDatabaseUrl: databaseUrlForSchema(databaseUrl, schemaName),
         fixtureReportDir: path.resolve('data/fixtures/reports'),
     };
 }
 
 function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTransaction: boolean = false): PostgresProductionStorage {
     return new PostgresProductionStorage(databaseUrl, {
-        poolConfig: {
-            options: `-c search_path=${schemaName},public`,
-        },
+        poolConfig: {},
         hooks: shouldFailMidTransaction
             ? {
                 async beforePersistIngestionRecord() {
@@ -89,20 +93,24 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
 
 (async () => {
     const databaseUrl = requireDatabaseUrl();
-    const schemaName = randomSchemaName();
     const adminPool = new Pool({ connectionString: databaseUrl, max: 1, allowExitOnIdle: true });
-    await adminPool.query(`CREATE SCHEMA "${schemaName}"`);
+    const primarySchemaName = randomSchemaName();
+    const concurrentSchemaName = randomSchemaName();
+    const rollbackSchemaName = randomSchemaName();
+    await adminPool.query(`CREATE SCHEMA "${primarySchemaName}"`);
+    await adminPool.query(`CREATE SCHEMA "${concurrentSchemaName}"`);
+    await adminPool.query(`CREATE SCHEMA "${rollbackSchemaName}"`);
 
     try {
-        const config = createConfig(schemaName, databaseUrl);
+        const config = createConfig(primarySchemaName, databaseUrl);
         const provider = new FakeCampaignAnalysisProvider();
 
-        const migrationStorageA = createStorage(databaseUrl, schemaName);
-        const migrationStorageB = createStorage(databaseUrl, schemaName);
+        const migrationStorageA = createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName);
+        const migrationStorageB = createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName);
         await Promise.all([migrationStorageA.initialize(), migrationStorageB.initialize()]);
         await Promise.all([migrationStorageA.close(), migrationStorageB.close()]);
 
-        const migrationCount = await readCount(adminPool, schemaName, 'schema_migrations');
+        const migrationCount = await readCount(adminPool, primarySchemaName, 'schema_migrations');
         assert.equal(migrationCount, 1, 'expected exactly one migration record after rerunnable initialize');
 
         const first = await runWeeklyProductionWorkflow({
@@ -112,7 +120,7 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
             weekEndExclusive: '2026-07-20',
             configOverride: config,
             providerOverride: provider,
-            storageOverride: createStorage(databaseUrl, schemaName),
+            storageOverride: createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName),
         });
         assert.equal(first.success, true);
         assert.equal(first.stores.length, 1);
@@ -125,33 +133,37 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
             weekEndExclusive: '2026-07-20',
             configOverride: config,
             providerOverride: new FakeCampaignAnalysisProvider(),
-            storageOverride: createStorage(databaseUrl, schemaName),
+            storageOverride: createStorage(databaseUrlForSchema(databaseUrl, primarySchemaName), primarySchemaName),
         });
         assert.equal(second.success, true);
         assert.equal(second.stores[0].alreadyProcessed, true);
 
-        assert.ok(await readCount(adminPool, schemaName, 'campaign_snapshots') > 0);
-        assert.ok(await readCount(adminPool, schemaName, 'recommendations') > 0);
-        assert.equal(await readCount(adminPool, schemaName, 'ingestion_idempotency'), 1);
+        assert.ok(await readCount(adminPool, primarySchemaName, 'campaign_snapshots') > 0);
+        assert.ok(await readCount(adminPool, primarySchemaName, 'recommendations') > 0);
+        assert.equal(await readCount(adminPool, primarySchemaName, 'ingestion_idempotency'), 1);
+
+        const concurrentConfig = createConfig(concurrentSchemaName, databaseUrl);
+        const concurrentStorageA = createStorage(databaseUrlForSchema(databaseUrl, concurrentSchemaName), concurrentSchemaName);
+        const concurrentStorageB = createStorage(databaseUrlForSchema(databaseUrl, concurrentSchemaName), concurrentSchemaName);
 
         const concurrentResults = await Promise.all([
             runWeeklyProductionWorkflow({
                 trigger: 'postgres-concurrent-a',
                 storeIds: ['raw-sushi-bar'],
-                weekStart: '2026-07-20',
-                weekEndExclusive: '2026-07-27',
-                configOverride: config,
+                weekStart: '2026-07-13',
+                weekEndExclusive: '2026-07-20',
+                configOverride: concurrentConfig,
                 providerOverride: new FakeCampaignAnalysisProvider(),
-                storageOverride: createStorage(databaseUrl, schemaName),
+                storageOverride: concurrentStorageA,
             }),
             runWeeklyProductionWorkflow({
                 trigger: 'postgres-concurrent-b',
                 storeIds: ['raw-sushi-bar'],
-                weekStart: '2026-07-20',
-                weekEndExclusive: '2026-07-27',
-                configOverride: config,
+                weekStart: '2026-07-13',
+                weekEndExclusive: '2026-07-20',
+                configOverride: concurrentConfig,
                 providerOverride: new FakeCampaignAnalysisProvider(),
-                storageOverride: createStorage(databaseUrl, schemaName),
+                storageOverride: concurrentStorageB,
             }),
         ]);
         assert.equal(concurrentResults.every(result => result.success), true);
@@ -159,25 +171,26 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
         assert.deepEqual(concurrentProcessedFlags, [false, true]);
 
         const postConcurrentIdempotency = await adminPool.query<{ count: number }>(
-            `SELECT COUNT(*)::int AS count FROM "${schemaName}".ingestion_idempotency WHERE week_start = $1`,
-            ['2026-07-20'],
+            `SELECT COUNT(*)::int AS count FROM "${concurrentSchemaName}".ingestion_idempotency WHERE week_start = $1`,
+            ['2026-07-13'],
         );
         assert.equal(Number(postConcurrentIdempotency.rows[0]?.count || 0), 1);
 
+        const rollbackConfig = createConfig(rollbackSchemaName, databaseUrl);
         const beforeRollbackSnapshots = await adminPool.query<{ count: number }>(
-            `SELECT COUNT(*)::int AS count FROM "${schemaName}".campaign_snapshots WHERE week_start = $1`,
-            ['2026-07-27'],
+            `SELECT COUNT(*)::int AS count FROM "${rollbackSchemaName}".campaign_snapshots WHERE week_start = $1`,
+            ['2026-07-13'],
         );
         assert.equal(Number(beforeRollbackSnapshots.rows[0]?.count || 0), 0);
 
         const rollbackResult = await runWeeklyProductionWorkflow({
             trigger: 'postgres-rollback',
             storeIds: ['raw-sushi-bar'],
-            weekStart: '2026-07-27',
-            weekEndExclusive: '2026-08-03',
-            configOverride: config,
+            weekStart: '2026-07-13',
+            weekEndExclusive: '2026-07-20',
+            configOverride: rollbackConfig,
             providerOverride: new FakeCampaignAnalysisProvider(),
-            storageOverride: createStorage(databaseUrl, schemaName, true),
+            storageOverride: createStorage(databaseUrlForSchema(databaseUrl, rollbackSchemaName), rollbackSchemaName, true),
         });
         assert.equal(rollbackResult.success, false);
         const rollbackError = rollbackResult.errors.join(' | ');
@@ -186,18 +199,18 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
         assert.ok(sanitizeErrorMessage('postgres://rollback-user:rollback-pass@localhost:5432/test?token=should-hide').includes('<redacted>'));
 
         const afterRollbackSnapshots = await adminPool.query<{ count: number }>(
-            `SELECT COUNT(*)::int AS count FROM "${schemaName}".campaign_snapshots WHERE week_start = $1`,
-            ['2026-07-27'],
+            `SELECT COUNT(*)::int AS count FROM "${rollbackSchemaName}".campaign_snapshots WHERE week_start = $1`,
+            ['2026-07-13'],
         );
         const afterRollbackRecommendations = await adminPool.query<{ count: number }>(
-            `SELECT COUNT(*)::int AS count FROM "${schemaName}".recommendations recommendation
-             JOIN "${schemaName}".campaign_snapshots snapshot ON snapshot.id = recommendation.campaign_snapshot_id
+            `SELECT COUNT(*)::int AS count FROM "${rollbackSchemaName}".recommendations recommendation
+             JOIN "${rollbackSchemaName}".campaign_snapshots snapshot ON snapshot.id = recommendation.campaign_snapshot_id
              WHERE snapshot.week_start = $1`,
-            ['2026-07-27'],
+            ['2026-07-13'],
         );
         const afterRollbackIdempotency = await adminPool.query<{ count: number }>(
-            `SELECT COUNT(*)::int AS count FROM "${schemaName}".ingestion_idempotency WHERE week_start = $1`,
-            ['2026-07-27'],
+            `SELECT COUNT(*)::int AS count FROM "${rollbackSchemaName}".ingestion_idempotency WHERE week_start = $1`,
+            ['2026-07-13'],
         );
         assert.equal(Number(afterRollbackSnapshots.rows[0]?.count || 0), 0);
         assert.equal(Number(afterRollbackRecommendations.rows[0]?.count || 0), 0);
@@ -205,7 +218,9 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
 
         console.log('production-postgres tests passed');
     } finally {
-        await adminPool.query(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`);
+        await adminPool.query(`DROP SCHEMA IF EXISTS "${primarySchemaName}" CASCADE`);
+        await adminPool.query(`DROP SCHEMA IF EXISTS "${concurrentSchemaName}" CASCADE`);
+        await adminPool.query(`DROP SCHEMA IF EXISTS "${rollbackSchemaName}" CASCADE`);
         await adminPool.end();
     }
 })().catch((error) => {
