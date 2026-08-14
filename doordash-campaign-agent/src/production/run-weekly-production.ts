@@ -24,6 +24,7 @@ export interface WeeklyProductionWorkflowOptions {
     weekEndExclusive?: string;
     fixtureMessagesByStore?: Record<string, GmailInboxMessage[]>;
     configOverride?: ProductionWorkflowConfig;
+    providerOverride?: CampaignAnalysisProvider;
 }
 
 export interface WeeklyProductionWorkflowResult {
@@ -190,7 +191,7 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
     const window = options.weekStart
         ? createWeeklyReportingWindow(config.schedulerTimeZone, options.weekStart, options.weekEndExclusive)
         : getCompletedWeeklyReportingWindow(config.schedulerTimeZone);
-    const provider = providerForConfig(config);
+    const provider = options.providerOverride || providerForConfig(config);
     const workflowRun = await storage.createWorkflowRun({
         workflowName: 'doordash-weekly-production',
         trigger: options.trigger || 'manual',

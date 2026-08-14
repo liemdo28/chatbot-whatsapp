@@ -9,6 +9,7 @@
         "test:weekly-window": "tsx scripts/test-weekly-window.ts",
         "test:production-openai": "tsx scripts/test-production-openai-provider.ts",
         "test:production-ingestion": "tsx scripts/test-production-report-ingestion.ts",
+        "test:production-runner": "tsx scripts/test-production-runner.ts",
         "test:production-storage": "tsx scripts/test-production-storage.ts",
         "test:workflow-validation": "tsx scripts/validate-production-workflow.ts",
         "start": "node dist/server/index.js",
