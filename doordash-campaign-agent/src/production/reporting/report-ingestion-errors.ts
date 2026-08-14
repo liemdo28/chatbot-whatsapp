@@ -26,6 +26,12 @@ export class ReportAuthenticationError extends ReportIngestionError {
     }
 }
 
+export class ReportInboxUnavailableError extends ReportIngestionError {
+    constructor(message: string) {
+        super(message, true);
+    }
+}
+
 export class ReportStoreMismatchError extends ReportIngestionError {
     constructor(message: string) {
         super(message, false);

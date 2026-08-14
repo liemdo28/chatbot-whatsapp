@@ -5,6 +5,9 @@ import AdmZip from 'adm-zip';
 import { parse } from 'csv-parse/sync';
 import * as XLSX from 'xlsx';
 
+const MAX_ZIP_ENTRY_COUNT = 24;
+const MAX_ZIP_UNCOMPRESSED_BYTES = 25 * 1024 * 1024;
+
 export interface ParsedMarketingCampaign {
     campaignId: string;
     campaignName: string;
@@ -82,6 +85,29 @@ function fileTypeForPath(filePath: string): 'zip' | 'csv' | 'xlsx' {
     if (ext === '.xlsx' || ext === '.xls') return 'xlsx';
     if (ext === '.csv') return 'csv';
     throw new Error(`Unsupported marketing report extension "${ext}" for ${path.basename(filePath)}.`);
+}
+
+function validateZipEntryName(entryName: string): void {
+    const normalized = entryName.replace(/\\/g, '/');
+    if (normalized.startsWith('/') || normalized.split('/').includes('..')) {
+        throw new Error(`Unsafe ZIP entry path "${safeFileName(entryName)}".`);
+    }
+}
+
+function validateZipEntries(entries: AdmZip.IZipEntry[]): void {
+    const fileEntries = entries.filter(entry => !entry.isDirectory);
+    if (fileEntries.length > MAX_ZIP_ENTRY_COUNT) {
+        throw new Error(`ZIP report contains too many files (${fileEntries.length}).`);
+    }
+
+    let totalBytes = 0;
+    for (const entry of fileEntries) {
+        validateZipEntryName(entry.entryName);
+        totalBytes += Number(entry.header?.size || 0);
+        if (totalBytes > MAX_ZIP_UNCOMPRESSED_BYTES) {
+            throw new Error(`ZIP report exceeds the ${MAX_ZIP_UNCOMPRESSED_BYTES} byte decompression safety limit.`);
+        }
+    }
 }
 
 function mergeRows(
@@ -172,7 +198,9 @@ export function parseMarketingReportFile(reportPath: string): ParsedMarketingRep
 
     if (sourceType === 'zip') {
         const zip = new AdmZip(fs.readFileSync(reportPath));
-        for (const entry of zip.getEntries()) {
+        const entries = zip.getEntries();
+        validateZipEntries(entries);
+        for (const entry of entries) {
             if (entry.isDirectory) continue;
             const lower = entry.entryName.toLowerCase();
             if (lower.endsWith('.csv')) {

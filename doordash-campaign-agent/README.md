@@ -66,6 +66,17 @@ GitHub Actions workflow `doordash-weekly-production` expects these repository se
 - `IMAP_USER`
 - `IMAP_PASS`
 
+## Gmail / IMAP operating requirements
+
+- Use a dedicated reporting mailbox, not a personal inbox, so allowed-sender filtering stays tight and audit scope stays narrow.
+- `IMAP_PASS` should be a Gmail App Password for the mailbox account. A normal Gmail password is not the recommended production setup.
+- Enable IMAP for that mailbox and keep `IMAP_HOST=imap.gmail.com`, `IMAP_PORT=993`, `IMAP_SECURE=true` unless your provider explicitly documents another TLS-safe combination.
+- `DD_REPORT_ALLOWED_SENDERS` is mandatory. Only exact allowed senders are considered valid report sources.
+- Supported report artifacts are limited to `.zip`, `.csv`, `.xlsx`, and `.xls`, with a 15 MB attachment/download cap.
+- ZIP reports are parsed in memory only, reject unsafe paths such as `../...`, and cap total file count and uncompressed size before parsing.
+- Workflow diagnostics store run summaries and file basenames only; mailbox bodies, attachment bytes, and credentials are not written to diagnostic artifacts.
+- IMAP access uses explicit connection, greeting, and socket timeouts, and authentication failures are surfaced separately from "report not arrived yet".
+
 ## What is still intentionally excluded
 
 - ChatGPT web browser automation is not on the production path.

@@ -2,10 +2,12 @@ import assert from 'node:assert/strict';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import AdmZip from 'adm-zip';
 import { SqliteProductionStorage } from '../src/production/storage/sqlite-production-storage.js';
 import { ingestWeeklyReportForStore } from '../src/production/reporting/report-ingestion-service.js';
+import { ReportAuthenticationError, ReportInboxUnavailableError } from '../src/production/reporting/report-ingestion-errors.js';
 import type { ProductionWorkflowConfig } from '../src/production/config.js';
-import type { GmailInboxMessage } from '../src/integrations/email/gmail-inbox-client.js';
+import { GmailInboxClient, ImapAuthenticationError, ImapConnectionError, type GmailInboxMessage } from '../src/integrations/email/gmail-inbox-client.js';
 
 (async () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dd-ingestion-test-'));
@@ -139,12 +141,81 @@ import type { GmailInboxMessage } from '../src/integrations/email/gmail-inbox-cl
         ingestWeeklyReportForStore({
             storage,
             config,
+            store,
+            window,
+            messages: [{
+                uid: 9,
+                messageId: 'message-oversized',
+                subject: `DoorDash marketing report ${store.name}`,
+                from: ['reports@doordash.com'],
+                to: [store.email],
+                receivedAt: new Date().toISOString(),
+                text: 'Weekly export attached.',
+                attachments: [{
+                    filename: 'oversized.csv',
+                    contentType: 'text/csv',
+                    content: Buffer.alloc((15 * 1024 * 1024) + 1, 'a'),
+                }],
+            }],
+        }),
+        /exceeds the .* safety limit/i,
+    );
+
+    const unsafeZipPath = path.join(tempDir, 'unsafe.zip');
+    const unsafeZip = new AdmZip();
+    for (let index = 0; index < 25; index += 1) {
+        unsafeZip.addFile(`file-${index}.csv`, Buffer.from('Date,Campaign ID,Campaign name,Store ID,Store name\n'));
+    }
+    unsafeZip.writeZip(unsafeZipPath);
+    await assert.rejects(
+        ingestWeeklyReportForStore({
+            storage,
+            config,
+            store,
+            window,
+            messages: [messageWithAttachment('message-unsafe-zip', unsafeZipPath, store.name)],
+        }),
+        /too many files/i,
+    );
+
+    await assert.rejects(
+        ingestWeeklyReportForStore({
+            storage,
+            config,
             store: mismatchStore,
             window,
             messages: [messageWithAttachment('message-mismatch', validFixture, mismatchStore.name)],
         }),
         /failed Store ID validation|does not match store/i,
     );
+
+    const originalFetchRecentMessages = GmailInboxClient.prototype.fetchRecentMessages;
+    GmailInboxClient.prototype.fetchRecentMessages = async () => {
+        throw new ImapAuthenticationError('bad credentials');
+    };
+    await assert.rejects(
+        ingestWeeklyReportForStore({
+            storage,
+            config,
+            store,
+            window,
+        }),
+        error => error instanceof ReportAuthenticationError,
+    );
+
+    GmailInboxClient.prototype.fetchRecentMessages = async () => {
+        throw new ImapConnectionError('timeout');
+    };
+    await assert.rejects(
+        ingestWeeklyReportForStore({
+            storage,
+            config,
+            store,
+            window,
+        }),
+        error => error instanceof ReportInboxUnavailableError,
+    );
+    GmailInboxClient.prototype.fetchRecentMessages = originalFetchRecentMessages;
 
     await storage.close();
     console.log('production-ingestion tests passed');

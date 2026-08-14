@@ -2,7 +2,12 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import crypto from 'crypto';
-import { GmailInboxClient, type GmailInboxMessage } from '../../integrations/email/gmail-inbox-client.js';
+import {
+    GmailInboxClient,
+    ImapAuthenticationError,
+    ImapConnectionError,
+    type GmailInboxMessage,
+} from '../../integrations/email/gmail-inbox-client.js';
 import { parseMarketingReportFile, type ParsedMarketingCampaign, type ParsedMarketingReport } from '../../reporting/marketing-report-parser.js';
 import { campaignMatchesStore } from '../../reporting/marketing-report-store-match.js';
 import { weeklyProductionRunScheduledAtUtc } from '../../automation/weekly-reporting-window.js';
@@ -12,6 +17,7 @@ import type { ProductionStorage, SnapshotUpsertResult } from '../storage/product
 import {
     ReportAuthenticationError,
     ReportDeliveryWindowExpiredError,
+    ReportInboxUnavailableError,
     ReportNotReadyError,
     ReportStoreMismatchError,
     UnsupportedReportArtifactError,
@@ -36,6 +42,18 @@ export interface WeeklyReportIngestionResult {
     upsert: SnapshotUpsertResult;
     alreadyProcessed: boolean;
 }
+
+const MAX_REPORT_ATTACHMENT_BYTES = 15 * 1024 * 1024;
+const REPORT_LINK_TIMEOUT_MS = 15_000;
+const SUPPORTED_ATTACHMENT_EXTENSIONS = new Set(['.zip', '.csv', '.xlsx', '.xls']);
+const SUPPORTED_ATTACHMENT_CONTENT_TYPES = new Set([
+    'application/octet-stream',
+    'application/zip',
+    'application/x-zip-compressed',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/csv',
+]);
 
 function normalizeValue(value: string | null | undefined): string {
     return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
@@ -74,9 +92,21 @@ function subjectLooksRelevant(message: GmailInboxMessage, store: ProductionStore
         && storeTokens.some(token => subject.includes(token));
 }
 
+function attachmentHasSupportedType(attachment: GmailInboxMessage['attachments'][number]): boolean {
+    const extension = path.extname(attachment.filename).toLowerCase();
+    if (!SUPPORTED_ATTACHMENT_EXTENSIONS.has(extension)) return false;
+    return SUPPORTED_ATTACHMENT_CONTENT_TYPES.has(normalizeValue(attachment.contentType || 'application/octet-stream'));
+}
+
 function findSupportedAttachment(message: GmailInboxMessage): { filename: string; content: Buffer } | null {
-    const attachment = message.attachments.find(item => /\.(zip|csv|xlsx|xls)$/i.test(item.filename));
-    return attachment ? { filename: attachment.filename, content: attachment.content } : null;
+    const attachment = message.attachments.find(attachmentHasSupportedType);
+    if (!attachment) return null;
+    if (attachment.content.length > MAX_REPORT_ATTACHMENT_BYTES) {
+        throw new UnsupportedReportArtifactError(
+            `Message ${message.messageId} attachment ${safeFileName(attachment.filename)} exceeds the ${MAX_REPORT_ATTACHMENT_BYTES} byte safety limit.`,
+        );
+    }
+    return { filename: attachment.filename, content: attachment.content };
 }
 
 function findOfficialExportLink(message: GmailInboxMessage): string | null {
@@ -93,22 +123,43 @@ async function downloadReportLink(targetUrl: string, config: ProductionWorkflowC
         headers['Cookie'] = process.env['DD_REPORT_LINK_COOKIE']!;
     }
 
-    const response = await fetch(targetUrl, { headers });
-    if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-            throw new ReportAuthenticationError(`Official report link download failed authentication with HTTP ${response.status}.`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REPORT_LINK_TIMEOUT_MS);
+
+    try {
+        const response = await fetch(targetUrl, { headers, signal: controller.signal });
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                throw new ReportAuthenticationError(`Official report link download failed authentication with HTTP ${response.status}.`);
+            }
+            throw new UnsupportedReportArtifactError(`Official report link download failed with HTTP ${response.status}.`);
         }
-        throw new UnsupportedReportArtifactError(`Official report link download failed with HTTP ${response.status}.`);
+
+        const declaredLength = Number(response.headers.get('content-length') || '0');
+        if (Number.isFinite(declaredLength) && declaredLength > MAX_REPORT_ATTACHMENT_BYTES) {
+            throw new UnsupportedReportArtifactError(`Official report link download exceeded the ${MAX_REPORT_ATTACHMENT_BYTES} byte safety limit.`);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const content = Buffer.from(arrayBuffer);
+        if (content.length > MAX_REPORT_ATTACHMENT_BYTES) {
+            throw new UnsupportedReportArtifactError(`Official report link download exceeded the ${MAX_REPORT_ATTACHMENT_BYTES} byte safety limit.`);
+        }
+        const extension = path.extname(new URL(targetUrl).pathname) || '.bin';
+        const filePath = path.resolve(attachmentDirectory(config), `${safeFileName(messageId)}${extension}`);
+        fs.writeFileSync(filePath, content);
+        return {
+            filePath,
+            hash: crypto.createHash('sha256').update(content).digest('hex'),
+        };
+    } catch (error) {
+        if (error instanceof ReportAuthenticationError || error instanceof UnsupportedReportArtifactError) {
+            throw error;
+        }
+        throw new ReportInboxUnavailableError('Official report link download timed out or the mailbox transport was unavailable.');
+    } finally {
+        clearTimeout(timeout);
     }
-    const arrayBuffer = await response.arrayBuffer();
-    const content = Buffer.from(arrayBuffer);
-    const extension = path.extname(new URL(targetUrl).pathname) || '.bin';
-    const filePath = path.resolve(attachmentDirectory(config), `${safeFileName(messageId)}${extension}`);
-    fs.writeFileSync(filePath, content);
-    return {
-        filePath,
-        hash: crypto.createHash('sha256').update(content).digest('hex'),
-    };
 }
 
 function persistAttachment(message: GmailInboxMessage, attachment: { filename: string; content: Buffer }, config: ProductionWorkflowConfig): { filePath: string; hash: string } {
@@ -237,8 +288,18 @@ async function resolveReportArtifact(
 
 async function locateCandidateMessages(config: ProductionWorkflowConfig): Promise<GmailInboxMessage[]> {
     const client = new GmailInboxClient();
-    const messages = await client.fetchRecentMessages(config.reportLookbackHours, config.reportInboxLabel);
-    return messages.filter(message => messageFromAllowedSender(message, config));
+    try {
+        const messages = await client.fetchRecentMessages(config.reportLookbackHours, config.reportInboxLabel);
+        return messages.filter(message => messageFromAllowedSender(message, config));
+    } catch (error) {
+        if (error instanceof ImapAuthenticationError) {
+            throw new ReportAuthenticationError(error.message);
+        }
+        if (error instanceof ImapConnectionError) {
+            throw new ReportInboxUnavailableError(error.message);
+        }
+        throw error;
+    }
 }
 
 export async function ingestWeeklyReportForStore(input: {
