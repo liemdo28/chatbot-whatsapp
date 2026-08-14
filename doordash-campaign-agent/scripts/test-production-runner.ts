@@ -46,6 +46,7 @@ class FakeCampaignAnalysisProvider implements CampaignAnalysisProvider {
         reportLookbackHours: 24,
         reportRetryAttempts: 2,
         reportRetryDelayMs: 1,
+        reportDeliveryGraceHours: 36,
         reportAllowedSenders: ['reports@doordash.com'],
         reportSubjectIncludes: ['DoorDash', 'marketing report'],
         reportInboxLabel: 'INBOX',

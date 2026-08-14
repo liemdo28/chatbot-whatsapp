@@ -8,17 +8,41 @@ const validationPath = path.resolve(process.cwd(), '..', '.github', 'workflows',
 
 const workflow = YAML.parse(fs.readFileSync(workflowPath, 'utf8')) as any;
 const validation = YAML.parse(fs.readFileSync(validationPath, 'utf8')) as any;
+const productionSteps = workflow.jobs['weekly-production'].steps as any[];
+const validationSteps = validation.jobs.validate.steps as any[];
+const productionRunStep = productionSteps.find((step: any) => step.id === 'workflow_run');
 
 assert.equal(workflow.on.schedule[0].cron, '5 18 * * 0');
 assert.ok(workflow.on.workflow_dispatch);
 assert.equal(workflow.jobs['weekly-production']['runs-on'], 'ubuntu-latest');
 assert.equal(workflow.jobs['weekly-production']['timeout-minutes'], 30);
 assert.equal(workflow.concurrency['cancel-in-progress'], false);
-assert.ok(workflow.jobs['weekly-production'].steps.some((step: any) => step.uses === 'actions/upload-artifact@v4'));
-assert.ok(workflow.jobs['weekly-production'].steps.some((step: any) => step.uses === 'actions/github-script@v8'));
+assert.equal(workflow.permissions.contents, 'read');
+assert.equal(workflow.jobs['weekly-production'].permissions.contents, 'read');
+assert.equal(workflow.jobs['create-production-issue'].permissions.issues, 'write');
+assert.equal(productionSteps[0].uses, 'actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09');
+assert.equal(productionSteps[1].uses, 'actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444');
+assert.ok(productionSteps.some((step: any) => step.uses === 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'));
+assert.equal(workflow.jobs['create-production-issue'].steps[0].uses, 'actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd');
+assert.equal(productionSteps.find((step: any) => step.name === 'Install dependencies').run.trim(), 'npm ci');
+assert.ok(productionSteps.find((step: any) => step.name === 'Run validation suite').run.includes('npm run test:production-runner'));
+assert.equal(productionRunStep.env.OPENAI_MODEL, '${{ vars.OPENAI_MODEL }}');
+assert.equal(productionRunStep.env.DD_REPORT_ALLOWED_SENDERS, '${{ vars.DD_REPORT_ALLOWED_SENDERS }}');
+assert.equal(productionRunStep.env.IMAP_HOST, '${{ vars.IMAP_HOST }}');
+assert.equal(productionRunStep.env.IMAP_PORT, '${{ vars.IMAP_PORT }}');
+assert.equal(productionRunStep.env.IMAP_SECURE, '${{ vars.IMAP_SECURE }}');
+assert.equal(productionRunStep.env.DD_REPORT_INBOX_LABEL, '${{ vars.DD_REPORT_INBOX_LABEL }}');
+assert.equal(productionRunStep.env.OPENAI_API_KEY, '${{ secrets.OPENAI_API_KEY }}');
+assert.equal(productionRunStep.env.DATABASE_URL, '${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}');
+assert.equal(productionRunStep.env.IMAP_USER, '${{ secrets.IMAP_USER }}');
+assert.equal(productionRunStep.env.IMAP_PASS, '${{ secrets.IMAP_PASS }}');
 
 assert.equal(validation.jobs.validate['runs-on'], 'ubuntu-latest');
 assert.ok(validation.on.pull_request);
 assert.ok(validation.on.push);
+assert.equal(validationSteps[0].uses, 'actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09');
+assert.equal(validationSteps[1].uses, 'actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444');
+assert.equal(validationSteps.find((step: any) => step.name === 'Install dependencies').run.trim(), 'npm ci');
+assert.ok(validationSteps.find((step: any) => step.name === 'Validate build and tests').run.includes('npm run test:production-runner'));
 
 console.log('workflow-validation tests passed');

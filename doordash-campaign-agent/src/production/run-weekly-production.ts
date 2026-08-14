@@ -15,6 +15,7 @@ import type {
     WorkflowStepStatus,
 } from './types.js';
 import { ingestWeeklyReportForStore, type WeeklyReportIngestionResult } from './reporting/report-ingestion-service.js';
+import { isRetryableReportIngestionError } from './reporting/report-ingestion-errors.js';
 import type { GmailInboxMessage } from '../integrations/email/gmail-inbox-client.js';
 
 export interface WeeklyProductionWorkflowOptions {
@@ -25,10 +26,13 @@ export interface WeeklyProductionWorkflowOptions {
     fixtureMessagesByStore?: Record<string, GmailInboxMessage[]>;
     configOverride?: ProductionWorkflowConfig;
     providerOverride?: CampaignAnalysisProvider;
+    now?: Date;
 }
 
 export interface WeeklyProductionWorkflowResult {
     success: boolean;
+    pendingExternalData: boolean;
+    failureCategory: 'none' | 'pending_report_delivery' | 'hard_failure';
     workflowRunId: string;
     weekStart: string;
     weekEndExclusive: string;
@@ -105,6 +109,7 @@ function defaultIngestionRetryPolicy(config: ProductionWorkflowConfig): RetryPol
         initialDelayMs: Math.max(0, config.reportRetryDelayMs),
         backoffMultiplier: 2,
         maxDelayMs: Math.max(config.reportRetryDelayMs, 15000),
+        shouldRetry: (error) => isRetryableReportIngestionError(error),
     };
 }
 
@@ -208,6 +213,8 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
     const stores = await storage.listActiveStores(options.storeIds);
     const storeSummaries: WeeklyProductionWorkflowResult['stores'] = [];
     const errors: string[] = [];
+    let encounteredPendingExternalData = false;
+    let encounteredHardFailure = false;
 
     try {
         await recordStep(storage, workflowRun.id, 'load_stores', 1, 'success', `Loaded ${stores.length} active stores.`, { stores: stores.map(store => store.id) });
@@ -223,6 +230,7 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                         window,
                         messages: options.fixtureMessagesByStore?.[store.id]
                             || (config.reportSource === 'fixture' ? buildFixtureMessages(config, store) : undefined),
+                        now: options.now,
                     });
                 }, defaultIngestionRetryPolicy(config), async (context) => {
                     await recordStep(storage, workflowRun.id, `ingest_${store.id}`, context.attempt, 'retrying', context.error.message, {
@@ -237,6 +245,11 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
             } catch (error) {
                 const message = `${store.id}: ${(error as Error).message}`;
                 errors.push(message);
+                if (isRetryableReportIngestionError(error)) {
+                    encounteredPendingExternalData = true;
+                } else {
+                    encounteredHardFailure = true;
+                }
                 await recordStep(storage, workflowRun.id, `ingest_${store.id}`, 1, 'failed', message, undefined, message);
                 continue;
             }
@@ -267,12 +280,14 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                 } catch (error) {
                     const message = `${store.id}/${snapshot.campaignName}: ${(error as Error).message}`;
                     errors.push(message);
+                    encounteredHardFailure = true;
                 }
             }
 
             if (recommendationCount === 0) {
                 const message = `${store.id}: no recommendations were produced for week ${window.weekStart}.`;
                 errors.push(message);
+                encounteredHardFailure = true;
                 await recordStep(storage, workflowRun.id, `analyze_${store.id}`, 1, 'failed', message, undefined, message);
             } else {
                 await recordStep(storage, workflowRun.id, `analyze_${store.id}`, 1, 'success', `Persisted ${recommendationCount} recommendation(s).`, {
@@ -282,22 +297,27 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
 
             storeSummaries.push({
                 storeId: store.id,
-                reportPath: ingestionResult.reportPath,
+                reportPath: ingestionResult.sourceRef,
                 recommendationCount,
                 alreadyProcessed: ingestionResult.alreadyProcessed,
             });
         }
 
         const success = errors.length === 0;
+        const pendingExternalData = !success && encounteredPendingExternalData && !encounteredHardFailure;
         const result: WeeklyProductionWorkflowResult = {
             success,
+            pendingExternalData,
+            failureCategory: success ? 'none' : pendingExternalData ? 'pending_report_delivery' : 'hard_failure',
             workflowRunId: workflowRun.id,
             weekStart: window.weekStart,
             weekEndExclusive: window.weekEndExclusive,
             reportLabel: window.label,
             summary: success
                 ? `Weekly production workflow completed for ${window.label}.`
-                : `Weekly production workflow failed for ${window.label}.`,
+                : pendingExternalData
+                    ? `Weekly production workflow is waiting for report delivery for ${window.label}.`
+                    : `Weekly production workflow failed for ${window.label}.`,
             diagnosticsPath: path.resolve(config.diagnosticsDir, `${workflowRun.id}.json`),
             stores: storeSummaries,
             errors,

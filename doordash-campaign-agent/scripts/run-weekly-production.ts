@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { runWeeklyProductionWorkflow } from '../src/production/run-weekly-production.js';
 
 function parseArgs(argv: string[]): { trigger: string; storeIds: string[]; weekStart?: string; weekEndExclusive?: string } {
@@ -25,6 +26,16 @@ function parseArgs(argv: string[]): { trigger: string; storeIds: string[]; weekS
     return result;
 }
 
+function writeGithubOutputs(result: Awaited<ReturnType<typeof runWeeklyProductionWorkflow>>): void {
+    const outputPath = process.env['GITHUB_OUTPUT'];
+    if (!outputPath) {
+        return;
+    }
+
+    fs.appendFileSync(outputPath, `pending_external_data=${result.pendingExternalData ? 'true' : 'false'}\n`);
+    fs.appendFileSync(outputPath, `failure_category=${result.failureCategory}\n`);
+}
+
 (async () => {
     const args = parseArgs(process.argv.slice(2));
     const result = await runWeeklyProductionWorkflow({
@@ -33,6 +44,7 @@ function parseArgs(argv: string[]): { trigger: string; storeIds: string[]; weekS
         weekStart: args.weekStart,
         weekEndExclusive: args.weekEndExclusive,
     });
+    writeGithubOutputs(result);
     console.log(JSON.stringify(result, null, 2));
     if (!result.success) {
         process.exitCode = 1;

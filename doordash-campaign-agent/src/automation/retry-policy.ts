@@ -3,6 +3,7 @@ export interface RetryPolicy {
     initialDelayMs: number;
     backoffMultiplier: number;
     maxDelayMs: number;
+    shouldRetry?: (error: Error, attempt: number, maxAttempts: number) => boolean;
 }
 
 export interface RetryContext {
@@ -29,7 +30,8 @@ export async function runWithRetry<T>(
             return await task();
         } catch (error: any) {
             const normalized = error instanceof Error ? error : new Error(String(error));
-            if (attempt >= attempts) {
+            const canRetry = attempt < attempts && (policy.shouldRetry ? policy.shouldRetry(normalized, attempt, attempts) : true);
+            if (!canRetry) {
                 throw normalized;
             }
 

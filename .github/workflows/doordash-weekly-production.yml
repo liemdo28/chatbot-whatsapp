@@ -24,27 +24,31 @@ concurrency:
 
 permissions:
   contents: read
-  issues: write
 
 jobs:
   weekly-production:
+    outputs:
+      pending_external_data: ${{ steps.workflow_run.outputs.pending_external_data }}
+      failure_category: ${{ steps.workflow_run.outputs.failure_category }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
     defaults:
       run:
         shell: bash
         working-directory: doordash-campaign-agent
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
         with:
           node-version: '20'
           cache: npm
           cache-dependency-path: doordash-campaign-agent/package-lock.json
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps --ignore-scripts
+        run: npm ci
 
       - name: Build
         run: npm run build
@@ -55,6 +59,7 @@ jobs:
           npm run test:production-storage
           npm run test:production-openai
           npm run test:production-ingestion
+          npm run test:production-runner
           npm run test:workflow-validation
 
       - name: Execute weekly production workflow
@@ -66,15 +71,15 @@ jobs:
           DD_REPORT_SOURCE: imap
           DD_STORAGE_BACKEND: postgres
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           DATABASE_URL: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}
-          DD_REPORT_ALLOWED_SENDERS: ${{ secrets.DD_REPORT_ALLOWED_SENDERS }}
-          IMAP_HOST: ${{ secrets.IMAP_HOST }}
-          IMAP_PORT: ${{ secrets.IMAP_PORT }}
-          IMAP_SECURE: ${{ secrets.IMAP_SECURE }}
+          DD_REPORT_ALLOWED_SENDERS: ${{ vars.DD_REPORT_ALLOWED_SENDERS }}
+          IMAP_HOST: ${{ vars.IMAP_HOST }}
+          IMAP_PORT: ${{ vars.IMAP_PORT }}
+          IMAP_SECURE: ${{ vars.IMAP_SECURE }}
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_PASS: ${{ secrets.IMAP_PASS }}
-          DD_REPORT_INBOX_LABEL: ${{ secrets.DD_REPORT_INBOX_LABEL }}
+          DD_REPORT_INBOX_LABEL: ${{ vars.DD_REPORT_INBOX_LABEL }}
           DD_SCHEDULER_TIMEZONE: America/Los_Angeles
         run: |
           args=("--trigger" "${{ github.event_name }}")
@@ -91,16 +96,29 @@ jobs:
 
       - name: Upload sanitized diagnostics
         if: steps.workflow_run.outcome == 'failure'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: doordash-weekly-production-diagnostics
           path: doordash-campaign-agent/artifacts/weekly-production
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Create or update production issue
+      - name: Fail job when required workflow step failed
         if: steps.workflow_run.outcome == 'failure'
-        uses: actions/github-script@v8
+        run: exit 1
+
+  create-production-issue:
+    if: ${{ always() && needs.weekly-production.result == 'failure' && needs.weekly-production.outputs.pending_external_data != 'true' }}
+    needs:
+      - weekly-production
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        env:
+          FAILURE_CATEGORY: ${{ needs.weekly-production.outputs.failure_category }}
         with:
           script: |
             const title = 'DoorDash weekly production workflow failed';
@@ -111,6 +129,7 @@ jobs:
               `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
               `Workflow: ${context.workflow}`,
               `Date: ${runDate}`,
+              `Failure category: ${process.env.FAILURE_CATEGORY || 'hard_failure'}`,
               '',
               'Sanitized diagnostics were uploaded as a workflow artifact.',
             ].join('\n');
@@ -138,7 +157,3 @@ jobs:
                 labels: ['doordash-production'],
               });
             }
-
-      - name: Fail job when required workflow step failed
-        if: steps.workflow_run.outcome == 'failure'
-        run: exit 1

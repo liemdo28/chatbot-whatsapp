@@ -19,8 +19,6 @@ import type { GmailInboxMessage } from '../src/integrations/email/gmail-inbox-cl
     assert.ok(store);
     assert.ok(mismatchStore);
     const validFixture = path.resolve('data/fixtures/reports/raw-sushi-bar-marketing-report-2026-07-13.zip');
-    const mismatchFixture = path.resolve('data/fixtures/reports/bakudan-the-rim-marketing-report-2026-06-29.zip');
-
     const config: ProductionWorkflowConfig = {
         executionEnv: 'test',
         analysisProvider: 'openai',
@@ -32,6 +30,7 @@ import type { GmailInboxMessage } from '../src/integrations/email/gmail-inbox-cl
         reportLookbackHours: 24,
         reportRetryAttempts: 2,
         reportRetryDelayMs: 1,
+        reportDeliveryGraceHours: 36,
         reportAllowedSenders: ['reports@doordash.com'],
         reportSubjectIncludes: ['DoorDash', 'marketing report'],
         reportInboxLabel: 'INBOX',
@@ -93,8 +92,21 @@ import type { GmailInboxMessage } from '../src/integrations/email/gmail-inbox-cl
             store,
             window,
             messages: [],
+            now: new Date('2026-07-27T00:00:00.000Z'),
         }),
-        /No report email matched sender\/subject filters/i,
+        /has not arrived yet/i,
+    );
+
+    await assert.rejects(
+        ingestWeeklyReportForStore({
+            storage,
+            config,
+            store,
+            window,
+            messages: [],
+            now: new Date('2026-07-28T18:06:00.000Z'),
+        }),
+        /delivery window expired/i,
     );
 
     const corruptPath = path.join(tempDir, 'corrupt.zip');

@@ -46,9 +46,9 @@ import { OpenAiCampaignAnalysisProvider } from '../src/production/analysis/opena
     const recommendation = await provider.analyzeCampaign({
         store: {
             id: 'raw-sushi-bar',
-            name: 'Raw Sushi Bar',
+            name: 'Demo Sushi West',
             email: 'raw@example.com',
-            doorDashAccountId: '892006',
+            doorDashAccountId: '900001',
             active: true,
         },
         snapshot: {
@@ -109,9 +109,9 @@ import { OpenAiCampaignAnalysisProvider } from '../src/production/analysis/opena
         malformedProvider.analyzeCampaign({
             store: {
                 id: 'raw-sushi-bar',
-                name: 'Raw Sushi Bar',
+                name: 'Demo Sushi West',
                 email: 'raw@example.com',
-                doorDashAccountId: '892006',
+                doorDashAccountId: '900001',
                 active: true,
             },
             snapshot: {

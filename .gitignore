@@ -24,6 +24,7 @@ build/
 coverage/
 .pytest_cache/
 test-results/
+**/artifacts/weekly-production/
 *.log
 logs/
 

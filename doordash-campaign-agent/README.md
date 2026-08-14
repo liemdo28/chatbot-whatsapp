@@ -17,8 +17,7 @@ This branch moves the weekly production path away from browser automation.
 Install dependencies:
 
 ```bash
-npm install --legacy-peer-deps --ignore-scripts
-npm rebuild better-sqlite3 --legacy-peer-deps
+npm ci
 ```
 
 Run build and verification:
@@ -29,6 +28,7 @@ npm run test:weekly-window
 npm run test:production-storage
 npm run test:production-openai
 npm run test:production-ingestion
+npm run test:production-runner
 npm run test:workflow-validation
 ```
 
@@ -44,20 +44,27 @@ OPENAI_MODEL=your_model \
 npm run automation:weekly:production -- --trigger manual --stores raw-sushi-bar --week-start 2026-07-13 --week-end-exclusive 2026-07-20
 ```
 
-## Required production secrets
+The production workflow runs every Sunday at `18:05 UTC`. If the report email has not arrived yet, the workflow retries within the run and treats the failure as pending external data until `DD_REPORT_DELIVERY_GRACE_HOURS` has elapsed after the scheduled run time.
 
-GitHub Actions workflow `doordash-weekly-production` expects:
+## Required repository variables
 
-- `OPENAI_API_KEY`
+GitHub Actions workflow `doordash-weekly-production` expects these repository variables:
+
 - `OPENAI_MODEL`
-- `DOORDASH_PRODUCTION_DATABASE_URL`
 - `DD_REPORT_ALLOWED_SENDERS`
 - `IMAP_HOST`
 - `IMAP_PORT`
 - `IMAP_SECURE`
+- `DD_REPORT_INBOX_LABEL` (optional)
+
+## Required repository secrets
+
+GitHub Actions workflow `doordash-weekly-production` expects these repository secrets:
+
+- `OPENAI_API_KEY`
+- `DOORDASH_PRODUCTION_DATABASE_URL`
 - `IMAP_USER`
 - `IMAP_PASS`
-- `DD_REPORT_INBOX_LABEL` (optional but recommended)
 
 ## What is still intentionally excluded
 

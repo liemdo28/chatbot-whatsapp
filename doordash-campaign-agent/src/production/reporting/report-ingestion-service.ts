@@ -1,12 +1,21 @@
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import crypto from 'crypto';
 import { GmailInboxClient, type GmailInboxMessage } from '../../integrations/email/gmail-inbox-client.js';
 import { parseMarketingReportFile, type ParsedMarketingCampaign, type ParsedMarketingReport } from '../../reporting/marketing-report-parser.js';
 import { campaignMatchesStore } from '../../reporting/marketing-report-store-match.js';
+import { weeklyProductionRunScheduledAtUtc } from '../../automation/weekly-reporting-window.js';
 import type { ProductionWorkflowConfig } from '../config.js';
 import type { IngestionIdempotencyRecord, ProductionStore, WeeklyCampaignSnapshot } from '../types.js';
 import type { ProductionStorage, SnapshotUpsertResult } from '../storage/production-storage.js';
+import {
+    ReportAuthenticationError,
+    ReportDeliveryWindowExpiredError,
+    ReportNotReadyError,
+    ReportStoreMismatchError,
+    UnsupportedReportArtifactError,
+} from './report-ingestion-errors.js';
 
 export interface WeeklyWindow {
     weekStart: string;
@@ -43,7 +52,7 @@ function safeFileName(value: string): string {
 }
 
 function attachmentDirectory(config: ProductionWorkflowConfig): string {
-    const dir = path.resolve(config.diagnosticsDir, 'downloaded-reports');
+    const dir = path.resolve(os.tmpdir(), 'doordash-weekly-production', 'downloaded-reports');
     fs.mkdirSync(dir, { recursive: true });
     return dir;
 }
@@ -86,7 +95,10 @@ async function downloadReportLink(targetUrl: string, config: ProductionWorkflowC
 
     const response = await fetch(targetUrl, { headers });
     if (!response.ok) {
-        throw new Error(`Official report link download failed with HTTP ${response.status}.`);
+        if (response.status === 401 || response.status === 403) {
+            throw new ReportAuthenticationError(`Official report link download failed authentication with HTTP ${response.status}.`);
+        }
+        throw new UnsupportedReportArtifactError(`Official report link download failed with HTTP ${response.status}.`);
     }
     const arrayBuffer = await response.arrayBuffer();
     const content = Buffer.from(arrayBuffer);
@@ -126,23 +138,23 @@ function buildSnapshotId(storeId: string, weekStart: string, campaign: ParsedMar
 
 function validateParsedReport(parsedReport: ParsedMarketingReport, store: ProductionStore, window: WeeklyWindow): ParsedMarketingCampaign[] {
     if (parsedReport.campaigns.length === 0) {
-        throw new Error(`Marketing report ${path.basename(parsedReport.reportPath)} contains no campaign rows.`);
+        throw new UnsupportedReportArtifactError(`Marketing report ${path.basename(parsedReport.reportPath)} contains no campaign rows.`);
     }
     if (!parsedReport.reportTypes.length) {
-        throw new Error(`Marketing report ${path.basename(parsedReport.reportPath)} does not declare a supported report type.`);
+        throw new UnsupportedReportArtifactError(`Marketing report ${path.basename(parsedReport.reportPath)} does not declare a supported report type.`);
     }
 
     const expectedEndInclusive = shiftIsoDate(window.weekEndExclusive, -1);
     const allowedEndDates = new Set([expectedEndInclusive, window.weekEndExclusive]);
     if (parsedReport.observedDateStart !== window.weekStart || !allowedEndDates.has(parsedReport.observedDateEnd || '')) {
-        throw new Error(
+        throw new UnsupportedReportArtifactError(
             `Marketing report ${path.basename(parsedReport.reportPath)} is stale or partial. Expected ${window.weekStart} to ${expectedEndInclusive} (or ${window.weekEndExclusive} when DoorDash includes the boundary day), got ${parsedReport.observedDateStart || 'n/a'} to ${parsedReport.observedDateEnd || 'n/a'}.`,
         );
     }
 
     const matchedCampaigns = parsedReport.campaigns.filter(campaign => campaignMatchesStore(campaign, store));
     if (matchedCampaigns.length === 0) {
-        throw new Error(`Marketing report ${path.basename(parsedReport.reportPath)} does not match store ${store.id}.`);
+        throw new ReportStoreMismatchError(`Marketing report ${path.basename(parsedReport.reportPath)} does not match store ${store.id}.`);
     }
 
     if (store.doorDashAccountId) {
@@ -150,13 +162,13 @@ function validateParsedReport(parsedReport: ParsedMarketingReport, store: Produc
             .map(campaign => campaign.storeId)
             .filter(storeId => normalizeValue(storeId) !== normalizeValue(store.doorDashAccountId));
         if (invalidStoreIds.length > 0) {
-            throw new Error(`Marketing report ${path.basename(parsedReport.reportPath)} failed Store ID validation for ${store.id}. Expected ${store.doorDashAccountId}.`);
+            throw new ReportStoreMismatchError(`Marketing report ${path.basename(parsedReport.reportPath)} failed Store ID validation for ${store.id}. Expected ${store.doorDashAccountId}.`);
         }
     }
 
     for (const campaign of matchedCampaigns) {
         if (campaign.rowCount <= 0) {
-            throw new Error(`Marketing report ${path.basename(parsedReport.reportPath)} contains an empty campaign for ${campaign.campaignName}.`);
+            throw new UnsupportedReportArtifactError(`Marketing report ${path.basename(parsedReport.reportPath)} contains an empty campaign for ${campaign.campaignName}.`);
         }
     }
 
@@ -196,7 +208,7 @@ function toWeeklySnapshots(
         endDate: campaign.endDate || null,
         dataCompleteness: 4,
         rawDataJson: JSON.stringify({
-            reportPath: parsedReport.reportPath,
+            reportPath: path.basename(parsedReport.reportPath),
             reportTypes: parsedReport.reportTypes,
             attachmentHash: parsedReport.attachmentHash,
             campaign,
@@ -220,7 +232,7 @@ async function resolveReportArtifact(
         return downloadReportLink(link, config, message.messageId);
     }
 
-    throw new Error(`Message ${message.messageId} does not contain a supported report attachment or official export link.`);
+    throw new UnsupportedReportArtifactError(`Message ${message.messageId} does not contain a supported report attachment or official export link.`);
 }
 
 async function locateCandidateMessages(config: ProductionWorkflowConfig): Promise<GmailInboxMessage[]> {
@@ -235,12 +247,23 @@ export async function ingestWeeklyReportForStore(input: {
     store: ProductionStore;
     window: WeeklyWindow;
     messages?: GmailInboxMessage[];
+    now?: Date;
 }): Promise<WeeklyReportIngestionResult> {
     const messages = input.messages || await locateCandidateMessages(input.config);
     const candidates = messages.filter(message => subjectLooksRelevant(message, input.store, input.config));
 
     if (candidates.length === 0) {
-        throw new Error(`No report email matched sender/subject filters for store ${input.store.id} and week ${input.window.weekStart}.`);
+        const scheduledRunAt = weeklyProductionRunScheduledAtUtc(input.window);
+        const deliveryDeadline = new Date(scheduledRunAt.getTime() + (input.config.reportDeliveryGraceHours * 60 * 60 * 1000));
+        const now = input.now || new Date();
+        if (now.getTime() > deliveryDeadline.getTime()) {
+            throw new ReportDeliveryWindowExpiredError(
+                `DoorDash report delivery window expired for store ${input.store.id} and week ${input.window.weekStart}. No matching report arrived before ${deliveryDeadline.toISOString()}.`,
+            );
+        }
+        throw new ReportNotReadyError(
+            `DoorDash report has not arrived yet for store ${input.store.id} and week ${input.window.weekStart}. The workflow will retry until ${deliveryDeadline.toISOString()}.`,
+        );
     }
 
     let lastError: Error | null = null;

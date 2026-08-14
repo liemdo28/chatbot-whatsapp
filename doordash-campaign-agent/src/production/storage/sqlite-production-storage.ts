@@ -161,10 +161,10 @@ export class SqliteProductionStorage implements ProductionStorage {
         const count = this.db.prepare('SELECT COUNT(*) AS count FROM stores').get() as { count: number };
         if (count.count === 0) {
             const rows: ProductionStore[] = [
-                { id: 'bakudan-the-rim', name: 'Bakudan The Rim', email: 'bakudanramen210@gmail.com', doorDashAccountId: null, active: true },
-                { id: 'bakudan-stone-oak', name: 'Bakudan Stone Oak', email: 'gm@bakudanramen.com', doorDashAccountId: null, active: true },
-                { id: 'bakudan-bandera', name: 'Bakudan Bandera', email: 'info@bakudanramen.com', doorDashAccountId: null, active: true },
-                { id: 'raw-sushi-bar', name: 'Raw Sushi Bar', email: 'h.oang.d.le@gmail.com', doorDashAccountId: '892006', active: true },
+                { id: 'bakudan-the-rim', name: 'Demo Ramen North', email: 'bakudan.rim@example.com', doorDashAccountId: '900002', active: true },
+                { id: 'bakudan-stone-oak', name: 'Demo Ramen Central', email: 'bakudan.central@example.com', doorDashAccountId: '900003', active: true },
+                { id: 'bakudan-bandera', name: 'Demo Ramen South', email: 'bakudan.south@example.com', doorDashAccountId: '900004', active: true },
+                { id: 'raw-sushi-bar', name: 'Demo Sushi West', email: 'raw.sushi@example.com', doorDashAccountId: '900001', active: true },
             ];
             const insert = this.db.prepare(`
                 INSERT INTO stores (id, name, email, doorDashAccountId, active, created_at, updated_at)

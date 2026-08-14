@@ -115,3 +115,9 @@ export function windowScheduledAtUtc(window: WeeklyReportingWindow, hour: number
     const [year, month, day] = window.weekEndExclusive.split('-').map(value => Number(value));
     return zonedDateTimeToUtc(year, month, day, hour, minute, window.timezone);
 }
+
+export function weeklyProductionRunScheduledAtUtc(window: Pick<WeeklyReportingWindow, 'weekEndExclusive'>): Date {
+    const scheduled = new Date(`${window.weekEndExclusive}T18:05:00.000Z`);
+    scheduled.setUTCDate(scheduled.getUTCDate() + 6);
+    return scheduled;
+}

@@ -12,6 +12,7 @@ export interface ProductionWorkflowConfig {
     reportLookbackHours: number;
     reportRetryAttempts: number;
     reportRetryDelayMs: number;
+    reportDeliveryGraceHours: number;
     reportAllowedSenders: string[];
     reportSubjectIncludes: string[];
     reportInboxLabel: string;
@@ -50,6 +51,7 @@ export function readProductionWorkflowConfig(): ProductionWorkflowConfig {
         reportLookbackHours: parseInteger(process.env['DD_REPORT_LOOKBACK_HOURS'], 240),
         reportRetryAttempts: parseInteger(process.env['DD_REPORT_RETRY_ATTEMPTS'], 3),
         reportRetryDelayMs: parseInteger(process.env['DD_REPORT_RETRY_DELAY_MS'], 2000),
+        reportDeliveryGraceHours: parseInteger(process.env['DD_REPORT_DELIVERY_GRACE_HOURS'], 36),
         reportAllowedSenders: normalizeList(process.env['DD_REPORT_ALLOWED_SENDERS'] || ''),
         reportSubjectIncludes: normalizeList(process.env['DD_REPORT_SUBJECT_INCLUDES'] || 'Doordash,DoorDash,marketing report'),
         reportInboxLabel: process.env['DD_REPORT_INBOX_LABEL'] || 'INBOX',
