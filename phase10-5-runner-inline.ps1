@@ -1,8 +1,16 @@
 $MiCoreUrl = "http://100.118.102.113:4001"
-$QbApiKey = "b149c4783a1109ff46d01498d91766e7"
-$MiApiKey = "2c6b56891f788f3836e3c6529624610f1bcce878dd556617b03b4ce690edebec"
+$QbApiKey = $env:QB_API_KEY
+$MiApiKey = $env:MI_CORE_API_KEY
 $Results = @{}
 $StartTime = Get-Date
+
+if ([string]::IsNullOrWhiteSpace($QbApiKey)) {
+    throw "Set QB_API_KEY in the current environment before running this script."
+}
+
+if ([string]::IsNullOrWhiteSpace($MiApiKey)) {
+    throw "Set MI_CORE_API_KEY in the current environment before running this script."
+}
 
 Write-Host ""
 Write-Host ("=" * 60) -ForegroundColor DarkCyan

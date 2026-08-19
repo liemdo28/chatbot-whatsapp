@@ -6,6 +6,8 @@ CEO PC  ──  Mi-core (port 4001)  ←── Laptop 1 (qb-laptop-01)
                                  ←── Laptop 2 (qb-laptop-02)
 ```
 
+> Security warning: never commit production API tokens to Git. Provision runtime secrets outside the repository and inject them locally before running the commands below.
+
 ---
 
 ## STEP 1 — Set Up Mi-core on CEO PC
@@ -22,7 +24,7 @@ Edit `E:\Project\Master\mi-core\server\.env`:
 MI_PORT=4001
 HOST=0.0.0.0          # bind to all interfaces (required for laptops to connect)
 MOBILE_ACCESS=1
-MI_CORE_API_KEY=xicB1Iyn9i1LFIjC13d74HqDxKpx4ZGtWkpbp9ZfwouQLFTBMipQ2eobdlqu4s6d   # same key used on both laptops
+MI_CORE_API_KEY=${MI_CORE_API_KEY}   # set locally from your secret manager; never commit the real token
 
 # Google Sheets (fill in after creating spreadsheet)
 GOOGLE_SHEET_ID=your-google-sheet-id-here
@@ -41,7 +43,8 @@ npm run dev
 ### 1d. Verify Mi-core is accessible
 From CEO PC:
 ```powershell
-curl http://localhost:4001/api/qb-agent/ping
+if (-not $env:MI_CORE_API_KEY) { throw "Set MI_CORE_API_KEY in this shell from a secure source before running verification." }
+curl -H "Authorization: Bearer $env:MI_CORE_API_KEY" http://localhost:4001/api/qb-agent/ping
 # Expected: {"ok":true,"server":"mi-core","timestamp":"..."}
 ```
 
@@ -53,7 +56,7 @@ tailscale ip -4
 
 From a different machine (Tailscale connected):
 ```powershell
-curl http://100.118.102.113:4001/api/qb-agent/ping
+curl -H "Authorization: Bearer $env:MI_CORE_API_KEY" http://100.118.102.113:4001/api/qb-agent/ping
 ```
 
 ---
@@ -97,8 +100,10 @@ Transfer `release/ToastPOSManagerSetup.exe` to Laptop 1.
 
 ### 3b. Set environment variable
 ```powershell
-# Run as admin or add to System Environment Variables
-[System.Environment]::SetEnvironmentVariable("MI_CORE_API_KEY", "xicB1Iyn9i1LFIjC13d74HqDxKpx4ZGtWkpbp9ZfwouQLFTBMipQ2eobdlqu4s6d", "Machine")
+# Run as admin or add to System Environment Variables.
+# First load MI_CORE_API_KEY into the current shell from your secure secret source.
+if (-not $env:MI_CORE_API_KEY) { throw "Set MI_CORE_API_KEY in this shell from a secure source before persisting it." }
+[System.Environment]::SetEnvironmentVariable("MI_CORE_API_KEY", $env:MI_CORE_API_KEY, "Machine")
 ```
 
 ### 3c. Copy config template
@@ -112,7 +117,7 @@ Edit `local-config.json`:
 
 ### 3d. Verify connection from Laptop 1
 ```powershell
-curl -H "Authorization: Bearer xicB1Iyn9i1LFIjC13d74HqDxKpx4ZGtWkpbp9ZfwouQLFTBMipQ2eobdlqu4s6d" http://100.118.102.113:4001/api/qb-agent/ping
+curl -H "Authorization: Bearer $env:MI_CORE_API_KEY" http://100.118.102.113:4001/api/qb-agent/ping
 ```
 
 ### 3e. Run first-time sync test
@@ -152,14 +157,14 @@ http://localhost:4001/api/qb-agent/status
 ```powershell
 curl -X POST http://localhost:4001/api/qb-agent/commands `
   -H "Content-Type: application/json" `
-  -H "Authorization: Bearer your-api-key" `
+  -H "Authorization: Bearer $env:MI_CORE_API_KEY" `
   -d '{"machine_id":"qb-laptop-01","command_type":"RUN_12H_SYNC_NOW","payload":{}}'
 ```
 
 ### Scan QB files on Laptop 2:
 ```powershell
 curl -X POST http://localhost:4001/api/qb-agent/commands `
-  -H "Authorization: Bearer your-api-key" `
+  -H "Authorization: Bearer $env:MI_CORE_API_KEY" `
   -H "Content-Type: application/json" `
   -d '{"machine_id":"qb-laptop-02","command_type":"SCAN_QB_FILES","payload":{}}'
 ```

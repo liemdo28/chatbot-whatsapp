@@ -1,0 +1,9 @@
+[
+  {
+    "company_name": "Example Company",
+    "company_file_path": "C:\\ProgramData\\Intuit\\QuickBooks\\Company Files\\ExampleCompany.qbw",
+    "assigned_store": "Example Store",
+    "assigned_department": "Accounting",
+    "notes": "Populate this local file on the target machine. Do not store QuickBooks passwords here."
+  }
+]

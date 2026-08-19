@@ -1,0 +1,17 @@
+# whatsapp-ai-gateway - LAPTOP2 example configuration
+DASHBOARD_PORT=3212
+DASHBOARD_HOST=0.0.0.0
+STARTUP_MODE=normal
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_group_chat_id_here
+WHATSAPP_SESSION_ROOT=./data/whatsapp
+SESSION_DIR=./data/whatsapp/auth
+SESSION_DATA_PATH=./data/whatsapp/auth
+WWEBJS_CACHE_DIR=./data/whatsapp/cache
+WHATSAPP_CLIENT_ID=bakudan-food-safety-laptop2
+WHATSAPP_HEADLESS=false
+WHATSAPP_AUTH_TIMEOUT_MS=120000
+WHATSAPP_QR_MAX_RETRIES=0
+WHATSAPP_TAKEOVER_ON_CONFLICT=true
+LOG_LEVEL=info
+LOG_DIR=./logs

@@ -1,33 +1,37 @@
-/**
- * DoorDash account registry — 4 brand accounts
- */
-module.exports = [
-  {
-    id: 'bakudan-1',
-    brand: 'Bakudan Ramen',
-    label: 'B1',
-    email: process.env.DD_B1_EMAIL || 'bakudanramen210@gmail.com',
-    password: process.env.DD_B1_PASS || 'Rawsushi123',
-  },
-  {
-    id: 'bakudan-2',
-    brand: 'Bakudan Ramen',
-    label: 'B2',
-    email: process.env.DD_B2_EMAIL || 'info@bakudanramen.com',
-    password: process.env.DD_B2_PASS || 'B@kudan1',
-  },
-  {
-    id: 'bakudan-3',
-    brand: 'Bakudan Ramen',
-    label: 'B3',
-    email: process.env.DD_B3_EMAIL || 'gm@bakudanramen.com',
-    password: process.env.DD_B3_PASS || 'Bakudan1',
-  },
-  {
-    id: 'raw-sushi',
-    brand: 'Raw Sushi Bar',
-    label: 'Raw',
-    email: process.env.DD_RAW_EMAIL || 'h.oang.d.le@gmail.com',
-    password: process.env.DD_RAW_PASS || 'rawsushi1',
-  },
+const ACCOUNT_DEFINITIONS = [
+  { id: 'bakudan-1', brand: 'Bakudan Ramen', label: 'B1', emailVar: 'DD_B1_EMAIL', passVar: 'DD_B1_PASS' },
+  { id: 'bakudan-2', brand: 'Bakudan Ramen', label: 'B2', emailVar: 'DD_B2_EMAIL', passVar: 'DD_B2_PASS' },
+  { id: 'bakudan-3', brand: 'Bakudan Ramen', label: 'B3', emailVar: 'DD_B3_EMAIL', passVar: 'DD_B3_PASS' },
+  { id: 'raw-sushi', brand: 'Raw Sushi Bar', label: 'Raw', emailVar: 'DD_RAW_EMAIL', passVar: 'DD_RAW_PASS' },
 ];
+
+function readRequiredEnv(name) {
+  return (process.env[name] || '').trim();
+}
+
+const missing = [];
+
+const accounts = ACCOUNT_DEFINITIONS.map((definition) => {
+  const email = readRequiredEnv(definition.emailVar);
+  const password = readRequiredEnv(definition.passVar);
+
+  if (!email) missing.push(definition.emailVar);
+  if (!password) missing.push(definition.passVar);
+
+  return {
+    id: definition.id,
+    brand: definition.brand,
+    label: definition.label,
+    email,
+    password,
+  };
+});
+
+if (missing.length > 0) {
+  throw new Error(
+    `Missing required DoorDash account configuration: ${missing.join(', ')}. ` +
+    'Populate doordash-agent/.env or set the variables in the process environment.'
+  );
+}
+
+module.exports = accounts;

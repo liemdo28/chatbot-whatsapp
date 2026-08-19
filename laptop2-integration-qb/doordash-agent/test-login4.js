@@ -1,4 +1,7 @@
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+
 const { chromium } = require('playwright');
+const testAccount = require('./src/accounts')[0];
 
 (async () => {
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
@@ -10,12 +13,12 @@ const { chromium } = require('playwright');
   await page.goto('https://merchant-portal.doordash.com/', { waitUntil: 'domcontentloaded', timeout: 30000 });
   await page.waitForTimeout(2000);
 
-  await page.fill('input[type="email"]', 'bakudanramen210@gmail.com');
+  await page.fill('input[type="email"]', testAccount.email);
   await page.waitForTimeout(500);
   await page.click('button:has-text("Continue to Log In")');
   await page.waitForTimeout(2000);
 
-  await page.fill('input[type="password"]', 'Rawsushi123');
+  await page.fill('input[type="password"]', testAccount.password);
   await page.waitForTimeout(500);
   await page.click('button:has-text("Log In")');
 
@@ -27,7 +30,7 @@ const { chromium } = require('playwright');
   const allText = bodyText.toLowerCase();
   ['incorrect', 'invalid', 'wrong', 'error', 'failed', 'captcha', 'verify', 'check'].forEach(word => {
     const idx = allText.indexOf(word);
-    if (idx >= 0) console.log(`Found "${word}":`, bodyText.slice(Math.max(0,idx-20), idx+60));
+    if (idx >= 0) console.log(`Found "${word}":`, bodyText.slice(Math.max(0, idx - 20), idx + 60));
   });
 
   await browser.close();

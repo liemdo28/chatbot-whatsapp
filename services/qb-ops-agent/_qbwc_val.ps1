@@ -115,7 +115,10 @@ Pop-Location
 # Step 8: Run the 4-step QBWC SOAP sequence
 Log "--- Step 8: QBWC SOAP Sequence ---"
 $apiUrl = "http://localhost:3457/api/qb/webhook"
-$apiKey = "b149c4783a1109ff46d01498d91766e7"
+$apiKey = $env:QBWC_PASSWORD
+if ([string]::IsNullOrWhiteSpace($apiKey)) {
+    throw "Set QBWC_PASSWORD in the current environment before running _qbwc_val.ps1."
+}
 
 # 8a: authenticate
 Log "== STEP 1/4: authenticate =="

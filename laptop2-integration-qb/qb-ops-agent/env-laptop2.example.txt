@@ -1,34 +1,21 @@
-# Agent Identity
-AGENT_NAME=qb-ops-agent
-AGENT_ENV=local
-
-# API Endpoints
+# qb-ops-agent - LAPTOP2 example configuration
+AGENT_NAME=qb-ops-agent-laptop2
+AGENT_ENV=production
+AGENT_HOSTNAME=laptop2
+MI_CORE_URL=http://100.118.102.113:4001
+MI_CORE_API_KEY=<REQUIRED_MI_CORE_API_KEY>
+MACHINE_ID=qb-laptop-02
 AGENT_OS_API_URL=http://127.0.0.1:3456/api
 DASHBOARD_API_URL=https://dashboard.bakudanramen.com/api
-MI_CORE_URL=http://127.0.0.1:4001
-MI_CORE_API_KEY=<REQUIRED_MI_CORE_API_KEY>
-MACHINE_ID=qb-laptop-01
-
-# Machine Auth Token (generated on first run)
 MACHINE_TOKEN=
-
-# Local Database
 LOCAL_DB_PATH=./data/qb-ops-agent.sqlite
-
-# QuickBooks Web Connector
 QBWC_PORT=3457
 QBWC_USER=mi-qb-agent
 QBWC_PASSWORD=<REQUIRED_QBWC_PASSWORD>
-
-# Timing
 HEARTBEAT_INTERVAL_SECONDS=60
 WORKFLOW_CHECK_INTERVAL_MINUTES=15
 COMMAND_POLL_INTERVAL_SECONDS=60
-
-# Safety Flags (Phase 1: both must be false)
 ENABLE_QB_WRITE_ACTIONS=false
 ENABLE_SCREEN_AUTOMATION=false
-
-# Logging
 LOG_LEVEL=info
 LOG_DIR=./logs

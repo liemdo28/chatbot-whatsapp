@@ -18,13 +18,21 @@
 
 param(
   [string]$MiCoreUrl = "http://100.118.102.113:4001",
-  [string]$QbApiKey  = "b149c4783a1109ff46d01498d91766e7",
-  [string]$MiApiKey  = "2c6b56891f788f3836e3c6529624610f1bcce878dd556617b03b4ce690edebec",
+  [string]$QbApiKey  = $env:QB_API_KEY,
+  [string]$MiApiKey  = $env:MI_CORE_API_KEY,
   [switch]$SkipWhatsApp,
   [switch]$Verbose
 )
 
 $ErrorActionPreference = "Stop"
+
+if ([string]::IsNullOrWhiteSpace($QbApiKey)) {
+  throw "Set QB_API_KEY in the current environment or pass -QbApiKey."
+}
+
+if ([string]::IsNullOrWhiteSpace($MiApiKey)) {
+  throw "Set MI_CORE_API_KEY in the current environment or pass -MiApiKey."
+}
 
 # -- Helpers ------------------------------------------------------------------
 $Results = @{}

@@ -24,9 +24,27 @@ if not exist "dist\index.js" (
   exit /b 1
 )
 
+if not exist ".env" (
+  echo [X] .env khong ton tai. Copy env-laptop2.example.txt thanh .env hoac chay INSTALL-ONE-CLICK.bat.
+  pause
+  exit /b 1
+)
+
 REM Load env vars tu file .env
 for /f "usebackq tokens=1,2 delims==" %%a in (".env") do (
   set "%%a=%%b"
+)
+
+if "%MI_CORE_API_KEY%"=="" (
+  echo [X] MI_CORE_API_KEY chua duoc set trong qb-ops-agent\.env
+  pause
+  exit /b 1
+)
+
+if "%QBWC_PASSWORD%"=="" (
+  echo [X] QBWC_PASSWORD chua duoc set trong qb-ops-agent\.env
+  pause
+  exit /b 1
 )
 
 echo Khoi dong qb-ops-agent (port 3457)...

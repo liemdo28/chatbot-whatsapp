@@ -47,27 +47,20 @@ REM Step 4: Configure .env
 echo [4/7] Configuring environment...
 if not exist .env (
     echo Creating .env from .env.example...
-    copy .env.example .env
-
-    REM Generate a random 32-char API key
-    for /f "tokens=*" %%i in ('node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"') do set QB_KEY=%%i
-
-    REM Update .env with detected IP and generated key
-    powershell -Command "(Get-Content '.env') -replace '192.168.1.100', '%LAPTOP1_IP%' -replace 'b149c4783a1109ff46d01498d91766e7', '%QB_KEY%' | Set-Content '.env'"
-
+    copy .env.example .env >nul
+    powershell -Command "(Get-Content '.env') -replace '192.168.1.100', '%LAPTOP1_IP%' | Set-Content '.env'"
     echo.
     echo =============================================
-    echo  IMPORTANT - COPY THESE VALUES
+    echo  ACTION REQUIRED
     echo =============================================
-    echo   LAPTOP1_IP: %LAPTOP1_IP%
-    echo   QB_API_KEY: %QB_KEY%
+    echo   .env was created from a placeholder-only template.
+    echo   Set MI_CORE_API_KEY and QBWC_PASSWORD locally in .env.
+    echo   No default credential is generated or printed by this installer.
     echo =============================================
     echo.
-    echo [?] Open .env in Notepad to verify? (Y/N)
-    set /p OPENENV=
-    if /i "%OPENENV%"=="Y" notepad .env
+    exit /b 1
 ) else (
-    echo [OK] .env already exists. Showing current values:
+    echo [OK] .env already exists.
     findstr /C:"LAPTOP1_IP" /C:"QB_API_KEY" .env
 )
 echo.
@@ -87,15 +80,7 @@ REM Step 6: Initialize data dir
 echo [6/7] Preparing data directory...
 if not exist "data" mkdir data
 if not exist "data\company-files.json" (
-    echo [
-    echo     {
-    echo         "company_name": "MI CEO",
-    echo         "company_file_path": "C:\\ProgramData\\Intuit\\QuickBooks\\Company Files\\MI_CEO.qbw",
-    echo         "assigned_store": null,
-    echo         "assigned_department": null,
-    echo         "notes": "Primary company file"
-    echo     }
-    echo ] > data\company-files.json
+    copy "data\company-files.example.json" "data\company-files.json" >nul
 )
 echo [OK] data/ ready.
 echo.
