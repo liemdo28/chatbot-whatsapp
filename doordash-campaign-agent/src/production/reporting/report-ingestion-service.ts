@@ -55,6 +55,35 @@ export interface PreparedWeeklyReportIngestion {
     storeId: string;
 }
 
+export type StoreReportDiscoveryStatus =
+    | 'ready'
+    | 'report_pending'
+    | 'invalid_report'
+    | 'store_id_mismatch'
+    | 'duplicate_report'
+    | 'imap_failure'
+    | 'analysis_complete'
+    | 'failed';
+
+export interface StoreReportDiscoveryResult {
+    storeId: string;
+    status: StoreReportDiscoveryStatus;
+    detail: string;
+    prepared: PreparedWeeklyReportIngestion | null;
+    error: Error | null;
+    weekStart: string;
+    weekEndExclusive: string;
+}
+
+export interface MultiStoreReportDiscoveryResult {
+    enabledStoreCount: number;
+    reportFoundCount: number;
+    missingReportCount: number;
+    rejectedCandidateCount: number;
+    rejectionCategories: Record<string, number>;
+    stores: StoreReportDiscoveryResult[];
+}
+
 const MAX_REPORT_ATTACHMENT_BYTES = 15 * 1024 * 1024;
 const REPORT_LINK_TIMEOUT_MS = 15_000;
 const SUPPORTED_ATTACHMENT_EXTENSIONS = new Set(['.zip', '.csv', '.xlsx', '.xls']);
@@ -66,6 +95,16 @@ const SUPPORTED_ATTACHMENT_CONTENT_TYPES = new Set([
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'text/csv',
 ]);
+
+const INTERNAL_APPROVAL_SUBJECT_MARKERS = [
+    'doordash approval needed',
+];
+
+const INTERNAL_APPROVAL_TEXT_MARKERS = [
+    'dd approve',
+    'dd reject',
+    'approval request',
+];
 
 function normalizeValue(value: string | null | undefined): string {
     return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
@@ -92,16 +131,61 @@ function messageFromAllowedSender(message: GmailInboxMessage, config: Production
     return config.reportAllowedSenders.some(sender => senders.includes(normalizeValue(sender)));
 }
 
-function subjectLooksRelevant(message: GmailInboxMessage, store: ProductionStore, config: ProductionWorkflowConfig): boolean {
+function fileNameMentionsStore(fileName: string, store: ProductionStore): boolean {
+    const normalized = normalizeValue(fileName);
+    const tokens = [
+        store.storeSlug,
+        store.displayName,
+        store.doorDashStoreId,
+        ...store.reportFilenameAliases,
+    ].map(normalizeValue).filter(Boolean);
+    return tokens.some(token => normalized.includes(token));
+}
+
+function messageMentionsStore(message: GmailInboxMessage, store: ProductionStore): boolean {
     const subject = normalizeValue(message.subject);
-    const storeTokens = [
-        normalizeValue(store.name),
-        normalizeValue(store.id),
-        normalizeValue(store.doorDashAccountId),
-        normalizeValue(store.name).replace(/[^a-z0-9]+/g, '-'),
-    ].filter(Boolean);
-    return config.reportSubjectIncludes.some(token => subject.includes(normalizeValue(token)))
-        && storeTokens.some(token => subject.includes(token));
+    const body = normalizeValue(message.text);
+    const tokens = [
+        store.storeSlug,
+        store.displayName,
+        store.doorDashStoreId,
+        ...store.reportSubjectAliases,
+        ...store.reportFilenameAliases,
+    ].map(normalizeValue).filter(Boolean);
+    if (tokens.some(token => subject.includes(token) || body.includes(token))) {
+        return true;
+    }
+    return message.attachments.some(attachment => fileNameMentionsStore(attachment.filename, store));
+}
+
+function messageIsInternalApproval(message: GmailInboxMessage): boolean {
+    const subject = normalizeValue(message.subject);
+    const body = normalizeValue(message.text);
+    if (INTERNAL_APPROVAL_SUBJECT_MARKERS.some(marker => subject.includes(marker))) {
+        return true;
+    }
+    if (INTERNAL_APPROVAL_TEXT_MARKERS.some(marker => body.includes(marker) || subject.includes(marker))) {
+        return true;
+    }
+    return false;
+}
+
+function messageLooksLikePotentialReport(message: GmailInboxMessage, config: ProductionWorkflowConfig): boolean {
+    if (messageIsInternalApproval(message)) {
+        return false;
+    }
+    try {
+        if (findSupportedAttachment(message)) {
+            return true;
+        }
+    } catch {
+        return true;
+    }
+    if (findOfficialExportLink(message)) {
+        return true;
+    }
+    const subject = normalizeValue(message.subject);
+    return config.reportSubjectIncludes.some(token => subject.includes(normalizeValue(token)));
 }
 
 function attachmentHasSupportedType(attachment: GmailInboxMessage['attachments'][number]): boolean {
@@ -310,6 +394,230 @@ async function locateCandidateMessages(config: ProductionWorkflowConfig): Promis
     }
 }
 
+function candidateRejectionCategory(error: unknown): string {
+    if (error instanceof ReportStoreMismatchError) return 'store_id_mismatch';
+    if (error instanceof UnsupportedReportArtifactError) return 'invalid_report';
+    if (error instanceof ReportAuthenticationError) return 'imap_failure';
+    if (error instanceof ReportInboxUnavailableError) return 'imap_failure';
+    return 'failed';
+}
+
+function missingReportResult(
+    config: ProductionWorkflowConfig,
+    store: ProductionStore,
+    window: WeeklyWindow,
+    now: Date,
+): StoreReportDiscoveryResult {
+    const deliveryDeadline = new Date(weeklyProductionRunScheduledAtUtc(window).getTime() + (config.reportDeliveryGraceHours * 60 * 60 * 1000));
+    if (now.getTime() > deliveryDeadline.getTime()) {
+        const error = new ReportDeliveryWindowExpiredError(
+            `DoorDash report delivery window expired for store ${store.storeSlug} and week ${window.weekStart}. No matching report arrived before ${deliveryDeadline.toISOString()}.`,
+        );
+        return {
+            storeId: store.storeSlug,
+            status: 'failed',
+            detail: error.message,
+            prepared: null,
+            error,
+            weekStart: window.weekStart,
+            weekEndExclusive: window.weekEndExclusive,
+        };
+    }
+
+    const error = new ReportNotReadyError(
+        `DoorDash report has not arrived yet for store ${store.storeSlug} and week ${window.weekStart}. The workflow will retry until ${deliveryDeadline.toISOString()}.`,
+    );
+    return {
+        storeId: store.storeSlug,
+        status: 'report_pending',
+        detail: error.message,
+        prepared: null,
+        error,
+        weekStart: window.weekStart,
+        weekEndExclusive: window.weekEndExclusive,
+    };
+}
+
+export async function discoverWeeklyReportsForStores(input: {
+    config: ProductionWorkflowConfig;
+    storeWindows: Array<{ store: ProductionStore; window: WeeklyWindow }>;
+    messages?: GmailInboxMessage[];
+    now?: Date;
+}): Promise<MultiStoreReportDiscoveryResult> {
+    const now = input.now || new Date();
+    const storeById = new Map(input.storeWindows.map(item => [item.store.storeSlug, item]));
+    const discoveries = new Map<string, StoreReportDiscoveryResult>();
+    const assigned = new Map<string, PreparedWeeklyReportIngestion>();
+    const rejectionCategories: Record<string, number> = {};
+    let rejectedCandidateCount = 0;
+
+    const reject = (category: string): void => {
+        rejectedCandidateCount += 1;
+        rejectionCategories[category] = (rejectionCategories[category] || 0) + 1;
+    };
+
+    let messages: GmailInboxMessage[];
+    try {
+        messages = input.messages || await locateCandidateMessages(input.config);
+    } catch (error) {
+        const detail = error instanceof Error ? error.message : 'IMAP mailbox connection failed.';
+        return {
+            enabledStoreCount: input.storeWindows.length,
+            reportFoundCount: 0,
+            missingReportCount: input.storeWindows.length,
+            rejectedCandidateCount: 0,
+            rejectionCategories: {},
+            stores: input.storeWindows.map(({ store, window }) => ({
+                storeId: store.storeSlug,
+                status: 'imap_failure',
+                detail,
+                prepared: null,
+                error: error instanceof Error ? error : new ReportInboxUnavailableError(detail),
+                weekStart: window.weekStart,
+                weekEndExclusive: window.weekEndExclusive,
+            })),
+        };
+    }
+
+    const sortedMessages = [...messages].sort((left, right) => new Date(right.receivedAt).getTime() - new Date(left.receivedAt).getTime());
+    for (const message of sortedMessages) {
+        if (messageIsInternalApproval(message)) {
+            reject('internal_approval');
+            continue;
+        }
+        if (!messageLooksLikePotentialReport(message, input.config)) {
+            reject('unsupported_candidate');
+            continue;
+        }
+
+        try {
+            const artifact = await resolveReportArtifact(message, input.config);
+            const parsedReport = parseMarketingReportFile(artifact.filePath);
+            const matches: Array<{ store: ProductionStore; window: WeeklyWindow; campaigns: ParsedMarketingCampaign[] }> = [];
+            const validationErrors = new Map<string, Error>();
+
+            for (const { store, window } of input.storeWindows) {
+                try {
+                    const campaigns = validateParsedReport(parsedReport, store, window);
+                    matches.push({ store, window, campaigns });
+                } catch (error) {
+                    if (error instanceof Error) {
+                        validationErrors.set(store.storeSlug, error);
+                    }
+                    continue;
+                }
+            }
+
+            if (matches.length === 0) {
+                const mentionedStores = input.storeWindows.filter(item => messageMentionsStore(message, item.store));
+                if (mentionedStores.length === 1) {
+                    const mentioned = mentionedStores[0];
+                    const validationError = validationErrors.get(mentioned.store.storeSlug);
+                    const status = validationError instanceof ReportStoreMismatchError ? 'store_id_mismatch' : 'invalid_report';
+                    discoveries.set(mentioned.store.storeSlug, {
+                        storeId: mentioned.store.storeSlug,
+                        status,
+                        detail: validationError?.message || `Supported report candidate for ${mentioned.store.storeSlug} did not contain a valid completed-week export for ${mentioned.window.weekStart}.`,
+                        prepared: null,
+                        error: validationError || new UnsupportedReportArtifactError(`Supported report candidate for ${mentioned.store.storeSlug} did not validate.`),
+                        weekStart: mentioned.window.weekStart,
+                        weekEndExclusive: mentioned.window.weekEndExclusive,
+                    });
+                }
+                reject('invalid_report');
+                continue;
+            }
+
+            if (matches.length > 1) {
+                for (const match of matches) {
+                    discoveries.set(match.store.storeSlug, {
+                        storeId: match.store.storeSlug,
+                        status: 'store_id_mismatch',
+                        detail: `One report candidate ambiguously matched multiple configured stores for week ${match.window.weekStart}.`,
+                        prepared: null,
+                        error: new ReportStoreMismatchError('Ambiguous multi-store report candidate.'),
+                        weekStart: match.window.weekStart,
+                        weekEndExclusive: match.window.weekEndExclusive,
+                    });
+                }
+                reject('store_id_mismatch');
+                continue;
+            }
+
+            const match = matches[0];
+            const prepared: PreparedWeeklyReportIngestion = {
+                storeId: match.store.storeSlug,
+                reportPath: artifact.filePath,
+                messageId: message.messageId,
+                sourceRef: path.basename(artifact.filePath),
+                idempotencyKey: buildIdempotencyKey(message.messageId, artifact.hash, match.store.storeSlug, match.window.weekStart),
+                parsedReport,
+                matchedCampaigns: match.campaigns,
+                snapshots: toWeeklySnapshots(match.store, match.window, parsedReport, match.campaigns, path.basename(artifact.filePath)),
+                attachmentHash: artifact.hash,
+            };
+
+            if (assigned.has(match.store.storeSlug)) {
+                assigned.delete(match.store.storeSlug);
+                discoveries.set(match.store.storeSlug, {
+                    storeId: match.store.storeSlug,
+                    status: 'duplicate_report',
+                    detail: `Multiple completed-week report candidates were found for ${match.store.storeSlug}.`,
+                    prepared: null,
+                    error: new UnsupportedReportArtifactError(`Duplicate report candidates for ${match.store.storeSlug}.`),
+                    weekStart: match.window.weekStart,
+                    weekEndExclusive: match.window.weekEndExclusive,
+                });
+                reject('duplicate_report');
+                continue;
+            }
+
+            assigned.set(match.store.storeSlug, prepared);
+            discoveries.set(match.store.storeSlug, {
+                storeId: match.store.storeSlug,
+                status: 'ready',
+                detail: `Completed-week report is ready for ${match.store.storeSlug}.`,
+                prepared,
+                error: null,
+                weekStart: match.window.weekStart,
+                weekEndExclusive: match.window.weekEndExclusive,
+            });
+        } catch (error) {
+            const mentionedStores = input.storeWindows.filter(item => messageMentionsStore(message, item.store));
+            if (mentionedStores.length === 1) {
+                const mentioned = mentionedStores[0];
+                discoveries.set(mentioned.store.storeSlug, {
+                    storeId: mentioned.store.storeSlug,
+                    status: candidateRejectionCategory(error) === 'store_id_mismatch' ? 'store_id_mismatch' : 'invalid_report',
+                    detail: error instanceof Error ? error.message : `Supported report candidate for ${mentioned.store.storeSlug} did not validate.`,
+                    prepared: null,
+                    error: error instanceof Error ? error : new UnsupportedReportArtifactError(`Supported report candidate for ${mentioned.store.storeSlug} did not validate.`),
+                    weekStart: mentioned.window.weekStart,
+                    weekEndExclusive: mentioned.window.weekEndExclusive,
+                });
+            }
+            reject(candidateRejectionCategory(error));
+        }
+    }
+
+    const stores = input.storeWindows.map(({ store, window }) => {
+        const existing = discoveries.get(store.storeSlug);
+        if (existing) {
+            return existing;
+        }
+        return missingReportResult(input.config, store, window, now);
+    });
+
+    return {
+        enabledStoreCount: input.storeWindows.length,
+        reportFoundCount: stores.filter(store => store.status === 'ready').length,
+        missingReportCount: stores.filter(store => store.status === 'report_pending' || store.status === 'failed').length,
+        rejectedCandidateCount,
+        rejectionCategories,
+        stores,
+    };
+}
+
 export async function prepareWeeklyReportForStore(input: {
     config: ProductionWorkflowConfig;
     store: ProductionStore;
@@ -317,49 +625,20 @@ export async function prepareWeeklyReportForStore(input: {
     messages?: GmailInboxMessage[];
     now?: Date;
 }): Promise<PreparedWeeklyReportIngestion> {
-    const messages = input.messages || await locateCandidateMessages(input.config);
-    const candidates = messages.filter(message => subjectLooksRelevant(message, input.store, input.config));
-
-    if (candidates.length === 0) {
-        const scheduledRunAt = weeklyProductionRunScheduledAtUtc(input.window);
-        const deliveryDeadline = new Date(scheduledRunAt.getTime() + (input.config.reportDeliveryGraceHours * 60 * 60 * 1000));
-        const now = input.now || new Date();
-        if (now.getTime() > deliveryDeadline.getTime()) {
-            throw new ReportDeliveryWindowExpiredError(
-                `DoorDash report delivery window expired for store ${input.store.id} and week ${input.window.weekStart}. No matching report arrived before ${deliveryDeadline.toISOString()}.`,
-            );
-        }
-        throw new ReportNotReadyError(
-            `DoorDash report has not arrived yet for store ${input.store.id} and week ${input.window.weekStart}. The workflow will retry until ${deliveryDeadline.toISOString()}.`,
-        );
+    const discovery = await discoverWeeklyReportsForStores({
+        config: input.config,
+        storeWindows: [{ store: input.store, window: input.window }],
+        messages: input.messages,
+        now: input.now,
+    });
+    const result = discovery.stores[0];
+    if (result?.status === 'ready' && result.prepared) {
+        return result.prepared;
     }
-
-    let lastError: Error | null = null;
-    for (const message of candidates) {
-        try {
-            const artifact = await resolveReportArtifact(message, input.config);
-            const parsedReport = parseMarketingReportFile(artifact.filePath);
-            const matchedCampaigns = validateParsedReport(parsedReport, input.store, input.window);
-            const idempotencyKey = buildIdempotencyKey(message.messageId, artifact.hash, input.store.id, input.window.weekStart);
-            const sourceRef = path.basename(artifact.filePath);
-            const snapshots = toWeeklySnapshots(input.store, input.window, parsedReport, matchedCampaigns, sourceRef);
-            return {
-                storeId: input.store.id,
-                reportPath: artifact.filePath,
-                messageId: message.messageId,
-                sourceRef,
-                idempotencyKey,
-                parsedReport,
-                matchedCampaigns,
-                snapshots,
-                attachmentHash: artifact.hash,
-            };
-        } catch (error) {
-            lastError = error as Error;
-        }
+    if (result?.error) {
+        throw result.error;
     }
-
-    throw lastError || new Error(`No usable report artifact was found for store ${input.store.id}.`);
+    throw new Error(`No usable report artifact was found for store ${input.store.id}.`);
 }
 
 export async function ingestWeeklyReportForStore(input: {

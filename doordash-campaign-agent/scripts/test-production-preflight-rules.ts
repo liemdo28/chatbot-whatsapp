@@ -46,6 +46,7 @@ const stdout = result.stdout || '';
 assert.equal(stdout.includes('OPENAI_API_KEY'), false);
 assert.equal(stdout.includes('"step": "config"'), true);
 assert.equal(stdout.includes('"status": "success"'), true);
-assert.equal(stdout.includes('"step": "postgres"') || stdout.includes('"step": "imap_auth"'), true);
+assert.equal(stdout.includes('"step": "store_catalog"'), true);
+assert.equal(stdout.includes('DoorDash Store ID is UNKNOWN') || stdout.includes('Reporting timezone is UNKNOWN') || stdout.includes('Expected report/account identity is UNKNOWN'), true);
 
 console.log('production-preflight-rules tests passed');

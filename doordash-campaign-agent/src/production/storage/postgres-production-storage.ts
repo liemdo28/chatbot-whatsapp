@@ -9,7 +9,7 @@ import type {
     WorkflowStepRecord,
 } from '../types.js';
 import { sanitizeErrorMessage, sanitizeJsonString } from '../security/error-sanitizer.js';
-import { configuredProductionStores, validateProductionStoreCatalog } from '../store-catalog.js';
+import { configuredProductionStores, hydrateProductionStore, validateProductionStoreCatalog } from '../store-catalog.js';
 import type {
     CreateWorkflowRunInput,
     PersistStoreBundleInput,
@@ -105,11 +105,11 @@ export class PostgresProductionStorage implements ProductionStorage {
                 active = stores.active,
                 updated_at = EXCLUDED.updated_at
         `, [
-            store.id,
-            store.name,
+            store.storeSlug,
+            store.displayName,
             store.email,
-            store.doorDashAccountId,
-            store.active,
+            store.doorDashStoreId,
+            store.enabled,
             timestamp,
         ]);
     }
@@ -123,7 +123,7 @@ export class PostgresProductionStorage implements ProductionStorage {
                 WHERE active = TRUE AND id = ANY($1::text[])
                 ORDER BY name
             `, [storeIds]);
-            return result.rows.map(row => ({
+            return result.rows.map(row => hydrateProductionStore({
                 id: row.id,
                 name: row.name,
                 email: row.email,
@@ -138,7 +138,7 @@ export class PostgresProductionStorage implements ProductionStorage {
             WHERE active = TRUE
             ORDER BY name
         `);
-        return result.rows.map(row => ({
+        return result.rows.map(row => hydrateProductionStore({
             id: row.id,
             name: row.name,
             email: row.email,
@@ -502,7 +502,7 @@ export class PostgresProductionStorage implements ProductionStorage {
                 upsert: { created: 0, updated: 0, unchanged: 0 },
             };
 
-            const configuredStore = configuredProductionStores().find(store => store.id === input.store.id) || input.store;
+            const configuredStore = input.store;
             const stepTimestamp = nowIso();
 
             try {

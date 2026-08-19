@@ -84,6 +84,9 @@ jobs:
       - name: Test production rules preflight
         run: npm run test:production-preflight-rules
 
+      - name: Test production multistore
+        run: npm run test:production-multistore
+
       - name: Test production storage
         run: npm run test:production-storage
 

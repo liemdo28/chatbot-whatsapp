@@ -6,6 +6,7 @@ export type RecommendationAction = 'INCREASE' | 'DECREASE' | 'PAUSE' | 'RESUME' 
 export type RecommendationRisk = 'low' | 'medium' | 'high';
 export type RecommendationSeverity = 'low' | 'medium' | 'high' | 'critical';
 export type RecommendationEnrichmentStatus = 'not_applicable' | 'enriched' | 'skipped';
+export type StoreVerificationStatus = 'verified' | 'assumed' | 'unknown';
 
 export interface RulesEngineConfig {
     ruleVersion: string;
@@ -29,6 +30,21 @@ export interface ProductionStore {
     email: string;
     doorDashAccountId: string | null;
     active: boolean;
+    storeSlug: string;
+    displayName: string;
+    doorDashStoreId: string | null;
+    timezone: string;
+    currency: string;
+    enabled: boolean;
+    reportSubjectAliases: string[];
+    reportFilenameAliases: string[];
+    expectedReportIdentity: string | null;
+    hasHistoricValidReport: boolean | null;
+    storeIdVerificationStatus: StoreVerificationStatus;
+    timezoneVerificationStatus: StoreVerificationStatus;
+    currencyVerificationStatus: StoreVerificationStatus;
+    expectedReportIdentityStatus: StoreVerificationStatus;
+    mappingNotes: string[];
 }
 
 export interface WeeklyCampaignSnapshot {

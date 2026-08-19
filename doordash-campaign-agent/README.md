@@ -5,6 +5,11 @@ This branch moves the weekly production path away from browser automation.
 ## Production architecture
 
 - Weekly ingestion uses IMAP email/export delivery, not DoorDash portal scraping.
+- One central IMAP mailbox is the preferred production architecture. Each enabled DoorDash account should schedule or forward its weekly report into that mailbox.
+- Weekly production supports four explicit store records in the tracked catalog: `bakudan-the-rim`, `bakudan-stone-oak`, `bakudan-bandera`, and `raw-sushi-bar`.
+- The parsed DoorDash Store ID inside the report is authoritative. Subject text and file names are discovery hints only.
+- Internal approval-request emails are explicitly rejected and can never be treated as weekly campaign source data.
+- Unknown store mappings are fail-closed in production preflight and full production runs. The workflow must not claim global success while any required enabled store is unresolved or fails.
 - Campaign analysis supports `ANALYSIS_PROVIDER=rules`, `ANALYSIS_PROVIDER=openai`, and `ANALYSIS_PROVIDER=hybrid`.
 - Production defaults to `ANALYSIS_PROVIDER=rules` when no provider is configured.
 - `rules` is fully deterministic and does not require `OPENAI_API_KEY`.
@@ -27,13 +32,14 @@ Run build and verification:
 
 ```bash
 npm run build
-npm run preflight:production -- --trigger local-preflight --stores raw-sushi-bar --week-start 2026-07-13 --week-end-exclusive 2026-07-20
+npm run preflight:production -- --trigger local-preflight --week-start 2026-07-13 --week-end-exclusive 2026-07-20
 npm run validate:production-store-config
 npm run test:weekly-window
 npm run test:production-sanitization
 npm run test:production-rules
 npm run test:production-hybrid
 npm run test:production-preflight-rules
+npm run test:production-multistore
 npm run test:production-postgres-tls
 npm run test:production-storage
 npm run test:production-openai
@@ -60,12 +66,12 @@ DD_EXECUTION_ENV=test \
 DD_REPORT_SOURCE=fixture \
 ANALYSIS_PROVIDER=rules \
 DD_STORAGE_BACKEND=sqlite \
-npm run automation:weekly:production -- --trigger manual --stores raw-sushi-bar --week-start 2026-07-13 --week-end-exclusive 2026-07-20
+npm run automation:weekly:production -- --trigger manual --week-start 2026-07-13 --week-end-exclusive 2026-07-20
 ```
 
 The production workflow runs every Sunday at `18:05 UTC`. If the report email has not arrived yet, the workflow retries within the run and treats the failure as pending external data until `DD_REPORT_DELIVERY_GRACE_HOURS` has elapsed after the scheduled run time.
 
-Manual `workflow_dispatch` now defaults to `run_mode=preflight`. Preflight validates isolated config presence, IMAP authentication, report discovery/parsing, Postgres migrations, the `raw-sushi-bar -> 892006` mapping, and provider-specific readiness without persisting production snapshots or recommendations.
+Manual `workflow_dispatch` now defaults to `run_mode=preflight`. Leaving `store_ids` empty processes all enabled stores; providing `store_ids=raw-sushi-bar` or a comma-separated subset scopes the run for debugging only. The weekly schedule must always process all enabled stores. Preflight validates isolated config presence, IMAP authentication, report discovery/parsing, Postgres migrations, store catalog readiness, and provider-specific readiness without persisting production snapshots or recommendations.
 
 - `rules` preflight validates deterministic rules configuration and does not require `OPENAI_API_KEY`.
 - `openai` preflight preserves the existing OpenAI connectivity check.
@@ -86,7 +92,7 @@ These defaults are intentionally conservative and should be tuned to the busines
 - `DD_STORE_CURRENCY=USD`
 - `DD_STORE_TIMEZONE=America/Los_Angeles`
 
-For the current production branch, `DD_STORE_TIMEZONE=America/Los_Angeles` and `DD_STORE_CURRENCY=USD` are configurable assumptions for `raw-sushi-bar`, not verified store metadata from DoorDash. They must be set explicitly in repository variables and confirmed by the user before live production sign-off. The weekly scheduler timezone is separate and should remain `Asia/Ho_Chi_Minh`.
+For the current production branch, catalog metadata that is not explicitly verified from a historic valid report should be treated as an assumption, not live production truth. Production validation stops when any enabled store still has UNKNOWN DoorDash Store ID, timezone, currency, or expected report identity. The weekly scheduler timezone is separate and should remain `Asia/Ho_Chi_Minh`.
 
 The deterministic rules engine calculates spend, attributed sales, orders, ROAS, optional impressions/clicks-derived metrics when the export provides them, week-over-week changes, and store share metrics. Unavailable metrics remain unavailable rather than being coerced to zero.
 
@@ -122,10 +128,10 @@ GitHub Actions workflow `doordash-weekly-production` expects these repository va
 - `IMAP_HOST`
 - `IMAP_PORT`
 - `IMAP_SECURE`
-- `DD_STORE_TIMEZONE` for the current store reporting timezone assumption
-- `DD_STORE_CURRENCY` for the current store currency assumption
 - `DD_REPORT_INBOX_LABEL` (optional)
 - `OPENAI_MODEL` (required only for `ANALYSIS_PROVIDER=openai`; optional otherwise)
+
+`DD_STORE_TIMEZONE` and `DD_STORE_CURRENCY` remain compatibility defaults for non-catalog code paths, but they are not authoritative production store mapping inputs.
 
 ## Required repository secrets
 
@@ -146,8 +152,10 @@ No legacy DoorDash browser credentials, MI Core credentials, QB/QBWC credentials
 - `IMAP_PASS` should be a Gmail App Password for the mailbox account. A normal Gmail password is not the recommended production setup.
 - Enable IMAP for that mailbox and keep `IMAP_HOST=imap.gmail.com`, `IMAP_PORT=993`, `IMAP_SECURE=true` unless your provider explicitly documents another TLS-safe combination.
 - `DD_REPORT_ALLOWED_SENDERS` is mandatory. Only exact allowed senders are considered valid report sources.
+- Configure each DoorDash store account to send or forward its weekly marketing export into the same central mailbox. If that is not possible, the only supported future extension is separate external mailbox profiles backed by separate secrets, not four plaintext mailbox configs in Git.
 - Supported report artifacts are limited to `.zip`, `.csv`, `.xlsx`, and `.xls`, with a 15 MB attachment/download cap.
 - ZIP reports are parsed in memory only, reject unsafe paths such as `../...`, and cap total file count and uncompressed size before parsing.
+- Approval-request emails are rejected before report parsing when they match internal approval markers such as `DoorDash Approval Needed`, `DD APPROVE`, or `DD REJECT`, or when they lack a supported report attachment.
 - No automatic budget or setting change is executed from these recommendations. Human approval remains required before any campaign change.
 - Public GitHub diagnostics are metadata only: workflow/run ID, store slug, completed-week range, provider, rule version, status, sanitized counts, and sanitized failure category.
 - Campaign metrics, spend, sales, orders, recommendation text, prompts, mailbox bodies, attachment bytes, and credentials are not written to public GitHub artifacts, issues, or logs.
