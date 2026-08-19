@@ -10,6 +10,7 @@ import { RulesCampaignAnalysisProvider } from './analysis/rules-campaign-analysi
 import { calculateCampaignMetrics, metricsToSupportingMetrics } from './analysis/campaign-metrics.js';
 import type { CampaignAnalysisProvider } from './analysis/provider.js';
 import { createProductionStorage } from './storage/storage-factory.js';
+import { assertStoresReadyForProductionRun } from './store-catalog.js';
 import type {
     CampaignRecommendationRecord,
     ProductionStore,
@@ -29,7 +30,9 @@ export interface WeeklyProductionWorkflowOptions {
     storeIds?: string[];
     weekStart?: string;
     weekEndExclusive?: string;
+    fixtureMessages?: GmailInboxMessage[];
     fixtureMessagesByStore?: Record<string, GmailInboxMessage[]>;
+    storeOverrides?: Record<string, Partial<ProductionStore>>;
     configOverride?: ProductionWorkflowConfig;
     providerOverride?: CampaignAnalysisProvider;
     storageOverride?: ProductionStorage;
@@ -48,6 +51,9 @@ export interface WeeklyProductionWorkflowResult {
     diagnosticsPath: string;
     stores: Array<{
         storeId: string;
+        status: 'analysis_complete' | 'report_pending' | 'failed';
+        weekStart: string;
+        weekEndExclusive: string;
         reportPath: string;
         recommendationCount: number;
         alreadyProcessed: boolean;
@@ -70,6 +76,7 @@ export interface PublicWorkflowDiagnostics {
     alreadyProcessedStoreCount: number;
     stores: Array<{
         storeId: string;
+        status: 'analysis_complete' | 'report_pending' | 'failed';
         recommendationCount: number;
         alreadyProcessed: boolean;
     }>;
@@ -149,10 +156,7 @@ function defaultIngestionRetryPolicy(config: ProductionWorkflowConfig): RetryPol
     };
 }
 
-function buildFixtureMessages(
-    config: ProductionWorkflowConfig,
-    store: ProductionStore,
-): GmailInboxMessage[] {
+function buildFixtureMessages(config: ProductionWorkflowConfig): GmailInboxMessage[] {
     const files = fs.existsSync(config.fixtureReportDir)
         ? fs.readdirSync(config.fixtureReportDir)
             .filter(file => /\.(zip|csv|xlsx|xls)$/i.test(file))
@@ -162,11 +166,11 @@ function buildFixtureMessages(
     return files.map((filePath, index) => ({
         uid: index + 1,
         messageId: `fixture-${safeToken(path.basename(filePath))}`,
-        subject: `DoorDash marketing report ${store.name} ${path.basename(filePath)}`,
+        subject: `DoorDash marketing report ${path.basename(filePath)}`,
         from: [config.reportAllowedSenders[0] || 'fixtures@example.com'],
-        to: [store.email],
+        to: ['central-mailbox@example.com'],
         receivedAt: new Date().toISOString(),
-        text: `Fixture report for ${store.name}.`,
+        text: 'Fixture report attached.',
         attachments: [{
             filename: path.basename(filePath),
             contentType: 'application/octet-stream',
@@ -359,6 +363,7 @@ export function buildPublicWorkflowDiagnostics(
         alreadyProcessedStoreCount,
         stores: result.stores.map(store => ({
             storeId: store.storeId,
+            status: store.status,
             recommendationCount: store.recommendationCount,
             alreadyProcessed: store.alreadyProcessed,
         })),
@@ -377,34 +382,49 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
     ensureDir(config.diagnosticsDir);
     const storage = options.storageOverride || createProductionStorage(config);
     await storage.initialize();
-
-    const window = options.weekStart
-        ? createWeeklyReportingWindow(config.rules.storeTimeZone, options.weekStart, options.weekEndExclusive)
-        : getCompletedWeeklyReportingWindow(config.rules.storeTimeZone);
     const provider = options.providerOverride || providerForConfig(config);
+    const stores = (await storage.listActiveStores(options.storeIds)).map(store => ({
+        ...store,
+        ...(options.storeOverrides?.[store.id] || {}),
+    }));
+    if (config.executionEnv === 'production') {
+        assertStoresReadyForProductionRun(stores);
+    }
+    const storeWindows = new Map(stores.map(store => [
+        store.id,
+        options.weekStart
+            ? createWeeklyReportingWindow(store.timezone, options.weekStart, options.weekEndExclusive)
+            : getCompletedWeeklyReportingWindow(store.timezone, options.now),
+    ]));
+    const canonicalWindow = storeWindows.get(stores[0]?.id || '')
+        || (options.weekStart
+            ? createWeeklyReportingWindow(config.rules.storeTimeZone, options.weekStart, options.weekEndExclusive)
+            : getCompletedWeeklyReportingWindow(config.rules.storeTimeZone, options.now));
     const workflowRun = await storage.createWorkflowRun({
         workflowName: 'doordash-weekly-production',
         trigger: options.trigger || 'manual',
         mode: `${config.reportSource}:${config.analysisProvider}:${config.storageBackend}`,
         timezone: config.schedulerTimeZone,
-        weekStart: window.weekStart,
-        weekEndExclusive: window.weekEndExclusive,
+        weekStart: canonicalWindow.weekStart,
+        weekEndExclusive: canonicalWindow.weekEndExclusive,
         metadataJson: JSON.stringify({
             executionEnv: config.executionEnv,
             diagnosticsDir: config.diagnosticsDir,
         }),
     });
 
-    const stores = await storage.listActiveStores(options.storeIds);
     const storeSummaries: WeeklyProductionWorkflowResult['stores'] = [];
     const errors: string[] = [];
     let encounteredPendingExternalData = false;
     let encounteredHardFailure = false;
+    const sharedFixtureMessages = options.fixtureMessages
+        || (config.reportSource === 'fixture' ? buildFixtureMessages(config) : undefined);
 
     try {
         await recordStep(storage, workflowRun.id, 'load_stores', 1, 'success', `Loaded ${stores.length} active stores.`, { stores: stores.map(store => store.id) });
 
         for (const store of stores) {
+            const window = storeWindows.get(store.id) || canonicalWindow;
             let prepared: PreparedWeeklyReportIngestion;
             let ingestAttempt = 0;
             try {
@@ -415,7 +435,7 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                         store,
                         window,
                         messages: options.fixtureMessagesByStore?.[store.id]
-                            || (config.reportSource === 'fixture' ? buildFixtureMessages(config, store) : undefined),
+                            || sharedFixtureMessages,
                         now: options.now,
                     });
                 }, defaultIngestionRetryPolicy(config), async (context) => {
@@ -433,6 +453,16 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                     encounteredHardFailure = true;
                 }
                 await recordStep(storage, workflowRun.id, `ingest_${store.id}`, 1, 'failed', message, undefined, message);
+                storeSummaries.push({
+                    storeId: store.id,
+                    status: isRetryableReportIngestionError(error) ? 'report_pending' : 'failed',
+                    weekStart: window.weekStart,
+                    weekEndExclusive: window.weekEndExclusive,
+                    reportPath: 'redacted',
+                    recommendationCount: 0,
+                    alreadyProcessed: false,
+                    reviewPackagePath: null,
+                });
                 continue;
             }
 
@@ -455,7 +485,11 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                         estimatedProfit: estimateProfit(snapshot),
                         estimatedMargin: snapshot.sales > 0 ? Math.round(((estimateProfit(snapshot) / snapshot.sales) * 1000)) / 1000 : 0,
                         previousSnapshot: pickPreviousSnapshot(previousSnapshots, snapshot),
-                        rules: config.rules,
+                        rules: {
+                            ...config.rules,
+                            storeCurrency: store.currency,
+                            storeTimeZone: store.timezone,
+                        },
                         storeWeeklyTotals: storeTotals,
                     });
                     providerQuestions = [...providerQuestions, ...analysis.questions]
@@ -484,6 +518,16 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                 errors.push(message);
                 encounteredHardFailure = true;
                 await recordStep(storage, workflowRun.id, `analyze_${store.id}`, 1, 'failed', message, undefined, message);
+                storeSummaries.push({
+                    storeId: store.id,
+                    status: 'failed',
+                    weekStart: window.weekStart,
+                    weekEndExclusive: window.weekEndExclusive,
+                    reportPath: config.executionEnv === 'production' ? 'redacted' : prepared.sourceRef,
+                    recommendationCount: 0,
+                    alreadyProcessed: false,
+                    reviewPackagePath: null,
+                });
                 continue;
             }
 
@@ -530,6 +574,9 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
 
                 storeSummaries.push({
                     storeId: store.id,
+                    status: 'analysis_complete',
+                    weekStart: window.weekStart,
+                    weekEndExclusive: window.weekEndExclusive,
                     reportPath: config.executionEnv === 'production' ? 'redacted' : prepared.sourceRef,
                     recommendationCount: persisted.recommendationCount,
                     alreadyProcessed: persisted.alreadyProcessed,
@@ -540,6 +587,16 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                 errors.push(message);
                 encounteredHardFailure = true;
                 await recordStep(storage, workflowRun.id, `ingest_${store.id}`, Math.max(1, ingestAttempt), 'failed', message, undefined, message);
+                storeSummaries.push({
+                    storeId: store.id,
+                    status: 'failed',
+                    weekStart: window.weekStart,
+                    weekEndExclusive: window.weekEndExclusive,
+                    reportPath: config.executionEnv === 'production' ? 'redacted' : prepared.sourceRef,
+                    recommendationCount: 0,
+                    alreadyProcessed: false,
+                    reviewPackagePath: null,
+                });
                 continue;
             }
 
@@ -558,14 +615,14 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
             pendingExternalData,
             failureCategory: success ? 'none' : pendingExternalData ? 'pending_report_delivery' : 'hard_failure',
             workflowRunId: workflowRun.id,
-            weekStart: window.weekStart,
-            weekEndExclusive: window.weekEndExclusive,
-            reportLabel: window.label,
+            weekStart: canonicalWindow.weekStart,
+            weekEndExclusive: canonicalWindow.weekEndExclusive,
+            reportLabel: canonicalWindow.label,
             summary: success
-                ? `Weekly production workflow completed for ${window.label}.`
+                ? `Weekly production workflow completed for ${canonicalWindow.label}.`
                 : pendingExternalData
-                    ? `Weekly production workflow is waiting for report delivery for ${window.label}.`
-                    : `Weekly production workflow failed for ${window.label}.`,
+                    ? `Weekly production workflow is waiting for report delivery for ${canonicalWindow.label}.`
+                    : `Weekly production workflow failed for ${canonicalWindow.label}.`,
             diagnosticsPath: path.resolve(config.diagnosticsDir, `${workflowRun.id}.json`),
             stores: storeSummaries,
             errors: errors.map(error => sanitizeErrorMessage(error)),

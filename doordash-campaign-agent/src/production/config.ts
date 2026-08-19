@@ -115,12 +115,6 @@ export function assertProductionWorkflowConfig(config: ProductionWorkflowConfig)
         if (config.reportSource === 'fixture') {
             throw new Error('Production execution rejects fixture report ingestion. Set DD_REPORT_SOURCE=imap.');
         }
-        if (!config.storeTimeZoneConfigured) {
-            throw new Error('DD_STORE_TIMEZONE must be explicitly configured for production rules-mode reporting.');
-        }
-        if (!config.storeCurrencyConfigured) {
-            throw new Error('DD_STORE_CURRENCY must be explicitly configured for production rules-mode reporting.');
-        }
     }
 
     if (config.analysisProvider === 'openai') {

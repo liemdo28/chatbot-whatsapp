@@ -43,6 +43,7 @@ assert.equal(stepByName(productionSteps, 'Test production Postgres TLS config').
 assert.equal(stepByName(productionSteps, 'Test production rules provider').run.trim(), 'npm run test:production-rules');
 assert.equal(stepByName(productionSteps, 'Test production hybrid provider').run.trim(), 'npm run test:production-hybrid');
 assert.equal(stepByName(productionSteps, 'Test production rules preflight').run.trim(), 'npm run test:production-preflight-rules');
+assert.equal(stepByName(productionSteps, 'Test production multistore').run.trim(), 'npm run test:production-multistore');
 assert.equal(stepByName(productionSteps, 'Test production storage').run.trim(), 'npm run test:production-storage');
 assert.equal(stepByName(productionSteps, 'Test production OpenAI provider').run.trim(), 'npm run test:production-openai');
 assert.equal(stepByName(productionSteps, 'Test production ingestion').run.trim(), 'npm run test:production-ingestion');
@@ -97,6 +98,7 @@ assert.equal(stepByName(validationSteps, 'Test production Postgres TLS config').
 assert.equal(stepByName(validationSteps, 'Test production rules provider').run.trim(), 'npm run test:production-rules');
 assert.equal(stepByName(validationSteps, 'Test production hybrid provider').run.trim(), 'npm run test:production-hybrid');
 assert.equal(stepByName(validationSteps, 'Test production rules preflight').run.trim(), 'npm run test:production-preflight-rules');
+assert.equal(stepByName(validationSteps, 'Test production multistore').run.trim(), 'npm run test:production-multistore');
 assert.equal(stepByName(validationSteps, 'Test production storage').run.trim(), 'npm run test:production-storage');
 assert.equal(stepByName(validationSteps, 'Test production OpenAI provider').run.trim(), 'npm run test:production-openai');
 assert.equal(stepByName(validationSteps, 'Test production ingestion').run.trim(), 'npm run test:production-ingestion');

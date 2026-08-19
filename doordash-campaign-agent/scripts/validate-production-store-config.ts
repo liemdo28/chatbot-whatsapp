@@ -1,12 +1,25 @@
 import assert from 'node:assert/strict';
 import { readProductionWorkflowConfig } from '../src/production/config.js';
 import { sanitizeErrorMessage } from '../src/production/security/error-sanitizer.js';
-import { validateProductionStoreCatalog } from '../src/production/store-catalog.js';
+import {
+    sanitizeProductionStoreCatalogRows,
+    unresolvedStoreMappings,
+    validateProductionStoreCatalog,
+} from '../src/production/store-catalog.js';
 import { createProductionStorage } from '../src/production/storage/storage-factory.js';
 
 (async () => {
     const config = readProductionWorkflowConfig();
     const expectedStores = validateProductionStoreCatalog();
+    console.table(sanitizeProductionStoreCatalogRows(expectedStores).map(row => ({
+        storeSlug: row.storeSlug,
+        displayName: row.displayName,
+        doorDashStoreId: row.doorDashStoreId,
+        timezone: row.timezone,
+        currency: row.currency,
+        enabled: row.enabled,
+        reportStatus: row.mappingStatus,
+    })));
 
     if (config.storageBackend === 'postgres' && !config.postgresDatabaseUrl) {
         throw new Error('DATABASE_URL is required when DD_STORAGE_BACKEND=postgres.');
@@ -21,8 +34,14 @@ import { createProductionStorage } from '../src/production/storage/storage-facto
         for (const expected of expectedStores) {
             const actual = actualStores.find(store => store.id === expected.id);
             assert.ok(actual, `Store ${expected.id} is missing from storage.`);
-            assert.equal(actual.doorDashAccountId, expected.doorDashAccountId, `Store ${expected.id} has the wrong DoorDash Store ID.`);
-            assert.equal(actual.email, expected.email, `Store ${expected.id} has the wrong reporting mailbox.`);
+            if (expected.doorDashStoreId) {
+                assert.equal(actual.doorDashAccountId, expected.doorDashStoreId, `Store ${expected.id} has the wrong DoorDash Store ID.`);
+            }
+        }
+
+        const unresolved = unresolvedStoreMappings(expectedStores);
+        if (config.executionEnv === 'production' && unresolved.length > 0) {
+            throw new Error(unresolved.map(item => `USER ACTION REQUIRED for ${item.store.storeSlug}: ${item.issues.join(' ')}`).join(' | '));
         }
 
         console.log(`production-store-config validation passed for ${expectedStores.length} stores`);

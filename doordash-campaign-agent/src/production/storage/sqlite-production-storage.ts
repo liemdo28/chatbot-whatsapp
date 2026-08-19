@@ -11,7 +11,7 @@ import type {
     WorkflowStepRecord,
 } from '../types.js';
 import { sanitizeErrorMessage, sanitizeJsonString } from '../security/error-sanitizer.js';
-import { configuredProductionStores, validateProductionStoreCatalog } from '../store-catalog.js';
+import { configuredProductionStores, hydrateProductionStore, validateProductionStoreCatalog } from '../store-catalog.js';
 import type { CreateWorkflowRunInput, PersistStoreBundleInput, PersistStoreBundleResult, ProductionStorage, SnapshotUpsertResult } from './production-storage.js';
 
 function nowIso(): string {
@@ -241,7 +241,7 @@ export class SqliteProductionStorage implements ProductionStorage {
         const timestamp = nowIso();
         const tx = db.transaction(() => {
             for (const store of stores) {
-                statement.run(store.id, store.name, store.email, store.doorDashAccountId, store.active ? 1 : 0, timestamp, timestamp);
+                statement.run(store.storeSlug, store.displayName, store.email, store.doorDashStoreId, store.enabled ? 1 : 0, timestamp, timestamp);
             }
         });
         tx();
@@ -257,7 +257,13 @@ export class SqliteProductionStorage implements ProductionStorage {
                 WHERE active = 1 AND id IN (${placeholders})
                 ORDER BY name
             `).all(...storeIds) as Array<{ id: string; name: string; email: string; doorDashAccountId: string | null; active: number }>;
-            return rows.map(row => ({ ...row, active: row.active === 1 }));
+            return rows.map(row => hydrateProductionStore({
+                id: row.id,
+                name: row.name,
+                email: row.email,
+                doorDashAccountId: row.doorDashAccountId || null,
+                active: row.active === 1,
+            }));
         }
         const rows = db.prepare(`
             SELECT id, name, email, doorDashAccountId, active
@@ -265,7 +271,13 @@ export class SqliteProductionStorage implements ProductionStorage {
             WHERE active = 1
             ORDER BY name
         `).all() as Array<{ id: string; name: string; email: string; doorDashAccountId: string | null; active: number }>;
-        return rows.map(row => ({ ...row, active: row.active === 1 }));
+        return rows.map(row => hydrateProductionStore({
+            id: row.id,
+            name: row.name,
+            email: row.email,
+            doorDashAccountId: row.doorDashAccountId || null,
+            active: row.active === 1,
+        }));
     }
 
     async createWorkflowRun(input: CreateWorkflowRunInput): Promise<WorkflowRunRecord> {
@@ -575,7 +587,7 @@ export class SqliteProductionStorage implements ProductionStorage {
         `);
 
         const tx = db.transaction(() => {
-            const configuredStore = configuredProductionStores().find(store => store.id === input.store.id) || input.store;
+            const configuredStore = input.store;
             const timestamp = nowIso();
             syncStore.run(
                 configuredStore.id,

@@ -15,6 +15,7 @@
         "test:production-rules": "tsx scripts/test-production-rules-provider.ts",
         "test:production-hybrid": "tsx scripts/test-production-hybrid-provider.ts",
         "test:production-preflight-rules": "tsx scripts/test-production-preflight-rules.ts",
+        "test:production-multistore": "tsx scripts/test-production-multistore.ts",
         "test:production-openai": "tsx scripts/test-production-openai-provider.ts",
         "test:production-ingestion": "tsx scripts/test-production-report-ingestion.ts",
         "test:production-postgres": "tsx scripts/test-production-postgres.ts",

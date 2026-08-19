@@ -1,19 +1,21 @@
 import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
 import OpenAI from 'openai';
 import {
     assertImapEnvConfigured,
-    GmailInboxClient,
 } from '../src/integrations/email/gmail-inbox-client.js';
 import {
     assertProductionWorkflowConfig,
     readProductionWorkflowConfig,
 } from '../src/production/config.js';
-import { prepareWeeklyReportForStore } from '../src/production/reporting/report-ingestion-service.js';
+import { discoverWeeklyReportsForStores } from '../src/production/reporting/report-ingestion-service.js';
 import { sanitizeErrorMessage, sanitizeSecrets } from '../src/production/security/error-sanitizer.js';
 import { createProductionStorage } from '../src/production/storage/storage-factory.js';
-import { configuredProductionStores, resolveConfiguredProductionStore, validateProductionStoreCatalog } from '../src/production/store-catalog.js';
+import {
+    assertStoresReadyForProductionRun,
+    enabledProductionStores,
+    sanitizeProductionStoreCatalogRows,
+    validateProductionStoreCatalog,
+} from '../src/production/store-catalog.js';
 import { createWeeklyReportingWindow, getCompletedWeeklyReportingWindow } from '../src/automation/weekly-reporting-window.js';
 
 type StepStatus = 'success' | 'failed';
@@ -127,14 +129,26 @@ function printResult(result: PreflightResult): void {
     console.log(JSON.stringify(sanitizeSecrets(result), null, 2));
 }
 
+function uniqueWindows(storeWindows: Array<{ window: { weekStart: string; weekEndExclusive: string } }>): Array<{ weekStart: string; weekEndExclusive: string }> {
+    const seen = new Set<string>();
+    const windows: Array<{ weekStart: string; weekEndExclusive: string }> = [];
+    for (const item of storeWindows) {
+        const key = `${item.window.weekStart}|${item.window.weekEndExclusive}`;
+        if (!seen.has(key)) {
+            seen.add(key);
+            windows.push({ weekStart: item.window.weekStart, weekEndExclusive: item.window.weekEndExclusive });
+        }
+    }
+    return windows;
+}
+
 (async () => {
     const args = parseArgs(process.argv.slice(2));
     const config = readProductionWorkflowConfig();
-    const window = args.weekStart
-        ? createWeeklyReportingWindow(config.rules.storeTimeZone, args.weekStart, args.weekEndExclusive)
-        : getCompletedWeeklyReportingWindow(config.rules.storeTimeZone);
-    const requestedStoreIds = args.storeIds.length > 0 ? args.storeIds : ['raw-sushi-bar'];
+    const requestedStoreIds = args.storeIds;
     const steps: StepResult[] = [];
+    let resolvedWeekStart = args.weekStart || '';
+    let resolvedWeekEndExclusive = args.weekEndExclusive || '';
 
     const fail = (step: string, error: unknown): never => {
         const detail = sanitizeErrorMessage(error);
@@ -142,8 +156,8 @@ function printResult(result: PreflightResult): void {
         const result: PreflightResult = {
             success: false,
             trigger: args.trigger,
-            weekStart: window.weekStart,
-            weekEndExclusive: window.weekEndExclusive,
+            weekStart: resolvedWeekStart,
+            weekEndExclusive: resolvedWeekEndExclusive,
             checkedStores: requestedStoreIds,
             steps,
             summary: `Production preflight failed during ${step}.`,
@@ -170,33 +184,43 @@ function printResult(result: PreflightResult): void {
         fail('config', error);
     }
 
-    let targetStores = configuredProductionStores().filter(store => requestedStoreIds.includes(store.id));
+    let targetStores = enabledProductionStores(requestedStoreIds);
     try {
         validateProductionStoreCatalog();
-        const rawSushiBar = resolveConfiguredProductionStore('raw-sushi-bar');
-        if (!rawSushiBar || rawSushiBar.doorDashAccountId !== '892006') {
-            throw new Error('raw-sushi-bar must map to DoorDash Store ID 892006.');
-        }
-        if (targetStores.length !== requestedStoreIds.length) {
-            const missing = requestedStoreIds.filter(id => !targetStores.some(store => store.id === id));
+        if (requestedStoreIds.length > 0 && targetStores.length !== requestedStoreIds.length) {
+            const missing = requestedStoreIds.filter(id => !targetStores.some(store => store.storeSlug === id));
             throw new Error(`Unknown production store ids: ${missing.join(', ')}`);
         }
-        steps.push({ step: 'store_catalog', status: 'success', detail: `Validated ${targetStores.length} production store mapping(s), including raw-sushi-bar -> 892006.` });
+        console.table(sanitizeProductionStoreCatalogRows(targetStores).map(row => ({
+            storeSlug: row.storeSlug,
+            displayName: row.displayName,
+            doorDashStoreId: row.doorDashStoreId,
+            timezone: row.timezone,
+            currency: row.currency,
+            enabled: row.enabled,
+            reportStatus: row.mappingStatus,
+        })));
+        assertStoresReadyForProductionRun(targetStores);
+        steps.push({ step: 'store_catalog', status: 'success', detail: `Validated ${targetStores.length} enabled production store mapping(s).` });
     } catch (error) {
         fail('store_catalog', error);
     }
 
+    const storeWindows = targetStores.map(store => ({
+        store,
+        window: args.weekStart
+            ? createWeeklyReportingWindow(store.timezone, args.weekStart, args.weekEndExclusive)
+            : getCompletedWeeklyReportingWindow(store.timezone),
+    }));
+    const windows = uniqueWindows(storeWindows);
+    resolvedWeekStart = windows.map(item => item.weekStart).join(',');
+    resolvedWeekEndExclusive = windows.map(item => item.weekEndExclusive).join(',');
+
     try {
-        if (!config.storeTimeZoneConfigured) {
-            throw new Error('DD_STORE_TIMEZONE is missing.');
-        }
-        if (!config.storeCurrencyConfigured) {
-            throw new Error('DD_STORE_CURRENCY is missing.');
-        }
         steps.push({
             step: 'store_locale',
             status: 'success',
-            detail: `Validated configurable store assumptions for raw-sushi-bar: timezone ${config.rules.storeTimeZone}, currency ${config.rules.storeCurrency}.`,
+            detail: `Validated per-store reporting metadata for ${targetStores.length} enabled store(s).`,
         });
     } catch (error) {
         fail('store_locale', error);
@@ -211,29 +235,37 @@ function printResult(result: PreflightResult): void {
         fail('postgres', error);
     }
 
-    let messages;
+    let discovery;
     try {
-        const inbox = new GmailInboxClient();
-        messages = await inbox.fetchRecentMessages(config.reportLookbackHours, config.reportInboxLabel);
+        discovery = await discoverWeeklyReportsForStores({
+            config,
+            storeWindows,
+        });
+        const imapFailure = discovery.stores.find((store: { status: string }) => store.status === 'imap_failure');
+        if (imapFailure) {
+            throw imapFailure.error || new Error(imapFailure.detail);
+        }
         steps.push({ step: 'imap_auth', status: 'success', detail: 'IMAP authentication and mailbox access succeeded.' });
     } catch (error) {
         fail('imap_auth', error);
     }
 
     try {
-        for (const store of targetStores) {
-            const prepared = await prepareWeeklyReportForStore({
-                config,
-                store,
-                window,
-                messages,
-            });
+        for (const storeResult of discovery.stores) {
+            if (storeResult.status !== 'ready' || !storeResult.prepared) {
+                throw storeResult.error || new Error(storeResult.detail);
+            }
             steps.push({
-                step: `report_${store.id}`,
+                step: `report_${storeResult.storeId}`,
                 status: 'success',
-                detail: `Located a valid report artifact for ${store.id} with ${prepared.matchedCampaigns.length} matched campaign(s) and message fingerprint ${shortHash(prepared.messageId)}.`,
+                detail: `Located a valid report artifact for ${storeResult.storeId} with ${storeResult.prepared.matchedCampaigns.length} matched campaign(s) and message fingerprint ${shortHash(storeResult.prepared.messageId)}.`,
             });
         }
+        steps.push({
+            step: 'report_diagnostics',
+            status: 'success',
+            detail: `Mailbox scan classified ${discovery.reportFoundCount} ready report(s), ${discovery.missingReportCount} missing report(s), and rejected ${discovery.rejectedCandidateCount} candidate(s).`,
+        });
     } catch (error) {
         fail('report_lookup', error);
     }
@@ -262,9 +294,9 @@ function printResult(result: PreflightResult): void {
     const result: PreflightResult = {
         success: true,
         trigger: args.trigger,
-        weekStart: window.weekStart,
-        weekEndExclusive: window.weekEndExclusive,
-        checkedStores: targetStores.map(store => store.id),
+        weekStart: resolvedWeekStart,
+        weekEndExclusive: resolvedWeekEndExclusive,
+        checkedStores: targetStores.map(store => store.storeSlug),
         steps,
         summary: 'Production preflight completed successfully.',
     };
