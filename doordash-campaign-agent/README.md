@@ -5,8 +5,11 @@ This branch moves the weekly production path away from browser automation.
 ## Production architecture
 
 - Weekly ingestion uses IMAP email/export delivery, not DoorDash portal scraping.
-- Campaign analysis uses the official OpenAI API, reading only `OPENAI_API_KEY` and `OPENAI_MODEL`.
-- Production rejects the browser provider through `DD_ANALYSIS_PROVIDER=openai`.
+- Campaign analysis supports `ANALYSIS_PROVIDER=rules`, `ANALYSIS_PROVIDER=openai`, and `ANALYSIS_PROVIDER=hybrid`.
+- Production defaults to `ANALYSIS_PROVIDER=rules` when no provider is configured.
+- `rules` is fully deterministic and does not require `OPENAI_API_KEY`.
+- `openai` requires `OPENAI_API_KEY` and `OPENAI_MODEL`.
+- `hybrid` always generates rule-based recommendations first, then adds optional OpenAI enrichment when a key is configured.
 - GitHub-hosted execution uses `ubuntu-latest` with root workflows under `.github/workflows/`.
 - Persistent production state is abstracted behind a storage adapter:
   - `sqlite` for local development
@@ -28,6 +31,9 @@ npm run preflight:production -- --trigger local-preflight --stores raw-sushi-bar
 npm run validate:production-store-config
 npm run test:weekly-window
 npm run test:production-sanitization
+npm run test:production-rules
+npm run test:production-hybrid
+npm run test:production-preflight-rules
 npm run test:production-storage
 npm run test:production-openai
 npm run test:production-ingestion
@@ -49,36 +55,78 @@ Run the weekly production workflow locally against fixture reports:
 ```bash
 DD_EXECUTION_ENV=test \
 DD_REPORT_SOURCE=fixture \
-DD_ANALYSIS_PROVIDER=openai \
+ANALYSIS_PROVIDER=rules \
 DD_STORAGE_BACKEND=sqlite \
-OPENAI_API_KEY=your_key \
-OPENAI_MODEL=your_model \
 npm run automation:weekly:production -- --trigger manual --stores raw-sushi-bar --week-start 2026-07-13 --week-end-exclusive 2026-07-20
 ```
 
 The production workflow runs every Sunday at `18:05 UTC`. If the report email has not arrived yet, the workflow retries within the run and treats the failure as pending external data until `DD_REPORT_DELIVERY_GRACE_HOURS` has elapsed after the scheduled run time.
 
-Manual `workflow_dispatch` now defaults to `run_mode=preflight`. Preflight validates isolated config presence, IMAP authentication, report discovery/parsing, Postgres migrations, the `raw-sushi-bar -> 892006` mapping, and minimal OpenAI connectivity without persisting production snapshots or recommendations.
+Manual `workflow_dispatch` now defaults to `run_mode=preflight`. Preflight validates isolated config presence, IMAP authentication, report discovery/parsing, Postgres migrations, the `raw-sushi-bar -> 892006` mapping, and provider-specific readiness without persisting production snapshots or recommendations.
+
+- `rules` preflight validates deterministic rules configuration and does not require `OPENAI_API_KEY`.
+- `openai` preflight preserves the existing OpenAI connectivity check.
+- `hybrid` preflight validates rules mode first and treats OpenAI enrichment as optional until a key is configured.
+
+## Rules-mode defaults
+
+These defaults are intentionally conservative and should be tuned to the business:
+
+- `DD_RULE_MIN_ROAS=3`
+- `DD_RULE_MAX_CPA=25`
+- `DD_RULE_MIN_SPEND=25`
+- `DD_RULE_MIN_IMPRESSIONS=1000`
+- `DD_RULE_MIN_CLICKS=25`
+- `DD_RULE_DETERIORATION_PCT=0.2`
+- `DD_RULE_BUDGET_INCREASE_CEILING_PCT=0.2`
+- `DD_RULE_VERSION=rules-v1`
+- `DD_STORE_CURRENCY=USD`
+- `DD_STORE_TIMEZONE=America/Los_Angeles`
+
+The deterministic rules engine calculates spend, attributed sales, orders, ROAS, optional impressions/clicks-derived metrics when the export provides them, week-over-week changes, and store share metrics. Unavailable metrics remain unavailable rather than being coerced to zero.
+
+Each persisted recommendation stores:
+
+- `rule_id`
+- `rule_version`
+- severity
+- detected condition
+- supporting metrics
+- expected benefit
+- confidence
+- whether human approval is required
+- enrichment status
+
+Each store/week also persists a sanitized review package in Postgres with:
+
+- executive summary
+- campaign metrics table
+- anomalies
+- rule-based recommendations
+- follow-up questions
+- a ready-to-copy ChatGPT prompt
 
 ## Required repository variables
 
 GitHub Actions workflow `doordash-weekly-production` expects these repository variables:
 
-- `OPENAI_MODEL`
+- `ANALYSIS_PROVIDER` with recommended value `rules`
 - `DD_REPORT_ALLOWED_SENDERS`
 - `IMAP_HOST`
 - `IMAP_PORT`
 - `IMAP_SECURE`
 - `DD_REPORT_INBOX_LABEL` (optional)
+- `OPENAI_MODEL` (required only for `ANALYSIS_PROVIDER=openai`; optional otherwise)
 
 ## Required repository secrets
 
 GitHub Actions workflow `doordash-weekly-production` expects these repository secrets:
 
-- `OPENAI_API_KEY`
 - `DOORDASH_PRODUCTION_DATABASE_URL`
 - `IMAP_USER`
 - `IMAP_PASS`
+
+`OPENAI_API_KEY` is required only when `ANALYSIS_PROVIDER=openai`. It is optional in `rules` mode and optional for enrichment in `hybrid` mode.
 
 No legacy DoorDash browser credentials, MI Core credentials, QB/QBWC credentials, browser cookies, or browser session profiles are used on the production path.
 
@@ -90,6 +138,7 @@ No legacy DoorDash browser credentials, MI Core credentials, QB/QBWC credentials
 - `DD_REPORT_ALLOWED_SENDERS` is mandatory. Only exact allowed senders are considered valid report sources.
 - Supported report artifacts are limited to `.zip`, `.csv`, `.xlsx`, and `.xls`, with a 15 MB attachment/download cap.
 - ZIP reports are parsed in memory only, reject unsafe paths such as `../...`, and cap total file count and uncompressed size before parsing.
+- No automatic budget or setting change is executed from these recommendations. Human approval remains required before any campaign change.
 - Workflow diagnostics store run summaries and file basenames only; mailbox bodies, attachment bytes, and credentials are not written to diagnostic artifacts, and production errors are sanitized before console logs, GitHub annotations, persisted workflow state, or uploaded artifacts.
 - IMAP access uses explicit connection, greeting, and socket timeouts, and authentication failures are surfaced separately from "report not arrived yet".
 

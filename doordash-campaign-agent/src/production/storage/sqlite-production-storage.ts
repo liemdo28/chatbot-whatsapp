@@ -89,15 +89,34 @@ export class SqliteProductionStorage implements ProductionStorage {
                 store_id TEXT NOT NULL,
                 campaign_snapshot_id TEXT NOT NULL,
                 recommendation_type TEXT NOT NULL,
+                rule_id TEXT NOT NULL DEFAULT '',
+                rule_version TEXT NOT NULL DEFAULT '',
+                severity TEXT NOT NULL DEFAULT 'medium',
+                detected_condition TEXT NOT NULL DEFAULT '',
                 current_setting TEXT NOT NULL,
                 proposed_setting TEXT NOT NULL,
+                supporting_metrics_json TEXT NOT NULL DEFAULT '{}',
+                expected_benefit TEXT NOT NULL DEFAULT '',
                 expected_roi_impact REAL,
                 expected_profit_impact REAL,
                 confidence REAL NOT NULL,
                 risk TEXT NOT NULL,
                 reason TEXT NOT NULL,
                 rollback_plan TEXT NOT NULL,
+                human_approval_required INTEGER NOT NULL DEFAULT 1,
+                enrichment_status TEXT NOT NULL DEFAULT 'not_applicable',
                 status TEXT DEFAULT 'pending',
+                created_at TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS review_packages (
+                id TEXT PRIMARY KEY,
+                workflow_run_id TEXT NOT NULL,
+                store_id TEXT NOT NULL,
+                week_start TEXT NOT NULL,
+                provider TEXT NOT NULL,
+                rule_version TEXT NOT NULL,
+                package_json TEXT NOT NULL,
                 created_at TEXT NOT NULL
             );
 
@@ -156,6 +175,14 @@ export class SqliteProductionStorage implements ProductionStorage {
         ensureColumn(this.db, 'recommendations', 'provider_model', 'TEXT');
         ensureColumn(this.db, 'recommendations', 'week_start', 'TEXT');
         ensureColumn(this.db, 'recommendations', 'raw_response_json', 'TEXT');
+        ensureColumn(this.db, 'recommendations', 'rule_id', `TEXT DEFAULT ''`);
+        ensureColumn(this.db, 'recommendations', 'rule_version', `TEXT DEFAULT ''`);
+        ensureColumn(this.db, 'recommendations', 'severity', `TEXT DEFAULT 'medium'`);
+        ensureColumn(this.db, 'recommendations', 'detected_condition', `TEXT DEFAULT ''`);
+        ensureColumn(this.db, 'recommendations', 'supporting_metrics_json', `TEXT DEFAULT '{}'`);
+        ensureColumn(this.db, 'recommendations', 'expected_benefit', `TEXT DEFAULT ''`);
+        ensureColumn(this.db, 'recommendations', 'human_approval_required', 'INTEGER DEFAULT 1');
+        ensureColumn(this.db, 'recommendations', 'enrichment_status', `TEXT DEFAULT 'not_applicable'`);
 
         this.db.exec(`
             UPDATE campaign_snapshots
@@ -172,8 +199,10 @@ export class SqliteProductionStorage implements ProductionStorage {
             ON campaign_snapshots(store_id, week_start, campaign_id);
             CREATE INDEX IF NOT EXISTS idx_recommendations_store_week
             ON recommendations(store_id, week_start, created_at DESC);
-            CREATE UNIQUE INDEX IF NOT EXISTS uq_recommendations_identity
-            ON recommendations(campaign_snapshot_id, provider, week_start, recommendation_type, proposed_setting);
+            CREATE UNIQUE INDEX IF NOT EXISTS uq_recommendations_identity_v2
+            ON recommendations(campaign_snapshot_id, provider, week_start, rule_id);
+            CREATE UNIQUE INDEX IF NOT EXISTS uq_review_packages_store_week_provider
+            ON review_packages(store_id, week_start, provider);
             CREATE INDEX IF NOT EXISTS idx_workflow_runs_name_started
             ON automation_workflow_runs(workflow_name, started_at DESC);
             CREATE INDEX IF NOT EXISTS idx_workflow_runs_status_started
@@ -460,17 +489,25 @@ export class SqliteProductionStorage implements ProductionStorage {
         this.requireDb().prepare(`
             INSERT INTO recommendations (
                 id, store_id, campaign_snapshot_id, recommendation_type, current_setting, proposed_setting,
-                expected_roi_impact, expected_profit_impact, confidence, risk, reason, rollback_plan, status,
-                created_at, provider, provider_model, week_start, raw_response_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(campaign_snapshot_id, provider, week_start, recommendation_type, proposed_setting) DO UPDATE SET
+                rule_id, rule_version, severity, detected_condition, supporting_metrics_json, expected_benefit,
+                expected_roi_impact, expected_profit_impact, confidence, risk, reason, rollback_plan, human_approval_required,
+                enrichment_status, status, created_at, provider, provider_model, week_start, raw_response_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(campaign_snapshot_id, provider, week_start, rule_id) DO UPDATE SET
                 current_setting = excluded.current_setting,
+                rule_version = excluded.rule_version,
+                severity = excluded.severity,
+                detected_condition = excluded.detected_condition,
+                supporting_metrics_json = excluded.supporting_metrics_json,
+                expected_benefit = excluded.expected_benefit,
                 expected_roi_impact = excluded.expected_roi_impact,
                 expected_profit_impact = excluded.expected_profit_impact,
                 confidence = excluded.confidence,
                 risk = excluded.risk,
                 reason = excluded.reason,
                 rollback_plan = excluded.rollback_plan,
+                human_approval_required = excluded.human_approval_required,
+                enrichment_status = excluded.enrichment_status,
                 status = excluded.status,
                 created_at = excluded.created_at,
                 provider_model = excluded.provider_model,
@@ -482,12 +519,20 @@ export class SqliteProductionStorage implements ProductionStorage {
             record.recommendationType,
             record.currentSetting,
             record.proposedSetting,
+            record.ruleId,
+            record.ruleVersion,
+            record.severity,
+            record.detectedCondition,
+            sanitizeJsonString(record.supportingMetricsJson),
+            record.expectedBenefit,
             record.expectedRoiImpact,
             record.expectedProfitImpact,
             record.confidence,
             record.risk,
             record.reason,
             record.rollbackPlan,
+            record.humanApprovalRequired ? 1 : 0,
+            record.enrichmentStatus,
             record.status,
             record.createdAt,
             record.provider,
@@ -594,6 +639,26 @@ export class SqliteProductionStorage implements ProductionStorage {
                     campaignSnapshotId: snapshotId,
                 });
             }
+
+            db.prepare(`
+                INSERT INTO review_packages (
+                    id, workflow_run_id, store_id, week_start, provider, rule_version, package_json, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(store_id, week_start, provider) DO UPDATE SET
+                    workflow_run_id = excluded.workflow_run_id,
+                    rule_version = excluded.rule_version,
+                    package_json = excluded.package_json,
+                    created_at = excluded.created_at
+            `).run(
+                input.reviewPackage.id,
+                input.reviewPackage.workflowRunId,
+                input.reviewPackage.storeId,
+                input.reviewPackage.weekStart,
+                input.reviewPackage.provider,
+                input.reviewPackage.ruleVersion,
+                sanitizeJsonString(JSON.stringify(input.reviewPackage)),
+                input.reviewPackage.createdAt,
+            );
 
             db.prepare(`
                 INSERT INTO ingestion_idempotency (
@@ -724,17 +789,25 @@ export class SqliteProductionStorage implements ProductionStorage {
         db.prepare(`
             INSERT INTO recommendations (
                 id, store_id, campaign_snapshot_id, recommendation_type, current_setting, proposed_setting,
-                expected_roi_impact, expected_profit_impact, confidence, risk, reason, rollback_plan, status,
-                created_at, provider, provider_model, week_start, raw_response_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(campaign_snapshot_id, provider, week_start, recommendation_type, proposed_setting) DO UPDATE SET
+                rule_id, rule_version, severity, detected_condition, supporting_metrics_json, expected_benefit,
+                expected_roi_impact, expected_profit_impact, confidence, risk, reason, rollback_plan, human_approval_required,
+                enrichment_status, status, created_at, provider, provider_model, week_start, raw_response_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(campaign_snapshot_id, provider, week_start, rule_id) DO UPDATE SET
                 current_setting = excluded.current_setting,
+                rule_version = excluded.rule_version,
+                severity = excluded.severity,
+                detected_condition = excluded.detected_condition,
+                supporting_metrics_json = excluded.supporting_metrics_json,
+                expected_benefit = excluded.expected_benefit,
                 expected_roi_impact = excluded.expected_roi_impact,
                 expected_profit_impact = excluded.expected_profit_impact,
                 confidence = excluded.confidence,
                 risk = excluded.risk,
                 reason = excluded.reason,
                 rollback_plan = excluded.rollback_plan,
+                human_approval_required = excluded.human_approval_required,
+                enrichment_status = excluded.enrichment_status,
                 status = excluded.status,
                 created_at = excluded.created_at,
                 provider_model = excluded.provider_model,
@@ -746,12 +819,20 @@ export class SqliteProductionStorage implements ProductionStorage {
             record.recommendationType,
             record.currentSetting,
             record.proposedSetting,
+            record.ruleId,
+            record.ruleVersion,
+            record.severity,
+            record.detectedCondition,
+            sanitizeJsonString(record.supportingMetricsJson),
+            record.expectedBenefit,
             record.expectedRoiImpact,
             record.expectedProfitImpact,
             record.confidence,
             record.risk,
             record.reason,
             record.rollbackPlan,
+            record.humanApprovalRequired ? 1 : 0,
+            record.enrichmentStatus,
             record.status,
             record.createdAt,
             record.provider,

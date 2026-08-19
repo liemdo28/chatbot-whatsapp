@@ -5,12 +5,16 @@ import { getCompletedWeeklyReportingWindow, createWeeklyReportingWindow } from '
 import { runWithRetry, type RetryPolicy } from '../automation/retry-policy.js';
 import { assertProductionWorkflowConfig, readProductionWorkflowConfig, type ProductionWorkflowConfig } from './config.js';
 import { OpenAiCampaignAnalysisProvider } from './analysis/openai-campaign-analysis-provider.js';
-import { BrowserCampaignAnalysisProvider } from './analysis/browser-campaign-analysis-provider.js';
+import { HybridCampaignAnalysisProvider } from './analysis/hybrid-campaign-analysis-provider.js';
+import { RulesCampaignAnalysisProvider } from './analysis/rules-campaign-analysis-provider.js';
+import { calculateCampaignMetrics, metricsToSupportingMetrics } from './analysis/campaign-metrics.js';
 import type { CampaignAnalysisProvider } from './analysis/provider.js';
 import { createProductionStorage } from './storage/storage-factory.js';
 import type {
     CampaignRecommendationRecord,
     ProductionStore,
+    SanitizedReviewPackage,
+    SupportingMetrics,
     WeeklyCampaignSnapshot,
     WorkflowStepStatus,
 } from './types.js';
@@ -47,6 +51,7 @@ export interface WeeklyProductionWorkflowResult {
         reportPath: string;
         recommendationCount: number;
         alreadyProcessed: boolean;
+        reviewPackagePath: string | null;
     }>;
     errors: string[];
 }
@@ -79,27 +84,35 @@ function summarizeCurrentSetting(snapshot: WeeklyCampaignSnapshot): string {
 function buildRecommendationRecord(
     store: ProductionStore,
     snapshot: WeeklyCampaignSnapshot,
-    providerName: string,
+    providerName: CampaignRecommendationRecord['provider'],
     model: string,
-    recommendation: Awaited<ReturnType<CampaignAnalysisProvider['analyzeCampaign']>>,
+    recommendation: Awaited<ReturnType<CampaignAnalysisProvider['analyzeCampaign']>>['recommendations'][number],
 ): CampaignRecommendationRecord {
     const createdAt = nowIso();
     return {
-        id: stableId('recommendation', `${store.id}|${snapshot.weekStart}|${snapshot.campaignId}|${providerName}|${recommendation.recommendationType}|${recommendation.proposedSetting}`),
+        id: stableId('recommendation', `${store.id}|${snapshot.weekStart}|${snapshot.campaignId}|${providerName}|${recommendation.ruleId}`),
         storeId: store.id,
         campaignSnapshotId: snapshot.id,
         weekStart: snapshot.weekStart,
-        provider: providerName === 'browser' ? 'browser' : 'openai',
+        provider: providerName,
         model,
+        ruleId: recommendation.ruleId,
+        ruleVersion: recommendation.ruleVersion,
         recommendationType: recommendation.recommendationType,
+        severity: recommendation.severity,
+        detectedCondition: recommendation.detectedCondition,
         currentSetting: recommendation.currentSetting || summarizeCurrentSetting(snapshot),
         proposedSetting: recommendation.proposedSetting,
+        supportingMetricsJson: JSON.stringify(recommendation.supportingMetrics),
+        expectedBenefit: recommendation.expectedBenefit,
         expectedRoiImpact: recommendation.expectedRoiImpact,
         expectedProfitImpact: recommendation.expectedProfitImpact,
         confidence: recommendation.confidence,
         risk: recommendation.risk,
         reason: recommendation.reason,
         rollbackPlan: recommendation.rollbackPlan,
+        humanApprovalRequired: recommendation.humanApprovalRequired,
+        enrichmentStatus: recommendation.enrichmentStatus,
         rawResponseJson: JSON.stringify(recommendation),
         status: 'pending',
         createdAt,
@@ -147,8 +160,15 @@ function safeToken(value: string): string {
 }
 
 function providerForConfig(config: ProductionWorkflowConfig): CampaignAnalysisProvider {
-    if (config.analysisProvider === 'browser') {
-        return new BrowserCampaignAnalysisProvider();
+    if (config.analysisProvider === 'rules') {
+        return new RulesCampaignAnalysisProvider(config.rules.ruleVersion);
+    }
+    if (config.analysisProvider === 'hybrid') {
+        return new HybridCampaignAnalysisProvider({
+            ruleVersion: config.rules.ruleVersion,
+            apiKey: config.openAiApiKey || undefined,
+            model: config.openAiModel || undefined,
+        });
     }
     return new OpenAiCampaignAnalysisProvider({
         apiKey: config.openAiApiKey,
@@ -182,6 +202,118 @@ async function recordStep(
 
 function pickPreviousSnapshot(previousSnapshots: WeeklyCampaignSnapshot[], current: WeeklyCampaignSnapshot): WeeklyCampaignSnapshot | null {
     return previousSnapshots.find(snapshot => snapshot.campaignId === current.campaignId || snapshot.campaignName === current.campaignName) || null;
+}
+
+function buildReviewPackage(input: {
+    workflowRunId: string;
+    config: ProductionWorkflowConfig;
+    store: ProductionStore;
+    weekStart: string;
+    weekEndExclusive: string;
+    providerName: CampaignRecommendationRecord['provider'];
+    providerModel: string;
+    snapshots: WeeklyCampaignSnapshot[];
+    previousSnapshots: WeeklyCampaignSnapshot[];
+    recommendations: CampaignRecommendationRecord[];
+    providerQuestions: string[];
+}): SanitizedReviewPackage {
+    const previousByCampaign = new Map(
+        input.previousSnapshots.map(snapshot => [snapshot.campaignId || snapshot.campaignName, snapshot]),
+    );
+    const storeTotals = input.snapshots.reduce((accumulator, snapshot) => ({
+        spend: accumulator.spend + snapshot.spend,
+        sales: accumulator.sales + snapshot.sales,
+        orders: accumulator.orders + snapshot.orders,
+    }), { spend: 0, sales: 0, orders: 0 });
+
+    const recommendationBySnapshotId = new Map<string, CampaignRecommendationRecord[]>();
+    for (const recommendation of input.recommendations) {
+        const existing = recommendationBySnapshotId.get(recommendation.campaignSnapshotId) || [];
+        existing.push(recommendation);
+        recommendationBySnapshotId.set(recommendation.campaignSnapshotId, existing);
+    }
+
+    const campaignMetricsTable = input.snapshots.map(snapshot => {
+        const metrics = calculateCampaignMetrics({
+            snapshot,
+            previousSnapshot: previousByCampaign.get(snapshot.campaignId || snapshot.campaignName) || null,
+            storeTotals,
+        });
+        return {
+            campaignId: snapshot.campaignId,
+            campaignName: snapshot.campaignName,
+            campaignType: snapshot.campaignType,
+            status: snapshot.status,
+            metrics: metricsToSupportingMetrics(metrics),
+        };
+    });
+
+    const anomalies = input.recommendations.map(recommendation => {
+        const snapshot = input.snapshots.find(candidate => candidate.id === recommendation.campaignSnapshotId);
+        return {
+            campaignId: snapshot?.campaignId || recommendation.campaignSnapshotId,
+            campaignName: snapshot?.campaignName || recommendation.campaignSnapshotId,
+            severity: recommendation.severity,
+            condition: recommendation.detectedCondition,
+            metrics: JSON.parse(recommendation.supportingMetricsJson) as SupportingMetrics,
+        };
+    });
+
+    const recommendations = input.recommendations.map(recommendation => {
+        const snapshot = input.snapshots.find(candidate => candidate.id === recommendation.campaignSnapshotId);
+        return {
+            campaignId: snapshot?.campaignId || recommendation.campaignSnapshotId,
+            campaignName: snapshot?.campaignName || recommendation.campaignSnapshotId,
+            severity: recommendation.severity,
+            detectedCondition: recommendation.detectedCondition,
+            supportingMetrics: JSON.parse(recommendation.supportingMetricsJson) as SupportingMetrics,
+            recommendedAction: recommendation.proposedSetting,
+            expectedBenefit: recommendation.expectedBenefit,
+            confidence: recommendation.confidence,
+            ruleId: recommendation.ruleId,
+            humanApprovalRequired: recommendation.humanApprovalRequired,
+            enrichmentStatus: recommendation.enrichmentStatus,
+        };
+    });
+
+    const executiveSummary = [
+        `Store ${input.store.id} generated ${input.recommendations.length} recommendation(s) for ${input.weekStart} to ${input.weekEndExclusive}.`,
+        `Provider: ${input.providerName}. Rule version: ${input.config.rules.ruleVersion}.`,
+        `Campaigns reviewed: ${input.snapshots.length}.`,
+    ].join(' ');
+
+    const promptLines = [
+        `Review DoorDash campaign recommendations for ${input.store.name} (${input.store.id}).`,
+        `Week: ${input.weekStart} to ${input.weekEndExclusive}.`,
+        'Summarize the highest-risk campaigns, challenge any weak assumptions, and propose manual follow-up questions.',
+        `Executive summary: ${executiveSummary}`,
+        `Recommendations JSON: ${JSON.stringify(recommendations)}`,
+    ];
+
+    return {
+        id: stableId('review-package', `${input.store.id}|${input.weekStart}|${input.providerName}`),
+        workflowRunId: input.workflowRunId,
+        storeId: input.store.id,
+        storeName: input.store.name,
+        weekStart: input.weekStart,
+        weekEndExclusive: input.weekEndExclusive,
+        provider: input.providerName,
+        providerModel: input.providerModel,
+        ruleVersion: input.config.rules.ruleVersion,
+        createdAt: nowIso(),
+        executiveSummary,
+        campaignMetricsTable,
+        anomalies,
+        recommendations,
+        questions: input.providerQuestions,
+        readyToCopyPrompt: promptLines.join('\n'),
+    };
+}
+
+function writeReviewPackage(config: ProductionWorkflowConfig, reviewPackage: SanitizedReviewPackage): string {
+    const targetPath = path.resolve(config.diagnosticsDir, `${reviewPackage.id}.review-package.json`);
+    fs.writeFileSync(targetPath, JSON.stringify(sanitizeSecrets(reviewPackage), null, 2));
+    return targetPath;
 }
 
 function writeDiagnostics(result: WeeklyProductionWorkflowResult): void {
@@ -255,27 +387,38 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
             }
 
             const previousSnapshots = await storage.listMostRecentSnapshotsBeforeWeek(store.id, window.weekStart);
+            const storeTotals = prepared.snapshots.reduce((accumulator, snapshot) => ({
+                spend: accumulator.spend + snapshot.spend,
+                sales: accumulator.sales + snapshot.sales,
+                orders: accumulator.orders + snapshot.orders,
+            }), { spend: 0, sales: 0, orders: 0 });
             const recommendations: CampaignRecommendationRecord[] = [];
+            let providerQuestions: string[] = [];
             let recommendationFailure: string | null = null;
 
             for (const snapshot of prepared.snapshots) {
                 try {
-                    const recommendation = await provider.analyzeCampaign({
+                    const analysis = await provider.analyzeCampaign({
                         store,
                         snapshot,
                         currentBudget: null,
                         estimatedProfit: estimateProfit(snapshot),
                         estimatedMargin: snapshot.sales > 0 ? Math.round(((estimateProfit(snapshot) / snapshot.sales) * 1000)) / 1000 : 0,
                         previousSnapshot: pickPreviousSnapshot(previousSnapshots, snapshot),
+                        rules: config.rules,
+                        storeWeeklyTotals: storeTotals,
                     });
-                    const record = buildRecommendationRecord(
-                        store,
-                        snapshot,
-                        provider.providerName,
-                        config.openAiModel || 'development-browser',
-                        recommendation,
-                    );
-                    recommendations.push(record);
+                    providerQuestions = [...providerQuestions, ...analysis.questions]
+                        .filter((value, index, array) => array.indexOf(value) === index);
+                    for (const recommendation of analysis.recommendations) {
+                        recommendations.push(buildRecommendationRecord(
+                            store,
+                            snapshot,
+                            analysis.provider,
+                            analysis.model,
+                            recommendation,
+                        ));
+                    }
                 } catch (error) {
                     recommendationFailure = `${store.id}/${snapshot.campaignName}: ${sanitizeErrorMessage(error)}`;
                     break;
@@ -295,11 +438,26 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
             }
 
             try {
+                const reviewPackage = buildReviewPackage({
+                    workflowRunId: workflowRun.id,
+                    config,
+                    store,
+                    weekStart: window.weekStart,
+                    weekEndExclusive: window.weekEndExclusive,
+                    providerName: recommendations[0]?.provider || config.analysisProvider,
+                    providerModel: recommendations[0]?.model || provider.providerModel,
+                    snapshots: prepared.snapshots,
+                    previousSnapshots,
+                    recommendations,
+                    providerQuestions,
+                });
+                const reviewPackagePath = writeReviewPackage(config, reviewPackage);
                 const persisted = await storage.persistStoreBundle({
                     workflowRunId: workflowRun.id,
                     store,
                     snapshots: prepared.snapshots,
                     recommendations,
+                    reviewPackage,
                     ingestionRecord: {
                         idempotencyKey: prepared.idempotencyKey,
                         messageId: prepared.messageId,
@@ -316,8 +474,8 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                         snapshotsCreated: prepared.snapshots.length,
                     }),
                     analyzeAttempt: 1,
-                    analyzeDetail: `Persisted ${recommendations.length} recommendation(s).`,
-                    analyzeMetricsJson: JSON.stringify({ recommendations: recommendations.length }),
+                    analyzeDetail: `Persisted ${recommendations.length} recommendation(s) and one sanitized review package.`,
+                    analyzeMetricsJson: JSON.stringify({ recommendations: recommendations.length, reviewPackageId: reviewPackage.id }),
                 });
 
                 storeSummaries.push({
@@ -325,6 +483,7 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                     reportPath: prepared.sourceRef,
                     recommendationCount: persisted.recommendationCount,
                     alreadyProcessed: persisted.alreadyProcessed,
+                    reviewPackagePath,
                 });
             } catch (error) {
                 const message = `${store.id}: ${sanitizeErrorMessage(error)}`;

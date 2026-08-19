@@ -38,6 +38,9 @@ assert.equal(productionSteps.find((step: any) => step.name === 'Install dependen
 assert.equal(stepByName(productionSteps, 'Validate production store config').run.trim(), 'npm run validate:production-store-config');
 assert.equal(stepByName(productionSteps, 'Test weekly window').run.trim(), 'npm run test:weekly-window');
 assert.equal(stepByName(productionSteps, 'Test production sanitization').run.trim(), 'npm run test:production-sanitization');
+assert.equal(stepByName(productionSteps, 'Test production rules provider').run.trim(), 'npm run test:production-rules');
+assert.equal(stepByName(productionSteps, 'Test production hybrid provider').run.trim(), 'npm run test:production-hybrid');
+assert.equal(stepByName(productionSteps, 'Test production rules preflight').run.trim(), 'npm run test:production-preflight-rules');
 assert.equal(stepByName(productionSteps, 'Test production storage').run.trim(), 'npm run test:production-storage');
 assert.equal(stepByName(productionSteps, 'Test production OpenAI provider').run.trim(), 'npm run test:production-openai');
 assert.equal(stepByName(productionSteps, 'Test production ingestion').run.trim(), 'npm run test:production-ingestion');
@@ -47,6 +50,7 @@ assert.equal(stepByName(productionSteps, 'Test production runner').run.trim(), '
 assert.equal(stepByName(productionSteps, 'Validate workflow definitions').run.trim(), 'npm run test:workflow-validation');
 assert.equal(stepByName(productionSteps, 'Run production preflight').run.includes('npm run preflight:production'), true);
 assert.equal(productionRunStep.if, "github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full'");
+assert.equal(productionRunStep.env.ANALYSIS_PROVIDER, "${{ vars.ANALYSIS_PROVIDER || 'rules' }}");
 assert.equal(productionRunStep.env.OPENAI_MODEL, '${{ vars.OPENAI_MODEL }}');
 assert.equal(productionRunStep.env.DD_REPORT_ALLOWED_SENDERS, '${{ vars.DD_REPORT_ALLOWED_SENDERS }}');
 assert.equal(productionRunStep.env.IMAP_HOST, '${{ vars.IMAP_HOST }}');
@@ -63,6 +67,7 @@ assert.equal(workflow.jobs['create-production-issue'].if, "${{ always() && needs
 assert.equal(validation.jobs.validate['runs-on'], 'ubuntu-latest');
 assert.ok(validation.on.pull_request);
 assert.ok(validation.on.push);
+assert.equal(validation.jobs.validate.env.ANALYSIS_PROVIDER, 'rules');
 assert.equal(validation.jobs.validate.env.DD_STORAGE_BACKEND, 'postgres');
 assert.equal(validation.jobs.validate.env.DATABASE_URL, 'postgres://validator:validator_password@127.0.0.1:5432/doordash_validation');
 assert.equal(validationServices.postgres.image, 'postgres:16-alpine');
@@ -76,6 +81,9 @@ assert.equal(stepByName(validationSteps, 'Build').run.trim(), 'npm run build');
 assert.equal(stepByName(validationSteps, 'Validate production store config').run.trim(), 'npm run validate:production-store-config');
 assert.equal(stepByName(validationSteps, 'Test weekly window').run.trim(), 'npm run test:weekly-window');
 assert.equal(stepByName(validationSteps, 'Test production sanitization').run.trim(), 'npm run test:production-sanitization');
+assert.equal(stepByName(validationSteps, 'Test production rules provider').run.trim(), 'npm run test:production-rules');
+assert.equal(stepByName(validationSteps, 'Test production hybrid provider').run.trim(), 'npm run test:production-hybrid');
+assert.equal(stepByName(validationSteps, 'Test production rules preflight').run.trim(), 'npm run test:production-preflight-rules');
 assert.equal(stepByName(validationSteps, 'Test production storage').run.trim(), 'npm run test:production-storage');
 assert.equal(stepByName(validationSteps, 'Test production OpenAI provider').run.trim(), 'npm run test:production-openai');
 assert.equal(stepByName(validationSteps, 'Test production ingestion').run.trim(), 'npm run test:production-ingestion');

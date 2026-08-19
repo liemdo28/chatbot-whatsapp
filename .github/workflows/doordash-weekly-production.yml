@@ -85,6 +85,15 @@ jobs:
       - name: Test production sanitization
         run: npm run test:production-sanitization
 
+      - name: Test production rules provider
+        run: npm run test:production-rules
+
+      - name: Test production hybrid provider
+        run: npm run test:production-hybrid
+
+      - name: Test production rules preflight
+        run: npm run test:production-preflight-rules
+
       - name: Test production storage
         run: npm run test:production-storage
 
@@ -109,7 +118,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           DD_EXECUTION_ENV: production
-          DD_ANALYSIS_PROVIDER: openai
+          ANALYSIS_PROVIDER: ${{ vars.ANALYSIS_PROVIDER || 'rules' }}
           DD_REPORT_SOURCE: imap
           DD_STORAGE_BACKEND: postgres
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -144,7 +153,7 @@ jobs:
         continue-on-error: true
         env:
           DD_EXECUTION_ENV: production
-          DD_ANALYSIS_PROVIDER: openai
+          ANALYSIS_PROVIDER: ${{ vars.ANALYSIS_PROVIDER || 'rules' }}
           DD_REPORT_SOURCE: imap
           DD_STORAGE_BACKEND: postgres
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

@@ -6,24 +6,40 @@ import { runWeeklyProductionWorkflow } from '../src/production/run-weekly-produc
 import { PostgresProductionStorage } from '../src/production/storage/postgres-production-storage.js';
 import { sanitizeErrorMessage } from '../src/production/security/error-sanitizer.js';
 import type { ProductionWorkflowConfig } from '../src/production/config.js';
-import type { CampaignAnalysisInput, ProviderRecommendation } from '../src/production/types.js';
+import type { CampaignAnalysisInput, ProviderCampaignAnalysisResult } from '../src/production/types.js';
 import type { CampaignAnalysisProvider } from '../src/production/analysis/provider.js';
 
 class FakeCampaignAnalysisProvider implements CampaignAnalysisProvider {
-    readonly providerName = 'openai';
+    readonly providerName = 'rules';
+    readonly providerModel = 'rules-v1';
 
-    async analyzeCampaign(input: CampaignAnalysisInput): Promise<ProviderRecommendation> {
+    async analyzeCampaign(input: CampaignAnalysisInput): Promise<ProviderCampaignAnalysisResult> {
         return {
-            recommendationType: input.snapshot.roas >= 3 ? 'KEEP' : 'REQUEST_MORE_DATA',
-            currentSetting: `Spend $${input.snapshot.spend.toFixed(2)} | Sales $${input.snapshot.sales.toFixed(2)}`,
-            proposedSetting: input.snapshot.roas >= 3 ? 'Maintain current settings' : 'Request more data',
-            expectedRoiImpact: 0,
-            expectedProfitImpact: input.estimatedProfit,
-            confidence: 0.82,
-            risk: 'low',
-            reason: 'Postgres integration validation.',
-            rollbackPlan: 'No rollback required for fixture validation.',
-            missingData: [],
+            provider: 'rules',
+            model: 'rules-v1',
+            summary: 'Postgres integration validation.',
+            questions: [],
+            recommendations: [{
+                ruleId: input.snapshot.roas >= 3 ? 'keep' : 'request-more-data',
+                ruleVersion: 'rules-v1',
+                recommendationType: input.snapshot.roas >= 3 ? 'KEEP' : 'REQUEST_MORE_DATA',
+                severity: 'low',
+                detectedCondition: 'Postgres integration validation.',
+                currentSetting: `Spend $${input.snapshot.spend.toFixed(2)} | Sales $${input.snapshot.sales.toFixed(2)}`,
+                proposedSetting: input.snapshot.roas >= 3 ? 'Maintain current settings' : 'Request more data',
+                supportingMetrics: { roas: input.snapshot.roas },
+                expectedBenefit: 'Keeps the integration test deterministic.',
+                expectedRoiImpact: 0,
+                expectedProfitImpact: input.estimatedProfit,
+                confidence: 0.82,
+                risk: 'low',
+                reason: 'Postgres integration validation.',
+                rollbackPlan: 'No rollback required for fixture validation.',
+                humanApprovalRequired: false,
+                missingData: [],
+                enrichmentStatus: 'not_applicable',
+                enrichmentNotes: null,
+            }],
         };
     }
 }
@@ -52,11 +68,23 @@ async function readCount(pool: Pool, schemaName: string, tableName: string): Pro
 function createConfig(schemaName: string, databaseUrl: string): ProductionWorkflowConfig {
     return {
         executionEnv: 'test',
-        analysisProvider: 'openai',
+        analysisProvider: 'rules',
         reportSource: 'fixture',
         storageBackend: 'postgres',
-        openAiApiKey: 'sk-test-synthetic',
+        openAiApiKey: '',
         openAiModel: 'gpt-test',
+        rules: {
+            ruleVersion: 'rules-v1',
+            minAcceptableRoas: 3,
+            maxAcceptableCpa: 25,
+            minimumSpendForJudgement: 25,
+            minimumImpressionsForConfidence: 1000,
+            minimumClicksForConfidence: 25,
+            deteriorationThresholdPct: 0.2,
+            budgetIncreaseCeilingPct: 0.2,
+            storeCurrency: 'USD',
+            storeTimeZone: 'America/Los_Angeles',
+        },
         schedulerTimeZone: 'America/Los_Angeles',
         reportLookbackHours: 24,
         reportRetryAttempts: 1,

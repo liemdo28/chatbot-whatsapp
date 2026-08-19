@@ -6,13 +6,14 @@ import Database from 'better-sqlite3';
 import { runWeeklyProductionWorkflow } from '../src/production/run-weekly-production.js';
 import { sanitizeSecretString } from '../src/production/security/error-sanitizer.js';
 import type { ProductionWorkflowConfig } from '../src/production/config.js';
-import type { CampaignAnalysisInput, ProviderRecommendation } from '../src/production/types.js';
+import type { CampaignAnalysisInput, ProviderCampaignAnalysisResult } from '../src/production/types.js';
 import type { CampaignAnalysisProvider } from '../src/production/analysis/provider.js';
 
 class SecretThrowingProvider implements CampaignAnalysisProvider {
     readonly providerName = 'openai';
+    readonly providerModel = 'gpt-test';
 
-    async analyzeCampaign(_input: CampaignAnalysisInput): Promise<ProviderRecommendation> {
+    async analyzeCampaign(_input: CampaignAnalysisInput): Promise<ProviderCampaignAnalysisResult> {
         throw new Error('postgres://leaky-user:leaky-pass@localhost:5432/doordash?token=shhh sk-test-1234567890 Authorization: Bearer real-token');
     }
 }
@@ -35,6 +36,18 @@ class SecretThrowingProvider implements CampaignAnalysisProvider {
         storageBackend: 'sqlite',
         openAiApiKey: 'sk-test-synthetic',
         openAiModel: 'gpt-test',
+        rules: {
+            ruleVersion: 'rules-v1',
+            minAcceptableRoas: 3,
+            maxAcceptableCpa: 25,
+            minimumSpendForJudgement: 25,
+            minimumImpressionsForConfidence: 1000,
+            minimumClicksForConfidence: 25,
+            deteriorationThresholdPct: 0.2,
+            budgetIncreaseCeilingPct: 0.2,
+            storeCurrency: 'USD',
+            storeTimeZone: 'America/Los_Angeles',
+        },
         schedulerTimeZone: 'America/Los_Angeles',
         reportLookbackHours: 24,
         reportRetryAttempts: 1,

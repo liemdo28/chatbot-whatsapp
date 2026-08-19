@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - fix/doordash-weekly-production
+      - fix/doordash-rules-mode
 
 jobs:
   validate:
@@ -34,7 +35,7 @@ jobs:
         working-directory: doordash-campaign-agent
     env:
       DD_EXECUTION_ENV: test
-      DD_ANALYSIS_PROVIDER: openai
+      ANALYSIS_PROVIDER: rules
       DD_REPORT_SOURCE: fixture
       DD_STORAGE_BACKEND: postgres
       OPENAI_API_KEY: sk-test-validation
@@ -63,6 +64,15 @@ jobs:
 
       - name: Test production sanitization
         run: npm run test:production-sanitization
+
+      - name: Test production rules provider
+        run: npm run test:production-rules
+
+      - name: Test production hybrid provider
+        run: npm run test:production-hybrid
+
+      - name: Test production rules preflight
+        run: npm run test:production-preflight-rules
 
       - name: Test production storage
         run: npm run test:production-storage

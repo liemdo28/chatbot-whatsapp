@@ -2,6 +2,7 @@ import type {
     CampaignRecommendationRecord,
     IngestionIdempotencyRecord,
     ProductionStore,
+    SanitizedReviewPackage,
     WeeklyCampaignSnapshot,
     WorkflowRunRecord,
     WorkflowStepRecord,
@@ -32,6 +33,7 @@ export interface PersistStoreBundleInput {
     ingestMetricsJson: string | null;
     ingestionRecord: IngestionIdempotencyRecord;
     recommendations: CampaignRecommendationRecord[];
+    reviewPackage: SanitizedReviewPackage;
     snapshots: WeeklyCampaignSnapshot[];
     store: ProductionStore;
     workflowRunId: string;
