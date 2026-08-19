@@ -56,6 +56,26 @@ export interface WeeklyProductionWorkflowResult {
     errors: string[];
 }
 
+export interface PublicWorkflowDiagnostics {
+    workflowRunId: string;
+    weekStart: string;
+    weekEndExclusive: string;
+    provider: string;
+    ruleVersion: string;
+    status: 'success' | 'failed';
+    failureCategory: WeeklyProductionWorkflowResult['failureCategory'];
+    pendingExternalData: boolean;
+    storeCount: number;
+    recommendationCount: number;
+    alreadyProcessedStoreCount: number;
+    stores: Array<{
+        storeId: string;
+        recommendationCount: number;
+        alreadyProcessed: boolean;
+    }>;
+    sanitizedErrorCategory: 'none' | 'pending_report_delivery' | 'hard_failure';
+}
+
 function nowIso(): string {
     return new Date().toISOString();
 }
@@ -311,14 +331,44 @@ function buildReviewPackage(input: {
 }
 
 function writeReviewPackage(config: ProductionWorkflowConfig, reviewPackage: SanitizedReviewPackage): string {
+    if (config.executionEnv === 'production') {
+        return '';
+    }
     const targetPath = path.resolve(config.diagnosticsDir, `${reviewPackage.id}.review-package.json`);
     fs.writeFileSync(targetPath, JSON.stringify(sanitizeSecrets(reviewPackage), null, 2));
     return targetPath;
 }
 
-function writeDiagnostics(result: WeeklyProductionWorkflowResult): void {
+export function buildPublicWorkflowDiagnostics(
+    result: WeeklyProductionWorkflowResult,
+    config: ProductionWorkflowConfig,
+): PublicWorkflowDiagnostics {
+    const recommendationCount = result.stores.reduce((sum, store) => sum + store.recommendationCount, 0);
+    const alreadyProcessedStoreCount = result.stores.filter(store => store.alreadyProcessed).length;
+    return {
+        workflowRunId: result.workflowRunId,
+        weekStart: result.weekStart,
+        weekEndExclusive: result.weekEndExclusive,
+        provider: config.analysisProvider,
+        ruleVersion: config.rules.ruleVersion,
+        status: result.success ? 'success' : 'failed',
+        failureCategory: result.failureCategory,
+        pendingExternalData: result.pendingExternalData,
+        storeCount: result.stores.length,
+        recommendationCount,
+        alreadyProcessedStoreCount,
+        stores: result.stores.map(store => ({
+            storeId: store.storeId,
+            recommendationCount: store.recommendationCount,
+            alreadyProcessed: store.alreadyProcessed,
+        })),
+        sanitizedErrorCategory: result.success ? 'none' : result.failureCategory,
+    };
+}
+
+function writeDiagnostics(result: WeeklyProductionWorkflowResult, config: ProductionWorkflowConfig): void {
     ensureDir(path.dirname(result.diagnosticsPath));
-    fs.writeFileSync(result.diagnosticsPath, JSON.stringify(sanitizeSecrets(result), null, 2));
+    fs.writeFileSync(result.diagnosticsPath, JSON.stringify(buildPublicWorkflowDiagnostics(result, config), null, 2));
 }
 
 export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkflowOptions = {}): Promise<WeeklyProductionWorkflowResult> {
@@ -329,8 +379,8 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
     await storage.initialize();
 
     const window = options.weekStart
-        ? createWeeklyReportingWindow(config.schedulerTimeZone, options.weekStart, options.weekEndExclusive)
-        : getCompletedWeeklyReportingWindow(config.schedulerTimeZone);
+        ? createWeeklyReportingWindow(config.rules.storeTimeZone, options.weekStart, options.weekEndExclusive)
+        : getCompletedWeeklyReportingWindow(config.rules.storeTimeZone);
     const provider = options.providerOverride || providerForConfig(config);
     const workflowRun = await storage.createWorkflowRun({
         workflowName: 'doordash-weekly-production',
@@ -451,7 +501,7 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
                     recommendations,
                     providerQuestions,
                 });
-                const reviewPackagePath = writeReviewPackage(config, reviewPackage);
+                const reviewPackagePath = writeReviewPackage(config, reviewPackage) || null;
                 const persisted = await storage.persistStoreBundle({
                     workflowRunId: workflowRun.id,
                     store,
@@ -480,7 +530,7 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
 
                 storeSummaries.push({
                     storeId: store.id,
-                    reportPath: prepared.sourceRef,
+                    reportPath: config.executionEnv === 'production' ? 'redacted' : prepared.sourceRef,
                     recommendationCount: persisted.recommendationCount,
                     alreadyProcessed: persisted.alreadyProcessed,
                     reviewPackagePath,
@@ -520,7 +570,7 @@ export async function runWeeklyProductionWorkflow(options: WeeklyProductionWorkf
             stores: storeSummaries,
             errors: errors.map(error => sanitizeErrorMessage(error)),
         };
-        writeDiagnostics(result);
+        writeDiagnostics(result, config);
 
         if (success) {
             await storage.completeWorkflowRun(workflowRun.id, sanitizeErrorMessage(result.summary), JSON.stringify(result));

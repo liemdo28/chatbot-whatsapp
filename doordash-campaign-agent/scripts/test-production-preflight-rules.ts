@@ -26,6 +26,8 @@ const result = spawnSync(process.execPath, [
         IMAP_HOST: 'imap.example.com',
         IMAP_PORT: '993',
         IMAP_SECURE: 'true',
+        DD_STORE_TIMEZONE: 'America/Los_Angeles',
+        DD_STORE_CURRENCY: 'USD',
         DD_REPORT_INBOX_LABEL: 'INBOX',
     },
 });

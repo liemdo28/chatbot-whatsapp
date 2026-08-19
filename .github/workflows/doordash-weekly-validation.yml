@@ -3,6 +3,7 @@ name: doordash-weekly-validation
 on:
   pull_request:
     paths:
+      - '.gitignore'
       - '.github/workflows/doordash-weekly-production.yml'
       - '.github/workflows/doordash-weekly-validation.yml'
       - 'doordash-campaign-agent/**'
@@ -40,6 +41,9 @@ jobs:
       DD_STORAGE_BACKEND: postgres
       OPENAI_API_KEY: sk-test-validation
       OPENAI_MODEL: gpt-test
+      DD_SCHEDULER_TIMEZONE: Asia/Ho_Chi_Minh
+      DD_STORE_TIMEZONE: America/Los_Angeles
+      DD_STORE_CURRENCY: USD
       DATABASE_URL: postgres://validator:validator_password@127.0.0.1:5432/doordash_validation
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
@@ -64,6 +68,9 @@ jobs:
 
       - name: Test production sanitization
         run: npm run test:production-sanitization
+
+      - name: Test production public diagnostics
+        run: npm run test:production-public-diagnostics
 
       - name: Test production rules provider
         run: npm run test:production-rules
@@ -91,3 +98,6 @@ jobs:
 
       - name: Validate workflow definitions
         run: npm run test:workflow-validation
+
+      - name: NPM production audit
+        run: npm audit --omit=dev --audit-level=critical

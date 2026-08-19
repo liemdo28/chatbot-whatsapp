@@ -131,8 +131,8 @@ function printResult(result: PreflightResult): void {
     const args = parseArgs(process.argv.slice(2));
     const config = readProductionWorkflowConfig();
     const window = args.weekStart
-        ? createWeeklyReportingWindow(config.schedulerTimeZone, args.weekStart, args.weekEndExclusive)
-        : getCompletedWeeklyReportingWindow(config.schedulerTimeZone);
+        ? createWeeklyReportingWindow(config.rules.storeTimeZone, args.weekStart, args.weekEndExclusive)
+        : getCompletedWeeklyReportingWindow(config.rules.storeTimeZone);
     const requestedStoreIds = args.storeIds.length > 0 ? args.storeIds : ['raw-sushi-bar'];
     const steps: StepResult[] = [];
 
@@ -184,6 +184,22 @@ function printResult(result: PreflightResult): void {
         steps.push({ step: 'store_catalog', status: 'success', detail: `Validated ${targetStores.length} production store mapping(s), including raw-sushi-bar -> 892006.` });
     } catch (error) {
         fail('store_catalog', error);
+    }
+
+    try {
+        if (!config.storeTimeZoneConfigured) {
+            throw new Error('DD_STORE_TIMEZONE is missing.');
+        }
+        if (!config.storeCurrencyConfigured) {
+            throw new Error('DD_STORE_CURRENCY is missing.');
+        }
+        steps.push({
+            step: 'store_locale',
+            status: 'success',
+            detail: `Validated configurable store assumptions for raw-sushi-bar: timezone ${config.rules.storeTimeZone}, currency ${config.rules.storeCurrency}.`,
+        });
+    } catch (error) {
+        fail('store_locale', error);
     }
 
     try {

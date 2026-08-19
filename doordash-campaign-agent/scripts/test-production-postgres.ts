@@ -85,7 +85,9 @@ function createConfig(schemaName: string, databaseUrl: string): ProductionWorkfl
             storeCurrency: 'USD',
             storeTimeZone: 'America/Los_Angeles',
         },
-        schedulerTimeZone: 'America/Los_Angeles',
+        storeTimeZoneConfigured: true,
+        storeCurrencyConfigured: true,
+        schedulerTimeZone: 'Asia/Ho_Chi_Minh',
         reportLookbackHours: 24,
         reportRetryAttempts: 1,
         reportRetryDelayMs: 1,
@@ -164,6 +166,7 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
 
         assert.ok(await readCount(adminPool, primarySchemaName, 'campaign_snapshots') > 0);
         assert.ok(await readCount(adminPool, primarySchemaName, 'recommendations') > 0);
+        assert.equal(await readCount(adminPool, primarySchemaName, 'review_packages'), 1);
         assert.equal(await readCount(adminPool, primarySchemaName, 'ingestion_idempotency'), 1);
 
         const concurrentConfig = createConfig(concurrentSchemaName, databaseUrl);
@@ -239,9 +242,14 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
             `SELECT COUNT(*)::int AS count FROM "${rollbackSchemaName}".ingestion_idempotency WHERE week_start = $1`,
             ['2026-07-13'],
         );
+        const afterRollbackReviewPackages = await adminPool.query<{ count: number }>(
+            `SELECT COUNT(*)::int AS count FROM "${rollbackSchemaName}".review_packages WHERE week_start = $1`,
+            ['2026-07-13'],
+        );
         assert.equal(Number(afterRollbackSnapshots.rows[0]?.count || 0), 0);
         assert.equal(Number(afterRollbackRecommendations.rows[0]?.count || 0), 0);
         assert.equal(Number(afterRollbackIdempotency.rows[0]?.count || 0), 0);
+        assert.equal(Number(afterRollbackReviewPackages.rows[0]?.count || 0), 0);
 
         console.log('production-postgres tests passed');
     } finally {

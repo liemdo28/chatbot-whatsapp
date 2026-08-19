@@ -83,6 +83,8 @@ These defaults are intentionally conservative and should be tuned to the busines
 - `DD_STORE_CURRENCY=USD`
 - `DD_STORE_TIMEZONE=America/Los_Angeles`
 
+For the current production branch, `DD_STORE_TIMEZONE=America/Los_Angeles` and `DD_STORE_CURRENCY=USD` are configurable assumptions for `raw-sushi-bar`, not verified store metadata from DoorDash. They must be set explicitly in repository variables and confirmed by the user before live production sign-off. The weekly scheduler timezone is separate and should remain `Asia/Ho_Chi_Minh`.
+
 The deterministic rules engine calculates spend, attributed sales, orders, ROAS, optional impressions/clicks-derived metrics when the export provides them, week-over-week changes, and store share metrics. Unavailable metrics remain unavailable rather than being coerced to zero.
 
 Each persisted recommendation stores:
@@ -106,6 +108,8 @@ Each store/week also persists a sanitized review package in Postgres with:
 - follow-up questions
 - a ready-to-copy ChatGPT prompt
 
+In production, that review package is persisted only in Postgres. It is not written to public GitHub artifacts.
+
 ## Required repository variables
 
 GitHub Actions workflow `doordash-weekly-production` expects these repository variables:
@@ -115,6 +119,8 @@ GitHub Actions workflow `doordash-weekly-production` expects these repository va
 - `IMAP_HOST`
 - `IMAP_PORT`
 - `IMAP_SECURE`
+- `DD_STORE_TIMEZONE` for the current store reporting timezone assumption
+- `DD_STORE_CURRENCY` for the current store currency assumption
 - `DD_REPORT_INBOX_LABEL` (optional)
 - `OPENAI_MODEL` (required only for `ANALYSIS_PROVIDER=openai`; optional otherwise)
 
@@ -139,7 +145,8 @@ No legacy DoorDash browser credentials, MI Core credentials, QB/QBWC credentials
 - Supported report artifacts are limited to `.zip`, `.csv`, `.xlsx`, and `.xls`, with a 15 MB attachment/download cap.
 - ZIP reports are parsed in memory only, reject unsafe paths such as `../...`, and cap total file count and uncompressed size before parsing.
 - No automatic budget or setting change is executed from these recommendations. Human approval remains required before any campaign change.
-- Workflow diagnostics store run summaries and file basenames only; mailbox bodies, attachment bytes, and credentials are not written to diagnostic artifacts, and production errors are sanitized before console logs, GitHub annotations, persisted workflow state, or uploaded artifacts.
+- Public GitHub diagnostics are metadata only: workflow/run ID, store slug, completed-week range, provider, rule version, status, sanitized counts, and sanitized failure category.
+- Campaign metrics, spend, sales, orders, recommendation text, prompts, mailbox bodies, attachment bytes, and credentials are not written to public GitHub artifacts, issues, or logs.
 - IMAP access uses explicit connection, greeting, and socket timeouts, and authentication failures are surfaced separately from "report not arrived yet".
 
 ## What is still intentionally excluded

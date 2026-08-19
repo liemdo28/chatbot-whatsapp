@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { calculateCampaignMetrics } from '../src/production/analysis/campaign-metrics.js';
 import { RulesCampaignAnalysisProvider } from '../src/production/analysis/rules-campaign-analysis-provider.js';
 import type { CampaignAnalysisInput, ProductionStore, WeeklyCampaignSnapshot } from '../src/production/types.js';
 
@@ -77,6 +78,15 @@ function buildInput(snapshot: WeeklyCampaignSnapshot, previousSnapshot: WeeklyCa
 
 (async () => {
     const provider = new RulesCampaignAnalysisProvider('rules-v1');
+    const metrics = calculateCampaignMetrics({
+        snapshot: buildSnapshot({ sales: 240, spend: 80, orders: 6 }, { impressions: 4000, clicks: 80 }),
+        previousSnapshot: buildSnapshot({ weekStart: '2026-07-06', weekEndExclusive: '2026-07-13', sales: 200, spend: 100, orders: 5 }, { impressions: 5000, clicks: 100 }),
+        storeTotals: { spend: 500, sales: 2000, orders: 40 },
+    });
+    assert.equal(metrics.roas, 3);
+    assert.equal(metrics.cpa, 13.33);
+    assert.equal(metrics.ctr, 0.02);
+    assert.equal(metrics.conversionRate, 0.075);
 
     const poorRoas = await provider.analyzeCampaign(buildInput(buildSnapshot({ sales: 120, spend: 100, orders: 3, roas: 1.2 })));
     assert.ok(poorRoas.recommendations.some(recommendation => recommendation.ruleId === 'roas-below-target'));
@@ -92,9 +102,22 @@ function buildInput(snapshot: WeeklyCampaignSnapshot, previousSnapshot: WeeklyCa
 
     const missingMetrics = await provider.analyzeCampaign(buildInput(buildSnapshot({}, { impressions: null, clicks: null })));
     assert.ok(missingMetrics.recommendations.some(recommendation => recommendation.missingData.includes('impressions')));
+    const unavailableMetrics = calculateCampaignMetrics({
+        snapshot: buildSnapshot({ orders: 0, spend: 0, sales: 0 }, { impressions: null, clicks: null }),
+        previousSnapshot: null,
+        storeTotals: { spend: 0, sales: 0, orders: 0 },
+    });
+    assert.equal(unavailableMetrics.ctr, null);
+    assert.equal(unavailableMetrics.cpa, null);
+    assert.equal(unavailableMetrics.conversionRate, null);
 
     const strongCampaign = await provider.analyzeCampaign(buildInput(buildSnapshot({ sales: 520, spend: 100, orders: 14, roas: 5.2 })));
     assert.ok(strongCampaign.recommendations.some(recommendation => recommendation.ruleId === 'strong-roas-limited-spend'));
+    const scaleRecommendation = strongCampaign.recommendations.find(recommendation => recommendation.ruleId === 'strong-roas-limited-spend');
+    assert.ok(scaleRecommendation);
+    assert.equal(scaleRecommendation?.humanApprovalRequired, true);
+    assert.equal(scaleRecommendation?.ruleVersion, 'rules-v1');
+    assert.equal(typeof scaleRecommendation?.supportingMetrics['roas'], 'number');
 
     const previous = buildSnapshot({ sales: 300, spend: 80, orders: 10, roas: 3.75, weekStart: '2026-07-06', weekEndExclusive: '2026-07-13' });
     const deterioration = await provider.analyzeCampaign(buildInput(
@@ -106,6 +129,10 @@ function buildInput(snapshot: WeeklyCampaignSnapshot, previousSnapshot: WeeklyCa
     const deterministicA = await provider.analyzeCampaign(buildInput(buildSnapshot({ sales: 150, spend: 100, orders: 4, roas: 1.5 })));
     const deterministicB = await provider.analyzeCampaign(buildInput(buildSnapshot({ sales: 150, spend: 100, orders: 4, roas: 1.5 })));
     assert.deepEqual(deterministicA, deterministicB);
+
+    const incomplete = await provider.analyzeCampaign(buildInput(buildSnapshot({ dataCompleteness: 2, observedDateStart: '2026-07-14' })));
+    assert.ok(incomplete.recommendations.some(recommendation => recommendation.ruleId === 'incomplete-data'));
+    assert.equal(incomplete.recommendations.some(recommendation => recommendation.recommendationType === 'INCREASE'), false);
 
     const uniqueRuleIds = deterministicA.recommendations.map(recommendation => recommendation.ruleId);
     assert.equal(uniqueRuleIds.length, new Set(uniqueRuleIds).size);

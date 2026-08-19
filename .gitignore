@@ -38,6 +38,7 @@ coverage/
 .pytest_cache/
 test-results/
 **/artifacts/weekly-production/
+**/*.review-package.json
 *.log
 logs/
 

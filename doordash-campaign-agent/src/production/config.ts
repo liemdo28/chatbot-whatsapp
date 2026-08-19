@@ -9,6 +9,8 @@ export interface ProductionWorkflowConfig {
     openAiApiKey: string;
     openAiModel: string;
     rules: RulesEngineConfig;
+    storeTimeZoneConfigured: boolean;
+    storeCurrencyConfigured: boolean;
     schedulerTimeZone: string;
     reportLookbackHours: number;
     reportRetryAttempts: number;
@@ -50,7 +52,9 @@ function normalizeAnalysisProvider(value: string | undefined): AnalysisProviderN
 
 export function readProductionWorkflowConfig(): ProductionWorkflowConfig {
     const executionEnv = (process.env['DD_EXECUTION_ENV'] || process.env['NODE_ENV'] || 'development').toLowerCase();
-    const schedulerTimeZone = process.env['DD_SCHEDULER_TIMEZONE'] || 'America/Los_Angeles';
+    const schedulerTimeZone = process.env['DD_SCHEDULER_TIMEZONE'] || 'Asia/Ho_Chi_Minh';
+    const storeTimeZone = process.env['DD_STORE_TIMEZONE'] || 'America/Los_Angeles';
+    const storeCurrency = process.env['DD_STORE_CURRENCY'] || 'USD';
     const analysisProvider = normalizeAnalysisProvider(process.env['ANALYSIS_PROVIDER'] || process.env['DD_ANALYSIS_PROVIDER'] || 'rules');
     const reportSource = (process.env['DD_REPORT_SOURCE'] || 'imap').toLowerCase() as ReportSourceName;
     const storageBackend = (process.env['DD_STORAGE_BACKEND'] || 'sqlite').toLowerCase() as StorageBackendName;
@@ -71,9 +75,11 @@ export function readProductionWorkflowConfig(): ProductionWorkflowConfig {
             minimumClicksForConfidence: parseInteger(process.env['DD_RULE_MIN_CLICKS'], 25),
             deteriorationThresholdPct: parseFloatValue(process.env['DD_RULE_DETERIORATION_PCT'], 0.2),
             budgetIncreaseCeilingPct: parseFloatValue(process.env['DD_RULE_BUDGET_INCREASE_CEILING_PCT'], 0.2),
-            storeCurrency: process.env['DD_STORE_CURRENCY'] || 'USD',
-            storeTimeZone: process.env['DD_STORE_TIMEZONE'] || schedulerTimeZone,
+            storeCurrency,
+            storeTimeZone,
         },
+        storeTimeZoneConfigured: Boolean(process.env['DD_STORE_TIMEZONE']),
+        storeCurrencyConfigured: Boolean(process.env['DD_STORE_CURRENCY']),
         schedulerTimeZone,
         reportLookbackHours: parseInteger(process.env['DD_REPORT_LOOKBACK_HOURS'], 240),
         reportRetryAttempts: parseInteger(process.env['DD_REPORT_RETRY_ATTEMPTS'], 3),
@@ -103,6 +109,12 @@ export function assertProductionWorkflowConfig(config: ProductionWorkflowConfig)
     if (config.executionEnv === 'production') {
         if (config.reportSource === 'fixture') {
             throw new Error('Production execution rejects fixture report ingestion. Set DD_REPORT_SOURCE=imap.');
+        }
+        if (!config.storeTimeZoneConfigured) {
+            throw new Error('DD_STORE_TIMEZONE must be explicitly configured for production rules-mode reporting.');
+        }
+        if (!config.storeCurrencyConfigured) {
+            throw new Error('DD_STORE_CURRENCY must be explicitly configured for production rules-mode reporting.');
         }
     }
 
