@@ -68,8 +68,12 @@ const localTls = resolveProductionPostgresTlsConfig({
 });
 assert.equal(localTls, undefined);
 
+const remoteConnectionUrl = new URL('postgres://db.example.supabase.co:6543/postgres?sslmode=require&application_name=weekly-agent');
+remoteConnectionUrl.username = 'validator';
+remoteConnectionUrl.password = 'placeholder-password';
+
 const poolConfig = buildPostgresPoolConfig(
-    'postgres://validator:validator_password@db.example.supabase.co:6543/postgres?sslmode=require&application_name=weekly-agent',
+    remoteConnectionUrl.toString(),
     { ssl: inlineTls },
 );
 assert.equal((poolConfig.ssl as { rejectUnauthorized: boolean }).rejectUnauthorized, true);
@@ -77,7 +81,11 @@ assert.ok(String(poolConfig.connectionString).includes('db.example.supabase.co:6
 assert.ok(String(poolConfig.connectionString).includes('application_name=weekly-agent'));
 assert.equal(String(poolConfig.connectionString).includes('sslmode='), false);
 
-const localPoolConfig = buildPostgresPoolConfig('postgres://validator:validator_password@127.0.0.1:5432/doordash_validation');
+const localConnectionUrl = new URL('postgres://127.0.0.1:5432/doordash_validation');
+localConnectionUrl.username = 'validator';
+localConnectionUrl.password = 'placeholder-password';
+
+const localPoolConfig = buildPostgresPoolConfig(localConnectionUrl.toString());
 assert.equal(localPoolConfig.ssl, undefined);
 assert.ok(String(localPoolConfig.connectionString).includes('127.0.0.1:5432/doordash_validation'));
 
@@ -89,7 +97,11 @@ const sanitizedSecret = sanitizeSecretString(`DOORDASH_PRODUCTION_DATABASE_CA_CE
 assert.equal(sanitizedSecret.includes('BEGIN CERTIFICATE'), false);
 assert.equal(sanitizedSecret.includes('SYNTHETIC-ROOT-CA'), false);
 
-const sanitizedConnectionString = buildExplicitSslConnectionString('postgres://user:pass@db.example/postgres?sslmode=require&sslrootcert=ignored&connect_timeout=10');
+const sanitizationUrl = new URL('postgres://db.example/postgres?sslmode=require&sslrootcert=ignored&connect_timeout=10');
+sanitizationUrl.username = 'validator';
+sanitizationUrl.password = 'placeholder-password';
+
+const sanitizedConnectionString = buildExplicitSslConnectionString(sanitizationUrl.toString());
 assert.equal(sanitizedConnectionString.includes('sslmode='), false);
 assert.equal(sanitizedConnectionString.includes('sslrootcert='), false);
 assert.ok(sanitizedConnectionString.includes('connect_timeout=10'));
