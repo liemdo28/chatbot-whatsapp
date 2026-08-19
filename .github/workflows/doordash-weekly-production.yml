@@ -41,6 +41,20 @@ jobs:
       failure_summary: ${{ steps.workflow_run.outputs.failure_summary }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: doordash_production_validation
+          POSTGRES_USER: validator
+          POSTGRES_PASSWORD: validator_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U validator -d doordash_production_validation"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     permissions:
       contents: read
     defaults:
@@ -81,6 +95,8 @@ jobs:
         run: npm run test:production-ingestion
 
       - name: Test production Postgres
+        env:
+          DATABASE_URL: postgres://validator:validator_password@127.0.0.1:5432/doordash_production_validation
         run: npm run test:production-postgres
 
       - name: Test production runner

@@ -13,6 +13,12 @@
   },
   {
     "rule": "database-url",
+    "path_regex": "^\\.github/workflows/doordash-weekly-production\\.yml$",
+    "line_regex": "postgres://validator:validator_password@127\\.0\\.0\\.1:5432/doordash_production_validation",
+    "reason": "Disposable GitHub Actions Postgres service URL used only for manual preflight and production workflow self-tests."
+  },
+  {
+    "rule": "database-url",
     "path_regex": "^doordash-campaign-agent/scripts/test-production-postgres\\.ts$",
     "line_regex": "postgres://rollback-user:rollback-pass@localhost:5432/test\\?token=should-hide",
     "reason": "Synthetic sanitization fixture for rollback/error redaction coverage."
@@ -28,5 +34,11 @@
     "path_regex": "^doordash-campaign-agent/scripts/validate-production-workflow\\.ts$",
     "line_regex": "postgres://validator:validator_password@127\\.0\\.0\\.1:5432/doordash_validation",
     "reason": "Workflow validation asserts the disposable CI database URL verbatim."
+  },
+  {
+    "rule": "database-url",
+    "path_regex": "^doordash-campaign-agent/scripts/validate-production-workflow\\.ts$",
+    "line_regex": "postgres://validator:validator_password@127\\.0\\.0\\.1:5432/doordash_production_validation",
+    "reason": "Workflow validation asserts the disposable production-workflow database URL verbatim."
   }
 ]
