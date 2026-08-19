@@ -1,0 +1,7 @@
+# mi-node-agent - LAPTOP2 example configuration
+NODE_ID=laptop2
+NODE_SECRET=<REQUIRED_NODE_SECRET>
+NODE_AGENT_PORT=4100
+MI_CORE_URL=http://100.118.102.113:4001
+PROJECT_DIR=C:/Users/hoang/Downloads/laptop2-integration-qb
+LOGS_DIR=C:/Users/hoang/Downloads/laptop2-integration-qb/logs

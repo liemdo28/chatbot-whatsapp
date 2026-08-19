@@ -1,4 +1,7 @@
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+
 const { chromium } = require('playwright');
+const testAccount = require('./src/accounts')[0];
 
 (async () => {
   const browser = await chromium.launch({ headless: false, args: ['--no-sandbox'] });
@@ -10,15 +13,13 @@ const { chromium } = require('playwright');
   await page.goto('https://merchant-portal.doordash.com/', { waitUntil: 'domcontentloaded', timeout: 30000 });
   await page.waitForTimeout(2000);
 
-  await page.fill('input[type="email"]', 'bakudanramen210@gmail.com');
+  await page.fill('input[type="email"]', testAccount.email);
   await page.waitForTimeout(500);
   await page.click('button:has-text("Continue to Log In")');
   await page.waitForTimeout(2000);
 
-  await page.fill('input[type="password"]', 'Rawsushi123');
+  await page.fill('input[type="password"]', testAccount.password);
   await page.waitForTimeout(500);
-
-  // Try pressing Enter
   await page.keyboard.press('Enter');
 
   try {
@@ -26,17 +27,15 @@ const { chromium } = require('playwright');
     console.log('SUCCESS - URL:', page.url());
   } catch {
     console.log('Still on identity page after Enter');
-    // Check for error
     const bodyText = await page.textContent('body');
     const errIdx = bodyText.toLowerCase().indexOf('incorrect');
-    if (errIdx >= 0) console.log('Error found:', bodyText.slice(errIdx, errIdx+100));
+    if (errIdx >= 0) console.log('Error found:', bodyText.slice(errIdx, errIdx + 100));
     else console.log('No "incorrect" error found on page');
   }
 
   await page.screenshot({ path: 'data/sessions/test3-result.png' });
   console.log('Screenshot saved');
 
-  // Keep browser open for 10s to inspect manually
   await page.waitForTimeout(10000);
   await browser.close();
 })().catch(e => console.error('Fatal:', e.message));

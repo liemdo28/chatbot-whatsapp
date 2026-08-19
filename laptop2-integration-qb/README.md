@@ -1,56 +1,39 @@
-# Laptop2 — Integration-QB Stack
+# Laptop2 - Integration-QB Stack
 
-> Bản copy từ laptop1 của project Integration-QB + 3 service hỗ trợ. **Chỉ cần 1 cú click để cài đặt**, kết nối Mi-Core **giống hệt laptop1**.
+This package must not contain production credentials or browser session state.
 
-## Quick Start (3 bước)
+## Quick start
 
-```bat
-REM Bước 1: Copy folder "laptop2-integration-qb" sang laptop2
-REM Bước 2: Mở CMD trong folder, chạy:
-INSTALL-ONE-CLICK.bat
+1. Copy `laptop2-integration-qb` to the target machine.
+2. Run `INSTALL-ONE-CLICK.bat`.
+3. The installer creates local `.env` files from placeholder-only `env-laptop2.example.txt` templates.
+4. Fill the required values in the generated `.env` files or provide them via machine environment variables.
+5. Re-run `INSTALL-ONE-CLICK.bat` after configuration passes validation.
+6. Start services with `START-ALL.bat`.
+7. Validate connectivity with `VERIFY-INSTALL.bat`.
 
-REM Bước 3: Sau khi cài xong, khởi động tất cả:
-START-ALL.bat
+## Required credential-bearing configuration
 
-REM Bước 4 (tùy chọn): Verify kết nối Mi-Core
-VERIFY-INSTALL.bat
-```
+- `qb-ops-agent\.env`
+  - `MI_CORE_API_KEY`
+  - `QBWC_PASSWORD`
+- `mi-node-agent\.env`
+  - `NODE_SECRET`
+- `doordash-agent\.env`
+  - `DD_B1_EMAIL`
+  - `DD_B1_PASS`
+  - `DD_B2_EMAIL`
+  - `DD_B2_PASS`
+  - `DD_B3_EMAIL`
+  - `DD_B3_PASS`
+  - `DD_RAW_EMAIL`
+  - `DD_RAW_PASS`
 
-## Bao gồm 4 service
+## Security rules
 
-| Service | Port | Mục đích |
-|---------|------|----------|
-| **qb-ops-agent** | 3457 | QuickBooks Desktop monitor + SOAP server cho QBWC |
-| **mi-node-agent** | 4100 | Node controller cho Mi-Core (NODE_ID=laptop2) |
-| **whatsapp-ai-gateway** | 3212 | Food safety chatbot |
-| **doordash-agent** | 3461 | DoorDash scraper (Playwright) |
+- Never commit production tokens, passwords, or session data.
+- Keep generated `.env` files local and out of Git.
+- Provision WhatsApp browser/session state outside the repository.
+- Use placeholders only in tracked docs and templates.
 
-## Thông tin kết nối Mi-Core (giống laptop1)
-
-```
-MI_CORE_URL=http://100.118.102.113:4001
-MI_CORE_API_KEY=b149c4783a1109ff46d01498d91766e7
-```
-
-## Khác biệt so với laptop1
-
-| | Laptop1 | Laptop2 |
-|---|---|---|
-| NODE_ID | `laptop1` | **`laptop2`** |
-| MACHINE_ID (QB) | `qb-laptop-01` | **`qb-laptop-02`** |
-| whatsapp port | 3210/3211 | **3212** |
-| doordash port | 3460 | **3461** |
-
-## Xem chi tiết
-
-Đọc file [`LAPTOP2_INSTALL.md`](LAPTOP2_INSTALL.md) để biết:
-- Cách cài thủ công
-- Cách verify sau cài
-- Troubleshooting
-- Cấu hình nâng cao
-
----
-
-**Build date:** 2026-06-30  
-**Source:** `C:\Users\hoang\Downloads\source` (laptop1)  
-**Compatible with:** Windows 10/11 + Node.js 18+
+See `LAPTOP2_INSTALL.md` for the full setup flow.

@@ -24,7 +24,7 @@
 - **Source:** `c:\Ld-project\services\qb-ops-agent\src\index.js`
 - **Port:** 3457
 - **Dependencies:** express, xml2js, dotenv (all installed)
-- **Auth Credentials:** user=mi-admin, key=b149c4783a1109ff46d01498d91766e7
+- **Auth Credentials:** user=mi-admin, key sourced from local ignored runtime configuration
 
 ---
 
@@ -38,7 +38,7 @@
   <soap:Body>
     <authenticate xmlns="http://developer.intuit.com/">
       <strUserName>mi-admin</strUserName>
-      <strPassword>b149c4783a1109ff46d01498d91766e7</strPassword>
+      <strPassword>REPLACE_WITH_QBWC_PASSWORD</strPassword>
     </authenticate>
   </soap:Body>
 </soap:Envelope>
@@ -245,7 +245,7 @@ QWCLog is written by the QuickBooks Web Connector executable itself (not by qb-o
 **To generate QWCLog:**
 1. Open QuickBooks Desktop → open `MI_CEO.qbw`
 2. Open Web Connector → click "Add an Application" → select `mi-core-connector.qwc`
-3. Enter password: `b149c4783a1109ff46d01498d91766e7`
+3. Enter password from local `QBWC_PASSWORD`
 4. Check "Auto-Run", set schedule to 6 hours
 5. Click **"Update Selected"**
 6. QWCLog will be created at the path above
@@ -284,7 +284,7 @@ The SOAP server is validated and functional. To complete end-to-end with the **a
 2. **Start qb-ops-agent** → `node src/index.js` (port 3457)
 3. **Open QuickBooks Web Connector** → double-click `Web Connector.lnk`
 4. **Add application** → select `mi-core-connector.qwc`
-5. **Enter password** → `b149c4783a1109ff46d01498d91766e7`
+5. **Enter password** → local `QBWC_PASSWORD` from the ignored runtime config
 6. **Enable Auto-Run** → 360 minutes (6 hours)
 7. **Click "Update Selected"** → watch QWCLog for authenticate → sendRequestXML → receiveResponseXML → closeConnection
 8. **Verify mi-core ingest** → ensure localhost:4001 is running if data persistence is needed

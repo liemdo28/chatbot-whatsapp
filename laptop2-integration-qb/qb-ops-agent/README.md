@@ -28,7 +28,7 @@ cp .env.example .env
 
 ### 4. Configure Company Files
 
-Edit `data\company-files.json` to list your QuickBooks company files:
+Create a local `data\company-files.json` from `data\company-files.example.json`, then edit it to list your QuickBooks company files:
 
 ```json
 [
@@ -41,6 +41,8 @@ Edit `data\company-files.json` to list your QuickBooks company files:
   }
 ]
 ```
+
+Do not add QuickBooks passwords or other credentials to this file. Keep the generated `data\company-files.json` local and out of Git.
 
 ### 5. Build TypeScript
 

@@ -1,17 +1,20 @@
-/**
- * DoorDash Agent — HTTP server + scheduled scraper
- * Port: 3460
- * Runs on: laptop1 (100.111.97.25) or mi-core-primary
- */
-require('dotenv').config({ path: require('path').join(__dirname, '../../../.env') });
-
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { runScrape } = require('./scraper');
-const ACCOUNTS = require('./accounts');
 
-const PORT = process.env.DD_AGENT_PORT || 3460;
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
+const { runScrape } = require('./scraper');
+
+let ACCOUNTS;
+try {
+  ACCOUNTS = require('./accounts');
+} catch (err) {
+  console.error('[CONFIG] ' + (err && err.message ? err.message : String(err)));
+  process.exit(1);
+}
+
+const PORT = parseInt(process.env.DD_AGENT_PORT || process.env.PORT || '3460', 10);
 const DATA_DIR = path.join(__dirname, '../data');
 const CACHE_FILE = path.join(DATA_DIR, 'latest-metrics.json');
 const LOG_FILE = path.join(__dirname, '../logs/agent.log');
@@ -54,7 +57,7 @@ async function runAllAccounts() {
 
   const results = [];
   for (const account of ACCOUNTS) {
-    log(`Scraping ${account.id} (${account.email})`);
+    log(`Scraping ${account.id}`);
     try {
       const result = await runScrape(account, true);
       results.push({ ...result, brand: account.brand, label: account.label });
@@ -118,7 +121,7 @@ app.post('/scrape/:accountId', async (req, res) => {
 
 // List accounts
 app.get('/accounts', (req, res) => {
-  res.json(ACCOUNTS.map(a => ({ id: a.id, brand: a.brand, label: a.label, email: a.email })));
+  res.json(ACCOUNTS.map(a => ({ id: a.id, brand: a.brand, label: a.label })));
 });
 
 // ── Start ───────────────────────────────────────────────────────────────────

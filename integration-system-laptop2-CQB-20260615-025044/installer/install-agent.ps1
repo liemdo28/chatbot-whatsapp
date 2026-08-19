@@ -6,7 +6,7 @@
 param(
     [Parameter(Mandatory=$true)][string]$LaptopId,
     [Parameter(Mandatory=$true)][string]$StoreName,
-    [string]$ApiKey  = "xicB1Iyn9i1LFIjC13d74HqDxKpx4ZGtWkpbp9ZfwouQLFTBMipQ2eobdlqu4s6d",
+    [string]$ApiKey  = $env:MI_CORE_API_KEY,
     [string]$MiCoreUrl = "http://100.118.102.113:4001",
     [switch]$NoPrompt
 )
@@ -21,6 +21,11 @@ $VenvPyW   = Join-Path $VenvDir "Scripts\pythonw.exe"
 $DataDir   = "C:\ProgramData\ToastPOSManager"
 $LogFile   = Join-Path $DataDir "logs\install.log"
 $TaskName  = "ToastPOSManager-Background"
+
+if ([string]::IsNullOrWhiteSpace($ApiKey)) {
+    Write-Host "ERROR: MI_CORE_API_KEY is required. Set it in the current environment or pass -ApiKey." -ForegroundColor Red
+    exit 1
+}
 
 function Log($msg) {
     $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
