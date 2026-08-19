@@ -65,6 +65,13 @@ async function readCount(pool: Pool, schemaName: string, tableName: string): Pro
     return Number(result.rows[0]?.count || 0);
 }
 
+async function readMigrationVersions(pool: Pool, schemaName: string): Promise<string[]> {
+    const result = await pool.query<{ version: string }>(
+        `SELECT version FROM "${schemaName}".schema_migrations ORDER BY version ASC`,
+    );
+    return result.rows.map(row => row.version);
+}
+
 function createConfig(schemaName: string, databaseUrl: string): ProductionWorkflowConfig {
     return {
         executionEnv: 'test',
@@ -136,8 +143,20 @@ function createStorage(databaseUrl: string, schemaName: string, shouldFailMidTra
         await Promise.all([migrationStorageA.initialize(), migrationStorageB.initialize()]);
         await Promise.all([migrationStorageA.close(), migrationStorageB.close()]);
 
-        const migrationCount = await readCount(adminPool, primarySchemaName, 'schema_migrations');
-        assert.equal(migrationCount, 1, 'expected exactly one migration record after rerunnable initialize');
+        const migrationVersions = await readMigrationVersions(adminPool, primarySchemaName);
+        assert.equal(
+            new Set(migrationVersions).size,
+            migrationVersions.length,
+            'expected schema_migrations to contain each migration version at most once after rerunnable initialize',
+        );
+        assert.ok(
+            migrationVersions.includes('001_weekly_production_foundation'),
+            'expected foundation migration to be recorded after rerunnable initialize',
+        );
+        assert.ok(
+            migrationVersions.includes('002_rules_review_packages'),
+            'expected review package migration to be recorded after rerunnable initialize',
+        );
 
         const first = await runWeeklyProductionWorkflow({
             trigger: 'postgres-integration',
