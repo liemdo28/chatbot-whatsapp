@@ -14,9 +14,17 @@ const HEARTBEAT_INTERVAL_MS = (parseInt(process.env.HEARTBEAT_INTERVAL_SECONDS |
 const WORKFLOW_INTERVAL_MS = (parseInt(process.env.WORKFLOW_CHECK_INTERVAL_MINUTES || '15', 10)) * 60 * 1000;
 const COMMAND_POLL_INTERVAL_MS = (parseInt(process.env.COMMAND_POLL_INTERVAL_SECONDS || '60', 10)) * 1000;
 
+function requireEnv(name: string): string {
+  const value = (process.env[name] || '').trim();
+  if (!value) {
+    throw new Error(`Missing required qb-ops-agent configuration: ${name}. Populate services/qb-ops-agent/.env before startup.`);
+  }
+  return value;
+}
+
 const MI_CORE_URL = process.env.MI_CORE_URL || 'http://localhost:4001';
-const MI_CORE_API_KEY = process.env.MI_CORE_API_KEY || '';
-const MACHINE_ID = process.env.MACHINE_ID || 'qb-laptop-01';
+const MI_CORE_API_KEY = requireEnv('MI_CORE_API_KEY');
+const MACHINE_ID = requireEnv('MACHINE_ID');
 
 let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
 let workflowTimer: ReturnType<typeof setInterval> | null = null;

@@ -37,9 +37,9 @@ install.bat
 `install.bat` will:
 1. Verify Node.js
 2. `npm install`
-3. Generate a random `QB_API_KEY` and create `.env`
-4. Generate `mi-core-connector.qwc` from your IP
-5. Run connection test
+3. Create `.env` from a placeholder-only template
+4. Create `data\company-files.json` from `data\company-files.example.json`
+5. Stop until `MI_CORE_API_KEY` and `QBWC_PASSWORD` are set locally
 
 Then start the agent:
 
@@ -63,18 +63,19 @@ Edit `.env`:
 ```bash
 PORT=3456
 QB_USER=mi-admin
-QB_API_KEY=<your-32-char-key>
+QBWC_PASSWORD=<your-qbwc-password>
 AGENT_OS_API_URL=http://<mi-core-ip>:4001
 LAPTOP1_IP=<your-laptop1-ip>
-QB_COMPANY_FILE=C:\ProgramData\Intuit\QuickBooks\Company Files\MI_CEO.qbw
 ```
+
+Create a local `data\company-files.json` from `data\company-files.example.json` and set the company file paths there. Do not store QuickBooks passwords in that JSON file.
 
 ## Load .qwc into QuickBooks
 
 1. Open QuickBooks Desktop on laptop1
 2. Open QB Web Connector
 3. **Add an Application** → select `mi-core-connector.qwc`
-4. Enter password = your `QB_API_KEY`
+4. Enter password = your `QBWC_PASSWORD`
 5. ✅ Auto-Run, schedule 6 hours
 6. Click **Update Selected** to test
 
@@ -84,7 +85,7 @@ Add to `E:\Project\Master\mi-core\.env`:
 
 ```bash
 QB_AGENT_URL=http://<laptop1-ip>:3456
-QB_API_KEY=<same-key-as-above>
+QBWC_PASSWORD=<same-password-as-above>
 ```
 
 Mount the ingest endpoint in mi-core (or run `miCoreIngest.js` standalone):
@@ -128,5 +129,5 @@ QBWC ↔ qb-ops-agent exchanges follow this sequence:
 | "Application not certified" | Click "Yes, always allow" — this is expected for custom apps |
 | Agent offline after reboot | `pm2 startup` and `pm2 save` on laptop1 |
 | IP changed | Edit `LAPTOP1_IP` in `.env`, re-run `node src/generateQwc.js`, reload .qwc |
-| Auth failed | Verify `QB_USER` and `QB_API_KEY` match in both `.env` files |
+| Auth failed | Verify `QBWC_USER` and `QBWC_PASSWORD` match the local `.env` and QB Web Connector |
 | SOAP 500 errors | Check agent logs, look for XML parse errors |

@@ -19,7 +19,16 @@ import { financialRouter } from '../api/financial-endpoint';
 
 const QBWC_PORT = parseInt(process.env.QBWC_PORT || '3457', 10);
 const QBWC_USER = process.env.QBWC_USER || 'mi-qb-agent';
-const QBWC_PASS = process.env.QB_API_KEY || 'b149c4783a1109ff46d01498d91766e7';
+
+function requireQbwcPassword(): string {
+  const value = (process.env.QBWC_PASSWORD || process.env.QB_API_KEY || '').trim();
+  if (!value) {
+    throw new Error('Missing required QBWC_PASSWORD configuration. Populate services/qb-ops-agent/.env before startup.');
+  }
+  return value;
+}
+
+const QBWC_PASS = requireQbwcPassword();
 const QBWC_NAMESPACE = 'http://developer.intuit.com/';
 
 // Active session tickets: ticket → { companyFile, requestsSent, done }

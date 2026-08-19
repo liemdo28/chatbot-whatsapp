@@ -1,0 +1,8 @@
+[
+  {
+    "rule": "credential-assignment",
+    "path_regex": "^integration-system-laptop2-CQB-20260615-025044/tests/test_first_run_wizard_config\\.py$",
+    "line_regex": "MI_CORE_API_KEY=(secret123|new-key)",
+    "reason": "Placeholder test fixture values used to verify config rewrite behavior."
+  }
+]

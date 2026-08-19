@@ -13,8 +13,6 @@ export interface ConfiguredCompanyFile {
   assigned_store: string | null;
   assigned_department: string | null;
   notes: string | null;
-  qb_username: string;
-  qb_password: string;
 }
 
 function ensureSettingsFile(): void {
@@ -38,8 +36,6 @@ export function loadConfiguredCompanyFiles(): ConfiguredCompanyFile[] {
     assigned_store: file.assigned_store || null,
     assigned_department: file.assigned_department || null,
     notes: file.notes || null,
-    qb_username: file.qb_username || 'admin',
-    qb_password: file.qb_password || '',
   })).filter(f => !!f.company_file_path);
 }
 
@@ -79,8 +75,6 @@ export function addConfiguredCompanyFile(machineId: string, filePath: string, co
     assigned_store: null,
     assigned_department: null,
     notes: null,
-    qb_username: 'admin',
-    qb_password: '',
   };
 
   const deduped = existing.filter(f => f.company_file_path.toLowerCase() !== normalizedPath.toLowerCase());

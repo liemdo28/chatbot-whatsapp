@@ -5,7 +5,7 @@
   <soap:Body>
     <authenticate xmlns="http://developer.intuit.com/">
       <strUserName>mi-admin</strUserName>
-      <strPassword>b149c4783a1109ff46d01498d91766e7</strPassword>
+      <strPassword>REPLACE_WITH_QBWC_PASSWORD</strPassword>
     </authenticate>
   </soap:Body>
 </soap:Envelope>

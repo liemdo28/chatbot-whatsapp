@@ -2,6 +2,10 @@
 .env
 .env.*
 !.env.example
+!.env.qb.example
+!.env.agent.example
+!*.env.example.txt
+**/.env.qb
 *.pem
 *.p12
 *.pfx
@@ -9,6 +13,15 @@
 *service-account*.json
 .machine_token
 *.qwc
+**/accounts.local.json
+**/accounts.*.local.json
+**/*.generated.env
+**/*qbwc*credentials*.json
+**/local-config.json
+**/credentials.json
+**/token.json
+**/.toast-session.json
+**/qb-ops-agent/data/company-files.json
 
 # Dependencies and virtual environments
 node_modules/

@@ -1,12 +1,7 @@
-const { runScrape } = require('./src/scraper');
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
-const testAccount = {
-  id: 'bakudan-1',
-  brand: 'Bakudan Ramen',
-  label: 'B1',
-  email: 'bakudanramen210@gmail.com',
-  password: 'Rawsushi123',
-};
+const { runScrape } = require('./src/scraper');
+const testAccount = require('./src/accounts')[0];
 
 console.log('Testing login for', testAccount.id);
 runScrape(testAccount, true).then(result => {

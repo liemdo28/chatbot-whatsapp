@@ -233,7 +233,7 @@ ception
   3. Open QuickBooks Web Connector (Start menu)
   4. Verify 'mi-core-connector' is in the list:
      - App URL: http://localhost:3457/qbwc
-     - Password: b149c4783a1109ff46d01498d91766e7
+     - Password source: QBWC_PASSWORD from the local ignored .env
   5. Click 'Update Selected'
   6. Wait for QBWC to complete the sync
   7. After sync completes, run this script again

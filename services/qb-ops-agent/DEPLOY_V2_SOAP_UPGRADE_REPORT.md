@@ -80,7 +80,7 @@ PS> node dist/index.js
 | SOAP at `/qbwc` | ✅ | POST endpoint handles all QBWC methods |
 | Status at `/api/status` | ✅ | `GET /api/status` returns JSON |
 | QBWC user = `mi-qb-agent` | ✅ | `QB_USER=mi-qb-agent` |
-| QBWC password | ✅ | `QB_API_KEY=b149c4783a1109ff46d01498d91766e7` |
+| QBWC password | ✅ | `QBWC_PASSWORD=<set-locally>` |
 | Data stored to `data/` | ✅ | `qb-raw-data.json`, `qb-sync-status.json` |
 | Express dependency | ✅ | `express@4.18.2` |
 
@@ -156,7 +156,7 @@ Old JS files removed: `index.js`, `logger.js`, `qbHandlers.js`, `generateQwc.js`
 2. **Start the new agent** — `node dist/index.js` or `start.bat`
 3. **Open QuickBooks Desktop** → `MI_CEO.qbw`
 4. **Open QB Web Connector** → Add application `mi-core-connector.qwc`
-5. **Enter password** → `b149c4783a1109ff46d01498d91766e7`
+5. **Enter password** → local `QBWC_PASSWORD` value from the ignored runtime `.env`
 6. **Verify sync** → `curl http://localhost:3457/api/status` should show `requests_received: 3`
 
 ---
