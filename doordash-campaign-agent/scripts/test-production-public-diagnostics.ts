@@ -34,6 +34,8 @@ const config: ProductionWorkflowConfig = {
     diagnosticsDir: 'artifacts/weekly-production',
     sqliteDbPath: '',
     postgresDatabaseUrl: '',
+    postgresDatabaseCaCert: '-----BEGIN CERTIFICATE-----\nSYNTHETIC-ROOT-CA\n-----END CERTIFICATE-----\n',
+    postgresDatabaseCaCertPath: '/tmp/synthetic-ca.pem',
     fixtureReportDir: '',
 };
 
@@ -68,6 +70,8 @@ assert.equal(serialized.includes('Maintain current settings'), false);
 assert.equal(serialized.includes('reportPath'), false);
 assert.equal(serialized.includes('reviewPackagePath'), false);
 assert.equal(serialized.includes('raw-sushi-bar-marketing-report-2026-07-13.zip'), false);
+assert.equal(serialized.includes('BEGIN CERTIFICATE'), false);
+assert.equal(serialized.includes('SYNTHETIC-ROOT-CA'), false);
 assert.equal(diagnostics.provider, 'rules');
 assert.equal(diagnostics.ruleVersion, 'rules-v1');
 assert.equal(diagnostics.recommendationCount, 3);

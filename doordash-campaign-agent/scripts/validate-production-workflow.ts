@@ -39,6 +39,7 @@ assert.equal(stepByName(productionSteps, 'Validate production store config').run
 assert.equal(stepByName(productionSteps, 'Test weekly window').run.trim(), 'npm run test:weekly-window');
 assert.equal(stepByName(productionSteps, 'Test production sanitization').run.trim(), 'npm run test:production-sanitization');
 assert.equal(stepByName(productionSteps, 'Test production public diagnostics').run.trim(), 'npm run test:production-public-diagnostics');
+assert.equal(stepByName(productionSteps, 'Test production Postgres TLS config').run.trim(), 'npm run test:production-postgres-tls');
 assert.equal(stepByName(productionSteps, 'Test production rules provider').run.trim(), 'npm run test:production-rules');
 assert.equal(stepByName(productionSteps, 'Test production hybrid provider').run.trim(), 'npm run test:production-hybrid');
 assert.equal(stepByName(productionSteps, 'Test production rules preflight').run.trim(), 'npm run test:production-preflight-rules');
@@ -51,6 +52,7 @@ assert.equal(stepByName(productionSteps, 'Test production runner').run.trim(), '
 assert.equal(stepByName(productionSteps, 'Validate workflow definitions').run.trim(), 'npm run test:workflow-validation');
 assert.equal(stepByName(productionSteps, 'NPM production audit').run.trim(), 'npm audit --omit=dev --audit-level=critical');
 assert.equal(stepByName(productionSteps, 'Run production preflight').run.includes('npm run preflight:production'), true);
+assert.equal(stepByName(productionSteps, 'Run production preflight').env.DOORDASH_PRODUCTION_DATABASE_CA_CERT, '${{ secrets.DOORDASH_PRODUCTION_DATABASE_CA_CERT }}');
 assert.equal(productionRunStep.if, "github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full'");
 assert.equal(productionRunStep.env.ANALYSIS_PROVIDER, "${{ vars.ANALYSIS_PROVIDER || 'rules' }}");
 assert.equal(productionRunStep.env.OPENAI_MODEL, '${{ vars.OPENAI_MODEL }}');
@@ -64,6 +66,7 @@ assert.equal(productionRunStep.env.DD_STORE_TIMEZONE, '${{ vars.DD_STORE_TIMEZON
 assert.equal(productionRunStep.env.DD_STORE_CURRENCY, '${{ vars.DD_STORE_CURRENCY }}');
 assert.equal(productionRunStep.env.OPENAI_API_KEY, '${{ secrets.OPENAI_API_KEY }}');
 assert.equal(productionRunStep.env.DATABASE_URL, '${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}');
+assert.equal(productionRunStep.env.DOORDASH_PRODUCTION_DATABASE_CA_CERT, '${{ secrets.DOORDASH_PRODUCTION_DATABASE_CA_CERT }}');
 assert.equal(productionRunStep.env.IMAP_USER, '${{ secrets.IMAP_USER }}');
 assert.equal(productionRunStep.env.IMAP_PASS, '${{ secrets.IMAP_PASS }}');
 assert.ok(workflow.jobs['create-production-issue'].steps[0].env.FAILURE_SUMMARY);
@@ -90,6 +93,7 @@ assert.equal(stepByName(validationSteps, 'Validate production store config').run
 assert.equal(stepByName(validationSteps, 'Test weekly window').run.trim(), 'npm run test:weekly-window');
 assert.equal(stepByName(validationSteps, 'Test production sanitization').run.trim(), 'npm run test:production-sanitization');
 assert.equal(stepByName(validationSteps, 'Test production public diagnostics').run.trim(), 'npm run test:production-public-diagnostics');
+assert.equal(stepByName(validationSteps, 'Test production Postgres TLS config').run.trim(), 'npm run test:production-postgres-tls');
 assert.equal(stepByName(validationSteps, 'Test production rules provider').run.trim(), 'npm run test:production-rules');
 assert.equal(stepByName(validationSteps, 'Test production hybrid provider').run.trim(), 'npm run test:production-hybrid');
 assert.equal(stepByName(validationSteps, 'Test production rules preflight').run.trim(), 'npm run test:production-preflight-rules');
@@ -100,5 +104,6 @@ assert.equal(stepByName(validationSteps, 'Test production Postgres').run.trim(),
 assert.equal(stepByName(validationSteps, 'Test production runner').run.trim(), 'npm run test:production-runner');
 assert.equal(stepByName(validationSteps, 'Validate workflow definitions').run.trim(), 'npm run test:workflow-validation');
 assert.equal(stepByName(validationSteps, 'NPM production audit').run.trim(), 'npm audit --omit=dev --audit-level=critical');
+assert.equal(JSON.stringify(validation).includes('DOORDASH_PRODUCTION_DATABASE_CA_CERT'), false);
 
 console.log('workflow-validation tests passed');

@@ -88,6 +88,9 @@ jobs:
       - name: Test production public diagnostics
         run: npm run test:production-public-diagnostics
 
+      - name: Test production Postgres TLS config
+        run: npm run test:production-postgres-tls
+
       - name: Test production rules provider
         run: npm run test:production-rules
 
@@ -130,6 +133,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           DATABASE_URL: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}
+          DOORDASH_PRODUCTION_DATABASE_CA_CERT: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_CA_CERT }}
           DD_REPORT_ALLOWED_SENDERS: ${{ vars.DD_REPORT_ALLOWED_SENDERS }}
           IMAP_HOST: ${{ vars.IMAP_HOST }}
           IMAP_PORT: ${{ vars.IMAP_PORT }}
@@ -167,6 +171,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           DATABASE_URL: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}
+          DOORDASH_PRODUCTION_DATABASE_CA_CERT: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_CA_CERT }}
           DD_REPORT_ALLOWED_SENDERS: ${{ vars.DD_REPORT_ALLOWED_SENDERS }}
           IMAP_HOST: ${{ vars.IMAP_HOST }}
           IMAP_PORT: ${{ vars.IMAP_PORT }}

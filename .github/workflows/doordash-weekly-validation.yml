@@ -72,6 +72,9 @@ jobs:
       - name: Test production public diagnostics
         run: npm run test:production-public-diagnostics
 
+      - name: Test production Postgres TLS config
+        run: npm run test:production-postgres-tls
+
       - name: Test production rules provider
         run: npm run test:production-rules
 

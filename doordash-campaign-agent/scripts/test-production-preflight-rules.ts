@@ -6,6 +6,11 @@ const cliPath = path.resolve('node_modules', 'tsx', 'dist', 'cli.mjs');
 const databaseUrl = new URL('postgres://127.0.0.1:1/doordash_validation');
 databaseUrl.username = 'validator';
 databaseUrl.password = 'validator_password';
+const syntheticCa = [
+    '-----BEGIN CERTIFICATE-----',
+    'SYNTHETIC-ROOT-CA',
+    '-----END CERTIFICATE-----',
+].join('\n');
 const result = spawnSync(process.execPath, [
     cliPath,
     'scripts/run-production-preflight.ts',
@@ -23,6 +28,7 @@ const result = spawnSync(process.execPath, [
         DD_REPORT_SOURCE: 'imap',
         DD_STORAGE_BACKEND: 'postgres',
         DATABASE_URL: databaseUrl.toString(),
+        DOORDASH_PRODUCTION_DATABASE_CA_CERT: syntheticCa,
         IMAP_USER: 'rules@example.com',
         IMAP_PASS: 'not-a-real-password',
         DD_REPORT_ALLOWED_SENDERS: 'reports@doordash.com',
