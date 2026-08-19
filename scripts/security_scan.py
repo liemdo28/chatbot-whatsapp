@@ -193,7 +193,7 @@ def read_text(path: Path) -> str | None:
 
 def should_skip_content_scan(path: str) -> bool:
     lowered = path.lower()
-    return lowered.endswith("package-lock.json")
+    return lowered.endswith("package-lock.json") or lowered.endswith("scripts/security_scan_allowlist.json")
 
 
 def scan() -> list[Violation]:

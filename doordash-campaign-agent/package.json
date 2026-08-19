@@ -6,6 +6,7 @@
     "scripts": {
         "build": "tsc",
         "automation:weekly:production": "tsx scripts/run-weekly-production.ts",
+        "preflight:production": "tsx scripts/run-production-preflight.ts",
         "validate:production-store-config": "tsx scripts/validate-production-store-config.ts",
         "test:weekly-window": "tsx scripts/test-weekly-window.ts",
         "test:production-sanitization": "tsx scripts/test-production-sanitization.ts",

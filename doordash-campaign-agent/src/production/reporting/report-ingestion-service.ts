@@ -127,19 +127,11 @@ function findOfficialExportLink(message: GmailInboxMessage): string | null {
 }
 
 async function downloadReportLink(targetUrl: string, config: ProductionWorkflowConfig, messageId: string): Promise<{ filePath: string; hash: string }> {
-    const headers: Record<string, string> = {};
-    if (process.env['DD_REPORT_LINK_AUTHORIZATION']) {
-        headers['Authorization'] = process.env['DD_REPORT_LINK_AUTHORIZATION']!;
-    }
-    if (process.env['DD_REPORT_LINK_COOKIE']) {
-        headers['Cookie'] = process.env['DD_REPORT_LINK_COOKIE']!;
-    }
-
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REPORT_LINK_TIMEOUT_MS);
 
     try {
-        const response = await fetch(targetUrl, { headers, signal: controller.signal });
+        const response = await fetch(targetUrl, { signal: controller.signal });
         if (!response.ok) {
             if (response.status === 401 || response.status === 403) {
                 throw new ReportAuthenticationError(`Official report link download failed authentication with HTTP ${response.status}.`);

@@ -5,6 +5,14 @@ on:
     - cron: '5 18 * * 0'
   workflow_dispatch:
     inputs:
+      run_mode:
+        description: Choose preflight-only validation or a full production run
+        required: true
+        default: preflight
+        type: choice
+        options:
+          - preflight
+          - full
       store_ids:
         description: Comma-separated store ids
         required: false
@@ -81,8 +89,42 @@ jobs:
       - name: Validate workflow definitions
         run: npm run test:workflow-validation
 
+      - name: Run production preflight
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DD_EXECUTION_ENV: production
+          DD_ANALYSIS_PROVIDER: openai
+          DD_REPORT_SOURCE: imap
+          DD_STORAGE_BACKEND: postgres
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          DATABASE_URL: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}
+          DD_REPORT_ALLOWED_SENDERS: ${{ vars.DD_REPORT_ALLOWED_SENDERS }}
+          IMAP_HOST: ${{ vars.IMAP_HOST }}
+          IMAP_PORT: ${{ vars.IMAP_PORT }}
+          IMAP_SECURE: ${{ vars.IMAP_SECURE }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASS: ${{ secrets.IMAP_PASS }}
+          DD_REPORT_INBOX_LABEL: ${{ vars.DD_REPORT_INBOX_LABEL }}
+          DD_SCHEDULER_TIMEZONE: America/Los_Angeles
+        run: |
+          args=("--trigger" "preflight")
+          if [[ -n "${{ inputs.store_ids }}" ]]; then
+            args+=("--stores" "${{ inputs.store_ids }}")
+          else
+            args+=("--stores" "raw-sushi-bar")
+          fi
+          if [[ -n "${{ inputs.week_start }}" ]]; then
+            args+=("--week-start" "${{ inputs.week_start }}")
+          fi
+          if [[ -n "${{ inputs.week_end_exclusive }}" ]]; then
+            args+=("--week-end-exclusive" "${{ inputs.week_end_exclusive }}")
+          fi
+          npm run preflight:production -- "${args[@]}"
+
       - name: Execute weekly production workflow
         id: workflow_run
+        if: github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full'
         continue-on-error: true
         env:
           DD_EXECUTION_ENV: production
@@ -127,7 +169,7 @@ jobs:
         run: exit 1
 
   create-production-issue:
-    if: ${{ always() && needs.weekly-production.result == 'failure' && needs.weekly-production.outputs.pending_external_data != 'true' }}
+    if: ${{ always() && needs.weekly-production.result == 'failure' && needs.weekly-production.outputs.pending_external_data != 'true' && (github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full') }}
     needs:
       - weekly-production
     runs-on: ubuntu-latest

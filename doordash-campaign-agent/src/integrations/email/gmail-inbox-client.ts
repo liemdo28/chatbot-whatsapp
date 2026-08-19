@@ -53,14 +53,18 @@ function inboxConfig() {
     const host = process.env['IMAP_HOST'] || 'imap.gmail.com';
     const port = parseInt(process.env['IMAP_PORT'] || '993', 10);
     const secure = (process.env['IMAP_SECURE'] || 'true').toLowerCase() !== 'false';
-    const user = process.env['IMAP_USER'] || process.env['SMTP_USER'] || '';
-    const pass = process.env['IMAP_PASS'] || process.env['SMTP_PASS'] || '';
+    const user = process.env['IMAP_USER'] || '';
+    const pass = process.env['IMAP_PASS'] || '';
 
     if (!user || !pass) {
-        throw new Error('IMAP is not configured. Set IMAP_USER/IMAP_PASS or reuse SMTP_USER/SMTP_PASS.');
+        throw new Error('IMAP is not configured. Set IMAP_USER and IMAP_PASS.');
     }
 
     return { host, port, secure, user, pass };
+}
+
+export function assertImapEnvConfigured(): void {
+    inboxConfig();
 }
 
 function classifyImapError(error: unknown): Error {

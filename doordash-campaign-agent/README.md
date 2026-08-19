@@ -24,6 +24,7 @@ Run build and verification:
 
 ```bash
 npm run build
+npm run preflight:production -- --trigger local-preflight --stores raw-sushi-bar --week-start 2026-07-13 --week-end-exclusive 2026-07-20
 npm run validate:production-store-config
 npm run test:weekly-window
 npm run test:production-sanitization
@@ -57,6 +58,8 @@ npm run automation:weekly:production -- --trigger manual --stores raw-sushi-bar 
 
 The production workflow runs every Sunday at `18:05 UTC`. If the report email has not arrived yet, the workflow retries within the run and treats the failure as pending external data until `DD_REPORT_DELIVERY_GRACE_HOURS` has elapsed after the scheduled run time.
 
+Manual `workflow_dispatch` now defaults to `run_mode=preflight`. Preflight validates isolated config presence, IMAP authentication, report discovery/parsing, Postgres migrations, the `raw-sushi-bar -> 892006` mapping, and minimal OpenAI connectivity without persisting production snapshots or recommendations.
+
 ## Required repository variables
 
 GitHub Actions workflow `doordash-weekly-production` expects these repository variables:
@@ -76,6 +79,8 @@ GitHub Actions workflow `doordash-weekly-production` expects these repository se
 - `DOORDASH_PRODUCTION_DATABASE_URL`
 - `IMAP_USER`
 - `IMAP_PASS`
+
+No legacy DoorDash browser credentials, MI Core credentials, QB/QBWC credentials, browser cookies, or browser session profiles are used on the production path.
 
 ## Gmail / IMAP operating requirements
 

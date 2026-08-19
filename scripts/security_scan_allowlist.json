@@ -4,5 +4,29 @@
     "path_regex": "^integration-system-laptop2-CQB-20260615-025044/tests/test_first_run_wizard_config\\.py$",
     "line_regex": "MI_CORE_API_KEY=(secret123|new-key)",
     "reason": "Placeholder test fixture values used to verify config rewrite behavior."
+  },
+  {
+    "rule": "database-url",
+    "path_regex": "^\\.github/workflows/doordash-weekly-validation\\.yml$",
+    "line_regex": "postgres://validator:validator_password@127\\.0\\.0\\.1:5432/doordash_validation",
+    "reason": "Disposable GitHub Actions Postgres service URL used only for isolated validation runs."
+  },
+  {
+    "rule": "database-url",
+    "path_regex": "^doordash-campaign-agent/scripts/test-production-postgres\\.ts$",
+    "line_regex": "postgres://rollback-user:rollback-pass@localhost:5432/test\\?token=should-hide",
+    "reason": "Synthetic sanitization fixture for rollback/error redaction coverage."
+  },
+  {
+    "rule": "database-url",
+    "path_regex": "^doordash-campaign-agent/scripts/test-production-sanitization\\.ts$",
+    "line_regex": "postgres://leaky-user:leaky-pass@localhost:5432/doordash\\?(password=hunter2&token=shhh|token=shhh)",
+    "reason": "Synthetic sanitization fixture used to prove database URL redaction."
+  },
+  {
+    "rule": "database-url",
+    "path_regex": "^doordash-campaign-agent/scripts/validate-production-workflow\\.ts$",
+    "line_regex": "postgres://validator:validator_password@127\\.0\\.0\\.1:5432/doordash_validation",
+    "reason": "Workflow validation asserts the disposable CI database URL verbatim."
   }
 ]

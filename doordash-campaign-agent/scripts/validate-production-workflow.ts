@@ -16,6 +16,8 @@ const stepByName = (steps: any[], name: string) => steps.find((step: any) => ste
 
 assert.equal(workflow.on.schedule[0].cron, '5 18 * * 0');
 assert.ok(workflow.on.workflow_dispatch);
+assert.equal(workflow.on.workflow_dispatch.inputs.run_mode.default, 'preflight');
+assert.deepEqual(workflow.on.workflow_dispatch.inputs.run_mode.options, ['preflight', 'full']);
 assert.equal(workflow.jobs['weekly-production']['runs-on'], 'ubuntu-latest');
 assert.equal(workflow.jobs['weekly-production']['timeout-minutes'], 30);
 assert.equal(workflow.jobs['weekly-production'].outputs.failure_summary, '${{ steps.workflow_run.outputs.failure_summary }}');
@@ -37,6 +39,8 @@ assert.equal(stepByName(productionSteps, 'Test production ingestion').run.trim()
 assert.equal(stepByName(productionSteps, 'Test production Postgres').run.trim(), 'npm run test:production-postgres');
 assert.equal(stepByName(productionSteps, 'Test production runner').run.trim(), 'npm run test:production-runner');
 assert.equal(stepByName(productionSteps, 'Validate workflow definitions').run.trim(), 'npm run test:workflow-validation');
+assert.equal(stepByName(productionSteps, 'Run production preflight').run.includes('npm run preflight:production'), true);
+assert.equal(productionRunStep.if, "github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full'");
 assert.equal(productionRunStep.env.OPENAI_MODEL, '${{ vars.OPENAI_MODEL }}');
 assert.equal(productionRunStep.env.DD_REPORT_ALLOWED_SENDERS, '${{ vars.DD_REPORT_ALLOWED_SENDERS }}');
 assert.equal(productionRunStep.env.IMAP_HOST, '${{ vars.IMAP_HOST }}');
@@ -48,6 +52,7 @@ assert.equal(productionRunStep.env.DATABASE_URL, '${{ secrets.DOORDASH_PRODUCTIO
 assert.equal(productionRunStep.env.IMAP_USER, '${{ secrets.IMAP_USER }}');
 assert.equal(productionRunStep.env.IMAP_PASS, '${{ secrets.IMAP_PASS }}');
 assert.ok(workflow.jobs['create-production-issue'].steps[0].env.FAILURE_SUMMARY);
+assert.equal(workflow.jobs['create-production-issue'].if, "${{ always() && needs.weekly-production.result == 'failure' && needs.weekly-production.outputs.pending_external_data != 'true' && (github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full') }}");
 
 assert.equal(validation.jobs.validate['runs-on'], 'ubuntu-latest');
 assert.ok(validation.on.pull_request);
