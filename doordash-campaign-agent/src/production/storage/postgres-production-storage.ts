@@ -18,6 +18,7 @@ import type {
     SnapshotUpsertResult,
 } from './production-storage.js';
 import { runPostgresMigrations } from './postgres-migrations.js';
+import { buildPostgresPoolConfig } from './postgres-tls.js';
 
 function nowIso(): string {
     return new Date().toISOString();
@@ -38,6 +39,7 @@ export interface PostgresProductionStorageHooks {
 export interface PostgresProductionStorageOptions {
     poolConfig?: Partial<PoolConfig>;
     hooks?: PostgresProductionStorageHooks;
+    ssl?: PoolConfig['ssl'];
 }
 
 export class PostgresProductionStorage implements ProductionStorage {
@@ -51,13 +53,10 @@ export class PostgresProductionStorage implements ProductionStorage {
     }
 
     async initialize(): Promise<void> {
-        this.pool = new Pool({
-            connectionString: this.databaseUrl,
-            max: 6,
-            allowExitOnIdle: true,
-            application_name: 'doordash-weekly-production',
-            ...this.options.poolConfig,
-        });
+        this.pool = new Pool(buildPostgresPoolConfig(this.databaseUrl, {
+            ssl: this.options.ssl,
+            poolConfig: this.options.poolConfig,
+        }));
         await runPostgresMigrations(this.pool);
         await this.syncConfiguredStores();
     }

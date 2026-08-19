@@ -1,5 +1,6 @@
 import path from 'path';
 import type { AnalysisProviderName, ReportSourceName, RulesEngineConfig, StorageBackendName } from './types.js';
+import { resolveProductionPostgresTlsConfig } from './storage/postgres-tls.js';
 
 export interface ProductionWorkflowConfig {
     executionEnv: 'production' | 'development' | 'test';
@@ -22,6 +23,8 @@ export interface ProductionWorkflowConfig {
     diagnosticsDir: string;
     sqliteDbPath: string;
     postgresDatabaseUrl: string;
+    postgresDatabaseCaCert?: string;
+    postgresDatabaseCaCertPath?: string;
     fixtureReportDir: string;
 }
 
@@ -91,6 +94,8 @@ export function readProductionWorkflowConfig(): ProductionWorkflowConfig {
         diagnosticsDir: path.resolve(process.env['DD_DIAGNOSTICS_DIR'] || path.resolve(process.cwd(), 'artifacts', 'weekly-production')),
         sqliteDbPath: process.env['DB_PATH'] || path.resolve(process.cwd(), 'data', 'doordash-campaigns.db'),
         postgresDatabaseUrl: process.env['DATABASE_URL'] || '',
+        postgresDatabaseCaCert: process.env['DOORDASH_PRODUCTION_DATABASE_CA_CERT'] || '',
+        postgresDatabaseCaCertPath: process.env['DOORDASH_PRODUCTION_DATABASE_CA_CERT_PATH'] || '',
         fixtureReportDir: path.resolve(process.env['DD_FIXTURE_REPORT_DIR'] || path.resolve(process.cwd(), 'data', 'fixtures', 'reports')),
     };
 }
@@ -153,4 +158,5 @@ export function assertProductionWorkflowConfig(config: ProductionWorkflowConfig)
     if (config.storageBackend === 'postgres' && !config.postgresDatabaseUrl) {
         throw new Error('DATABASE_URL is required when DD_STORAGE_BACKEND=postgres.');
     }
+    resolveProductionPostgresTlsConfig(config);
 }

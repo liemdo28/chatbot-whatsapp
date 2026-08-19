@@ -19,8 +19,8 @@ class SecretThrowingProvider implements CampaignAnalysisProvider {
 }
 
 (async () => {
-    const sanitized = sanitizeSecretString('DATABASE_URL=postgres://leaky-user:leaky-pass@localhost:5432/doordash?password=hunter2&token=shhh IMAP_PASS=supersecret sk-proj-secret Authorization: Bearer abc123');
-    for (const forbidden of ['leaky-pass', 'hunter2', 'shhh', 'supersecret', 'abc123', 'sk-proj-secret']) {
+    const sanitized = sanitizeSecretString('DATABASE_URL=postgres://leaky-user:leaky-pass@localhost:5432/doordash?password=hunter2&token=shhh IMAP_PASS=supersecret sk-proj-secret Authorization: Bearer abc123 -----BEGIN CERTIFICATE-----\nSYNTHETIC-ROOT-CA\n-----END CERTIFICATE-----');
+    for (const forbidden of ['leaky-pass', 'hunter2', 'shhh', 'supersecret', 'abc123', 'sk-proj-secret', 'BEGIN CERTIFICATE', 'SYNTHETIC-ROOT-CA']) {
         assert.equal(sanitized.includes(forbidden), false, `sanitized output still leaked ${forbidden}`);
     }
 

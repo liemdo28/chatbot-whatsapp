@@ -19,12 +19,19 @@ const SECRET_ENV_NAMES = [
     'DATABASE_URL',
     'DD_REPORT_LINK_AUTHORIZATION',
     'DD_REPORT_LINK_COOKIE',
+    'DOORDASH_PRODUCTION_DATABASE_CA_CERT',
     'IMAP_PASS',
     'IMAP_USER',
     'OPENAI_API_KEY',
     'SMTP_PASS',
     'SMTP_USER',
 ];
+
+const SECRET_FIELD_NAMES = new Set([
+    ...[...SECRET_PARAM_NAMES].map(name => name.toLowerCase()),
+    ...SECRET_ENV_NAMES.map(name => name.toLowerCase()),
+    'postgresdatabasecacert',
+]);
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -50,6 +57,7 @@ export function sanitizeSecretString(input: string): string {
     let value = String(input || '');
     if (!value) return value;
 
+    value = value.replace(/-----BEGIN CERTIFICATE-----[\s\S]+?-----END CERTIFICATE-----/g, '<redacted-certificate>');
     value = value.replace(/\b(?:postgres(?:ql)?):\/\/[^\s"'`]+/gi, match => sanitizeUrl(match));
     value = value.replace(/\bhttps?:\/\/[^\s"'`]+/gi, match => sanitizeUrl(match));
     value = value.replace(/\bsk-[A-Za-z0-9_-]{8,}\b/g, '<redacted-openai-key>');
@@ -86,7 +94,7 @@ export function sanitizeSecrets<T>(input: T): T {
     if (isPlainObject(input)) {
         const output: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(input)) {
-            if (SECRET_PARAM_NAMES.has(key.toLowerCase()) || SECRET_ENV_NAMES.includes(key)) {
+            if (SECRET_FIELD_NAMES.has(key.toLowerCase())) {
                 output[key] = '<redacted>';
             } else {
                 output[key] = sanitizeSecrets(value);

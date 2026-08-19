@@ -34,6 +34,7 @@ npm run test:production-sanitization
 npm run test:production-rules
 npm run test:production-hybrid
 npm run test:production-preflight-rules
+npm run test:production-postgres-tls
 npm run test:production-storage
 npm run test:production-openai
 npm run test:production-ingestion
@@ -49,6 +50,8 @@ npm run validate:production-store-config
 ```
 
 That command runs migrations, bootstraps the configured stores with non-destructive upserts, and verifies that `raw-sushi-bar` is mapped to DoorDash Store ID `892006` before a production run.
+
+For Supabase-hosted production Postgres, keep TLS enabled and provide the trusted root CA through `DOORDASH_PRODUCTION_DATABASE_CA_CERT`. Local development may instead set `DOORDASH_PRODUCTION_DATABASE_CA_CERT_PATH` to an external PEM file path. The CA must contain a PEM `BEGIN CERTIFICATE` / `END CERTIFICATE` block. Certificate verification is not disabled in any supported environment.
 
 Run the weekly production workflow locally against fixture reports:
 
@@ -129,6 +132,7 @@ GitHub Actions workflow `doordash-weekly-production` expects these repository va
 GitHub Actions workflow `doordash-weekly-production` expects these repository secrets:
 
 - `DOORDASH_PRODUCTION_DATABASE_URL`
+- `DOORDASH_PRODUCTION_DATABASE_CA_CERT`
 - `IMAP_USER`
 - `IMAP_PASS`
 

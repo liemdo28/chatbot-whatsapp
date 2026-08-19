@@ -11,6 +11,7 @@
         "test:weekly-window": "tsx scripts/test-weekly-window.ts",
         "test:production-sanitization": "tsx scripts/test-production-sanitization.ts",
         "test:production-public-diagnostics": "tsx scripts/test-production-public-diagnostics.ts",
+        "test:production-postgres-tls": "tsx scripts/test-production-postgres-tls.ts",
         "test:production-rules": "tsx scripts/test-production-rules-provider.ts",
         "test:production-hybrid": "tsx scripts/test-production-hybrid-provider.ts",
         "test:production-preflight-rules": "tsx scripts/test-production-preflight-rules.ts",
