@@ -85,6 +85,18 @@ jobs:
       - name: Test production sanitization
         run: npm run test:production-sanitization
 
+      - name: Test production public diagnostics
+        run: npm run test:production-public-diagnostics
+
+      - name: Test production rules provider
+        run: npm run test:production-rules
+
+      - name: Test production hybrid provider
+        run: npm run test:production-hybrid
+
+      - name: Test production rules preflight
+        run: npm run test:production-preflight-rules
+
       - name: Test production storage
         run: npm run test:production-storage
 
@@ -105,11 +117,14 @@ jobs:
       - name: Validate workflow definitions
         run: npm run test:workflow-validation
 
+      - name: NPM production audit
+        run: npm audit --omit=dev --audit-level=critical
+
       - name: Run production preflight
         if: github.event_name == 'workflow_dispatch'
         env:
           DD_EXECUTION_ENV: production
-          DD_ANALYSIS_PROVIDER: openai
+          ANALYSIS_PROVIDER: ${{ vars.ANALYSIS_PROVIDER || 'rules' }}
           DD_REPORT_SOURCE: imap
           DD_STORAGE_BACKEND: postgres
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -122,7 +137,9 @@ jobs:
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_PASS: ${{ secrets.IMAP_PASS }}
           DD_REPORT_INBOX_LABEL: ${{ vars.DD_REPORT_INBOX_LABEL }}
-          DD_SCHEDULER_TIMEZONE: America/Los_Angeles
+          DD_SCHEDULER_TIMEZONE: Asia/Ho_Chi_Minh
+          DD_STORE_TIMEZONE: ${{ vars.DD_STORE_TIMEZONE }}
+          DD_STORE_CURRENCY: ${{ vars.DD_STORE_CURRENCY }}
         run: |
           args=("--trigger" "preflight")
           if [[ -n "${{ inputs.store_ids }}" ]]; then
@@ -144,7 +161,7 @@ jobs:
         continue-on-error: true
         env:
           DD_EXECUTION_ENV: production
-          DD_ANALYSIS_PROVIDER: openai
+          ANALYSIS_PROVIDER: ${{ vars.ANALYSIS_PROVIDER || 'rules' }}
           DD_REPORT_SOURCE: imap
           DD_STORAGE_BACKEND: postgres
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -157,7 +174,9 @@ jobs:
           IMAP_USER: ${{ secrets.IMAP_USER }}
           IMAP_PASS: ${{ secrets.IMAP_PASS }}
           DD_REPORT_INBOX_LABEL: ${{ vars.DD_REPORT_INBOX_LABEL }}
-          DD_SCHEDULER_TIMEZONE: America/Los_Angeles
+          DD_SCHEDULER_TIMEZONE: Asia/Ho_Chi_Minh
+          DD_STORE_TIMEZONE: ${{ vars.DD_STORE_TIMEZONE }}
+          DD_STORE_CURRENCY: ${{ vars.DD_STORE_CURRENCY }}
         run: |
           args=("--trigger" "${{ github.event_name }}")
           if [[ -n "${{ inputs.store_ids }}" ]]; then
@@ -210,7 +229,7 @@ jobs:
               `Failure category: ${process.env.FAILURE_CATEGORY || 'hard_failure'}`,
               `Failure summary: ${process.env.FAILURE_SUMMARY || 'Sanitized diagnostics uploaded.'}`,
               '',
-              'Sanitized diagnostics were uploaded as a workflow artifact.',
+              'A sanitized metadata-only diagnostics artifact was uploaded.',
             ].join('\n');
             const { data: issues } = await github.rest.issues.listForRepo({
               owner: context.repo.owner,

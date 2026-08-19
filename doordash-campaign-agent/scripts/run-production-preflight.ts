@@ -69,10 +69,8 @@ function requiredEnv(name: string): string {
     return value;
 }
 
-function assertRequiredIsolatedConfig(): void {
-    for (const key of [
-        'OPENAI_API_KEY',
-        'OPENAI_MODEL',
+function assertRequiredIsolatedConfig(provider: string): void {
+    const required = [
         'DATABASE_URL',
         'IMAP_USER',
         'IMAP_PASS',
@@ -80,7 +78,11 @@ function assertRequiredIsolatedConfig(): void {
         'IMAP_HOST',
         'IMAP_PORT',
         'IMAP_SECURE',
-    ]) {
+    ];
+    if (provider === 'openai') {
+        required.push('OPENAI_API_KEY', 'OPENAI_MODEL');
+    }
+    for (const key of required) {
         requiredEnv(key);
     }
 }
@@ -129,8 +131,8 @@ function printResult(result: PreflightResult): void {
     const args = parseArgs(process.argv.slice(2));
     const config = readProductionWorkflowConfig();
     const window = args.weekStart
-        ? createWeeklyReportingWindow(config.schedulerTimeZone, args.weekStart, args.weekEndExclusive)
-        : getCompletedWeeklyReportingWindow(config.schedulerTimeZone);
+        ? createWeeklyReportingWindow(config.rules.storeTimeZone, args.weekStart, args.weekEndExclusive)
+        : getCompletedWeeklyReportingWindow(config.rules.storeTimeZone);
     const requestedStoreIds = args.storeIds.length > 0 ? args.storeIds : ['raw-sushi-bar'];
     const steps: StepResult[] = [];
 
@@ -151,7 +153,7 @@ function printResult(result: PreflightResult): void {
     };
 
     try {
-        assertRequiredIsolatedConfig();
+        assertRequiredIsolatedConfig(config.analysisProvider);
         assertImapEnvConfigured();
         assertProductionWorkflowConfig(config);
         if (config.executionEnv !== 'production') {
@@ -163,7 +165,7 @@ function printResult(result: PreflightResult): void {
         if (config.storageBackend !== 'postgres') {
             throw new Error('Production preflight requires DD_STORAGE_BACKEND=postgres.');
         }
-        steps.push({ step: 'config', status: 'success', detail: 'Required isolated variables and secrets are present.' });
+        steps.push({ step: 'config', status: 'success', detail: `Required isolated variables and secrets are present for provider ${config.analysisProvider}.` });
     } catch (error) {
         fail('config', error);
     }
@@ -182,6 +184,22 @@ function printResult(result: PreflightResult): void {
         steps.push({ step: 'store_catalog', status: 'success', detail: `Validated ${targetStores.length} production store mapping(s), including raw-sushi-bar -> 892006.` });
     } catch (error) {
         fail('store_catalog', error);
+    }
+
+    try {
+        if (!config.storeTimeZoneConfigured) {
+            throw new Error('DD_STORE_TIMEZONE is missing.');
+        }
+        if (!config.storeCurrencyConfigured) {
+            throw new Error('DD_STORE_CURRENCY is missing.');
+        }
+        steps.push({
+            step: 'store_locale',
+            status: 'success',
+            detail: `Validated configurable store assumptions for raw-sushi-bar: timezone ${config.rules.storeTimeZone}, currency ${config.rules.storeCurrency}.`,
+        });
+    } catch (error) {
+        fail('store_locale', error);
     }
 
     try {
@@ -220,11 +238,25 @@ function printResult(result: PreflightResult): void {
         fail('report_lookup', error);
     }
 
-    try {
-        await validateOpenAiConnectivity(config.openAiModel, config.openAiApiKey);
-        steps.push({ step: 'openai', status: 'success', detail: 'OpenAI connectivity succeeded with a minimal safe request.' });
-    } catch (error) {
-        fail('openai', error);
+    if (config.analysisProvider === 'rules') {
+        steps.push({
+            step: 'rules_config',
+            status: 'success',
+            detail: `Rules mode is active with ${config.rules.ruleVersion} and does not require OpenAI connectivity.`,
+        });
+    } else if (config.analysisProvider === 'hybrid' && !config.openAiApiKey) {
+        steps.push({
+            step: 'hybrid_openai',
+            status: 'success',
+            detail: `Hybrid mode is active with ${config.rules.ruleVersion}; OpenAI enrichment is optional and will be skipped until OPENAI_API_KEY is configured.`,
+        });
+    } else {
+        try {
+            await validateOpenAiConnectivity(config.openAiModel, config.openAiApiKey);
+            steps.push({ step: 'openai', status: 'success', detail: 'OpenAI connectivity succeeded with a minimal safe request.' });
+        } catch (error) {
+            fail('openai', error);
+        }
     }
 
     const result: PreflightResult = {

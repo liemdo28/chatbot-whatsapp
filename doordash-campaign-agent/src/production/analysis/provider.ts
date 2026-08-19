@@ -1,6 +1,7 @@
-import type { CampaignAnalysisInput, ProviderRecommendation } from '../types.js';
+import type { CampaignAnalysisInput, ProviderCampaignAnalysisResult } from '../types.js';
 
 export interface CampaignAnalysisProvider {
     readonly providerName: string;
-    analyzeCampaign(input: CampaignAnalysisInput): Promise<ProviderRecommendation>;
+    readonly providerModel: string;
+    analyzeCampaign(input: CampaignAnalysisInput): Promise<ProviderCampaignAnalysisResult>;
 }

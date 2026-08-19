@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { runWithRetry, type RetryPolicy } from '../../automation/retry-policy.js';
-import type { CampaignAnalysisInput, ProviderRecommendation } from '../types.js';
+import { calculateCampaignMetrics, metricsToSupportingMetrics } from './campaign-metrics.js';
+import type { CampaignAnalysisInput, ProviderCampaignAnalysisResult, ProviderRecommendation } from '../types.js';
 import type { CampaignAnalysisProvider } from './provider.js';
 
 interface JsonSchemaResponseFormat {
@@ -129,16 +130,25 @@ export function validateProviderRecommendation(payload: unknown): ProviderRecomm
     }
 
     return {
+        ruleId: 'openai-primary',
+        ruleVersion: 'openai-v1',
         recommendationType: recommendationType as ProviderRecommendation['recommendationType'],
+        severity: risk === 'high' ? 'high' : risk === 'medium' ? 'medium' : 'low',
+        detectedCondition: String(candidate['reason']),
         currentSetting: String(candidate['currentSetting']),
         proposedSetting: String(candidate['proposedSetting']),
+        supportingMetrics: {},
+        expectedBenefit: String(candidate['proposedSetting']),
         expectedRoiImpact: safeNumber(candidate['expectedRoiImpact']),
         expectedProfitImpact: safeNumber(candidate['expectedProfitImpact']),
         confidence,
         risk: risk as ProviderRecommendation['risk'],
         reason: String(candidate['reason']),
         rollbackPlan: String(candidate['rollbackPlan']),
+        humanApprovalRequired: !['KEEP', 'REQUEST_MORE_DATA'].includes(recommendationType),
         missingData: missingData as string[],
+        enrichmentStatus: 'not_applicable',
+        enrichmentNotes: null,
     };
 }
 
@@ -148,6 +158,7 @@ function defaultRetryPolicy(): RetryPolicy {
 
 export class OpenAiCampaignAnalysisProvider implements CampaignAnalysisProvider {
     readonly providerName = 'openai';
+    readonly providerModel: string;
     private readonly client: OpenAiClientLike;
     private readonly model: string;
     private readonly timeoutMs: number;
@@ -162,11 +173,17 @@ export class OpenAiCampaignAnalysisProvider implements CampaignAnalysisProvider 
     }) {
         this.client = input.client || (new OpenAI({ apiKey: input.apiKey }) as unknown as OpenAiClientLike);
         this.model = input.model;
+        this.providerModel = input.model;
         this.timeoutMs = input.timeoutMs || 30000;
         this.retryPolicy = input.retryPolicy || defaultRetryPolicy();
     }
 
-    async analyzeCampaign(input: CampaignAnalysisInput): Promise<ProviderRecommendation> {
+    async analyzeCampaign(input: CampaignAnalysisInput): Promise<ProviderCampaignAnalysisResult> {
+        const metrics = calculateCampaignMetrics({
+            snapshot: input.snapshot,
+            previousSnapshot: input.previousSnapshot,
+            storeTotals: input.storeWeeklyTotals,
+        });
         const userPayload = {
             store: {
                 id: input.store.id,
@@ -201,6 +218,8 @@ export class OpenAiCampaignAnalysisProvider implements CampaignAnalysisProvider 
                 estimatedProfit: input.estimatedProfit,
                 estimatedMargin: input.estimatedMargin,
             },
+            thresholds: input.rules,
+            supportingMetrics: metricsToSupportingMetrics(metrics),
         };
 
         const systemPrompt = [
@@ -248,6 +267,24 @@ export class OpenAiCampaignAnalysisProvider implements CampaignAnalysisProvider 
         } catch (error) {
             throw new Error(`OpenAI response JSON could not be parsed: ${(error as Error).message}`);
         }
-        return validateProviderRecommendation(parsed);
+        const recommendation = validateProviderRecommendation(parsed);
+        return {
+            provider: 'openai',
+            model: this.model,
+            recommendations: [{
+                ...recommendation,
+                ruleId: 'openai-primary',
+                ruleVersion: 'openai-v1',
+                severity: recommendation.risk === 'high' ? 'high' : recommendation.risk === 'medium' ? 'medium' : 'low',
+                detectedCondition: recommendation.reason,
+                supportingMetrics: metricsToSupportingMetrics(metrics),
+                expectedBenefit: recommendation.proposedSetting,
+                humanApprovalRequired: !['KEEP', 'REQUEST_MORE_DATA'].includes(recommendation.recommendationType),
+                enrichmentStatus: 'not_applicable',
+                enrichmentNotes: null,
+            }],
+            questions: recommendation.missingData.map(item => `Can the report provide ${item} for stronger analysis?`),
+            summary: 'Generated an OpenAI recommendation.',
+        };
     }
 }

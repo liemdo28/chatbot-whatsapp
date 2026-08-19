@@ -436,19 +436,27 @@ export class PostgresProductionStorage implements ProductionStorage {
         await client.query(`
             INSERT INTO recommendations (
                 id, store_id, campaign_snapshot_id, recommendation_type, current_setting, proposed_setting,
-                expected_roi_impact, expected_profit_impact, confidence, risk, reason, rollback_plan, status,
-                created_at, provider, provider_model, week_start, raw_response_json
+                rule_id, rule_version, severity, detected_condition, supporting_metrics_json, expected_benefit,
+                expected_roi_impact, expected_profit_impact, confidence, risk, reason, rollback_plan, human_approval_required,
+                enrichment_status, status, created_at, provider, provider_model, week_start, raw_response_json
             ) VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26
             )
-            ON CONFLICT (campaign_snapshot_id, provider, week_start, recommendation_type, proposed_setting) DO UPDATE SET
+            ON CONFLICT (campaign_snapshot_id, provider, week_start, rule_id) DO UPDATE SET
                 current_setting = EXCLUDED.current_setting,
+                rule_version = EXCLUDED.rule_version,
+                severity = EXCLUDED.severity,
+                detected_condition = EXCLUDED.detected_condition,
+                supporting_metrics_json = EXCLUDED.supporting_metrics_json,
+                expected_benefit = EXCLUDED.expected_benefit,
                 expected_roi_impact = EXCLUDED.expected_roi_impact,
                 expected_profit_impact = EXCLUDED.expected_profit_impact,
                 confidence = EXCLUDED.confidence,
                 risk = EXCLUDED.risk,
                 reason = EXCLUDED.reason,
                 rollback_plan = EXCLUDED.rollback_plan,
+                human_approval_required = EXCLUDED.human_approval_required,
+                enrichment_status = EXCLUDED.enrichment_status,
                 status = EXCLUDED.status,
                 created_at = EXCLUDED.created_at,
                 provider_model = EXCLUDED.provider_model,
@@ -460,12 +468,20 @@ export class PostgresProductionStorage implements ProductionStorage {
             record.recommendationType,
             record.currentSetting,
             record.proposedSetting,
+            record.ruleId,
+            record.ruleVersion,
+            record.severity,
+            record.detectedCondition,
+            sanitizeJsonString(record.supportingMetricsJson),
+            record.expectedBenefit,
             record.expectedRoiImpact,
             record.expectedProfitImpact,
             record.confidence,
             record.risk,
             record.reason,
             record.rollbackPlan,
+            record.humanApprovalRequired,
+            record.enrichmentStatus,
             record.status,
             record.createdAt,
             record.provider,
@@ -559,6 +575,26 @@ export class PostgresProductionStorage implements ProductionStorage {
                         campaignSnapshotId: persistedSnapshotId,
                     });
                 }
+
+                await client.query(`
+                    INSERT INTO review_packages (
+                        id, workflow_run_id, store_id, week_start, provider, rule_version, package_json, created_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                    ON CONFLICT (store_id, week_start, provider) DO UPDATE SET
+                        workflow_run_id = EXCLUDED.workflow_run_id,
+                        rule_version = EXCLUDED.rule_version,
+                        package_json = EXCLUDED.package_json,
+                        created_at = EXCLUDED.created_at
+                `, [
+                    input.reviewPackage.id,
+                    input.reviewPackage.workflowRunId,
+                    input.reviewPackage.storeId,
+                    input.reviewPackage.weekStart,
+                    input.reviewPackage.provider,
+                    input.reviewPackage.ruleVersion,
+                    sanitizeJsonString(JSON.stringify(input.reviewPackage)),
+                    input.reviewPackage.createdAt,
+                ]);
 
                 if (this.options.hooks?.beforePersistIngestionRecord) {
                     await this.options.hooks.beforePersistIngestionRecord(client, input);

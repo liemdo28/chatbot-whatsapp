@@ -20,6 +20,8 @@ export interface ParsedMarketingCampaign {
     sales: number;
     spend: number;
     roas: number;
+    impressions: number | null;
+    clicks: number | null;
     observedDateStart: string;
     observedDateEnd: string;
     rowCount: number;
@@ -44,6 +46,14 @@ function toNumber(value: string | undefined): number {
     return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function toOptionalNumber(value: string | undefined): number | null {
+    if (value === undefined) return null;
+    const normalized = String(value).replace(/,/g, '').trim();
+    if (!normalized) return null;
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : null;
+}
+
 function safeFileName(value: string): string {
     return value.replace(/[^a-zA-Z0-9_.-]/g, '_').slice(0, 180);
 }
@@ -61,6 +71,15 @@ function rowSpend(fileName: string, row: CsvRow): number {
     const credit = toNumber(row['DoorDash marketing credit']);
     const thirdParty = toNumber(row['Third-party contribution']);
     return Math.max(0, marketingFees + fundedByYou - credit - thirdParty);
+}
+
+function firstPresentMetric(row: CsvRow, candidates: string[]): number | null {
+    for (const candidate of candidates) {
+        if (Object.prototype.hasOwnProperty.call(row, candidate)) {
+            return toOptionalNumber(row[candidate]);
+        }
+    }
+    return null;
 }
 
 function parseCsvRows(content: string): CsvRow[] {
@@ -136,15 +155,26 @@ function mergeRows(
             sales: 0,
             spend: 0,
             roas: 0,
+            impressions: null,
+            clicks: null,
             observedDateStart: date,
             observedDateEnd: date,
             rowCount: 0,
         };
 
+        const rowImpressions = firstPresentMetric(row, ['Impressions', 'Ad impressions', 'Ad Impressions']);
+        const rowClicks = firstPresentMetric(row, ['Clicks', 'Ad clicks', 'Ad Clicks']);
+
         existing.orders += toNumber(row['Orders']);
         existing.sales += toNumber(row['Sales']);
         existing.spend += rowSpend(logicalName, row);
         existing.rowCount += 1;
+        if (rowImpressions !== null) {
+            existing.impressions = (existing.impressions || 0) + rowImpressions;
+        }
+        if (rowClicks !== null) {
+            existing.clicks = (existing.clicks || 0) + rowClicks;
+        }
         existing.observedDateStart = existing.observedDateStart < date ? existing.observedDateStart : date;
         existing.observedDateEnd = existing.observedDateEnd > date ? existing.observedDateEnd : date;
 

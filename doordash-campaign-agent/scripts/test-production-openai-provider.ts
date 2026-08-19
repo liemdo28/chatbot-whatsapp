@@ -82,9 +82,21 @@ import { OpenAiCampaignAnalysisProvider } from '../src/production/analysis/opena
         estimatedProfit: 12,
         estimatedMargin: 0.1,
         previousSnapshot: null,
+        rules: {
+            ruleVersion: 'rules-v1',
+            minAcceptableRoas: 3,
+            maxAcceptableCpa: 25,
+            minimumSpendForJudgement: 25,
+            minimumImpressionsForConfidence: 1000,
+            minimumClicksForConfidence: 25,
+            deteriorationThresholdPct: 0.2,
+            budgetIncreaseCeilingPct: 0.2,
+            storeCurrency: 'USD',
+            storeTimeZone: 'America/Los_Angeles',
+        },
     });
 
-    assert.equal(recommendation.recommendationType, 'KEEP');
+    assert.equal(recommendation.recommendations[0].recommendationType, 'KEEP');
     assert.equal(callCount, 2);
 
     const malformedProvider = new OpenAiCampaignAnalysisProvider({
@@ -145,6 +157,18 @@ import { OpenAiCampaignAnalysisProvider } from '../src/production/analysis/opena
             estimatedProfit: 12,
             estimatedMargin: 0.1,
             previousSnapshot: null,
+            rules: {
+                ruleVersion: 'rules-v1',
+                minAcceptableRoas: 3,
+                maxAcceptableCpa: 25,
+                minimumSpendForJudgement: 25,
+                minimumImpressionsForConfidence: 1000,
+                minimumClicksForConfidence: 25,
+                deteriorationThresholdPct: 0.2,
+                budgetIncreaseCeilingPct: 0.2,
+                storeCurrency: 'USD',
+                storeTimeZone: 'America/Los_Angeles',
+            },
         }),
         /missing or empty|malformed|invalid/i,
     );

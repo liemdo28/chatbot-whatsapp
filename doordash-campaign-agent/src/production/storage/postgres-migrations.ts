@@ -399,6 +399,135 @@ const migrations: PostgresMigration[] = [
             ]);
         },
     },
+    {
+        version: '002_rules_review_packages',
+        async up(client: PoolClient): Promise<void> {
+            await executeStatements(client, [
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS rule_id TEXT`,
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS rule_version TEXT`,
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS severity TEXT`,
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS detected_condition TEXT`,
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS supporting_metrics_json TEXT`,
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS expected_benefit TEXT`,
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS human_approval_required BOOLEAN`,
+                `ALTER TABLE recommendations ADD COLUMN IF NOT EXISTS enrichment_status TEXT`,
+                `
+                UPDATE recommendations
+                SET
+                    rule_id = COALESCE(NULLIF(rule_id, ''), lower(regexp_replace(COALESCE(recommendation_type, 'keep'), '[^a-zA-Z0-9]+', '-', 'g'))),
+                    rule_version = COALESCE(NULLIF(rule_version, ''), 'legacy-openai'),
+                    severity = COALESCE(NULLIF(severity, ''), CASE
+                        WHEN risk = 'high' THEN 'high'
+                        WHEN risk = 'medium' THEN 'medium'
+                        ELSE 'low'
+                    END),
+                    detected_condition = COALESCE(NULLIF(detected_condition, ''), reason),
+                    supporting_metrics_json = COALESCE(NULLIF(supporting_metrics_json, ''), '{}'),
+                    expected_benefit = COALESCE(NULLIF(expected_benefit, ''), proposed_setting),
+                    human_approval_required = COALESCE(human_approval_required, recommendation_type NOT IN ('KEEP', 'REQUEST_MORE_DATA')),
+                    enrichment_status = COALESCE(NULLIF(enrichment_status, ''), 'not_applicable')
+                `,
+                `ALTER TABLE recommendations ALTER COLUMN rule_id SET NOT NULL`,
+                `ALTER TABLE recommendations ALTER COLUMN rule_version SET NOT NULL`,
+                `ALTER TABLE recommendations ALTER COLUMN severity SET NOT NULL`,
+                `ALTER TABLE recommendations ALTER COLUMN detected_condition SET NOT NULL`,
+                `ALTER TABLE recommendations ALTER COLUMN supporting_metrics_json SET NOT NULL`,
+                `ALTER TABLE recommendations ALTER COLUMN expected_benefit SET NOT NULL`,
+                `ALTER TABLE recommendations ALTER COLUMN human_approval_required SET NOT NULL`,
+                `ALTER TABLE recommendations ALTER COLUMN enrichment_status SET NOT NULL`,
+                `
+                CREATE TABLE IF NOT EXISTS review_packages (
+                    id TEXT PRIMARY KEY,
+                    workflow_run_id TEXT NOT NULL,
+                    store_id TEXT NOT NULL,
+                    week_start TEXT NOT NULL,
+                    provider TEXT NOT NULL,
+                    rule_version TEXT NOT NULL,
+                    package_json TEXT NOT NULL,
+                    created_at TIMESTAMPTZ NOT NULL
+                )
+                `,
+                `
+                DO $$
+                BEGIN
+                    IF EXISTS (
+                        SELECT 1
+                        FROM pg_constraint
+                        WHERE conrelid = 'recommendations'::regclass
+                          AND conname = 'uq_recommendations_idempotent'
+                    ) THEN
+                        ALTER TABLE recommendations DROP CONSTRAINT uq_recommendations_idempotent;
+                    END IF;
+                END $$;
+                `,
+                `
+                WITH ranked AS (
+                    SELECT ctid,
+                           ROW_NUMBER() OVER (
+                               PARTITION BY campaign_snapshot_id, provider, week_start, rule_id
+                               ORDER BY created_at DESC NULLS LAST, id DESC
+                           ) AS row_number
+                    FROM recommendations
+                )
+                DELETE FROM recommendations target
+                USING ranked
+                WHERE target.ctid = ranked.ctid
+                  AND ranked.row_number > 1
+                `,
+                `
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1
+                        FROM pg_constraint
+                        WHERE conrelid = 'recommendations'::regclass
+                          AND conname = 'uq_recommendations_idempotent_v2'
+                    ) THEN
+                        ALTER TABLE recommendations
+                        ADD CONSTRAINT uq_recommendations_idempotent_v2
+                        UNIQUE (campaign_snapshot_id, provider, week_start, rule_id);
+                    END IF;
+                END $$;
+                `,
+                `
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1
+                        FROM pg_constraint
+                        WHERE conrelid = 'review_packages'::regclass
+                          AND conname = 'fk_review_packages_store'
+                    ) THEN
+                        ALTER TABLE review_packages
+                        ADD CONSTRAINT fk_review_packages_store
+                        FOREIGN KEY (store_id)
+                        REFERENCES stores(id)
+                        ON DELETE RESTRICT;
+                    END IF;
+                END $$;
+                `,
+                `
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1
+                        FROM pg_constraint
+                        WHERE conrelid = 'review_packages'::regclass
+                          AND conname = 'fk_review_packages_run'
+                    ) THEN
+                        ALTER TABLE review_packages
+                        ADD CONSTRAINT fk_review_packages_run
+                        FOREIGN KEY (workflow_run_id)
+                        REFERENCES automation_workflow_runs(id)
+                        ON DELETE CASCADE;
+                    END IF;
+                END $$;
+                `,
+                `CREATE UNIQUE INDEX IF NOT EXISTS uq_review_packages_store_week_provider ON review_packages(store_id, week_start, provider)`,
+                `CREATE INDEX IF NOT EXISTS idx_review_packages_store_week ON review_packages(store_id, week_start, created_at DESC)`,
+            ]);
+        },
+    },
 ];
 
 export async function runPostgresMigrations(pool: Pool): Promise<void> {

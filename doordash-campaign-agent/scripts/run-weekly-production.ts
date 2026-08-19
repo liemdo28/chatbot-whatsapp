@@ -1,6 +1,7 @@
 import fs from 'fs';
-import { runWeeklyProductionWorkflow } from '../src/production/run-weekly-production.js';
-import { sanitizeErrorMessage, sanitizeSecretString, sanitizeSecrets } from '../src/production/security/error-sanitizer.js';
+import { readProductionWorkflowConfig } from '../src/production/config.js';
+import { buildPublicWorkflowDiagnostics, runWeeklyProductionWorkflow } from '../src/production/run-weekly-production.js';
+import { sanitizeErrorMessage, sanitizeSecretString } from '../src/production/security/error-sanitizer.js';
 
 function parseArgs(argv: string[]): { trigger: string; storeIds: string[]; weekStart?: string; weekEndExclusive?: string } {
     const result: { trigger: string; storeIds: string[]; weekStart?: string; weekEndExclusive?: string } = {
@@ -47,6 +48,7 @@ function writeGithubFailureAnnotation(message: string): void {
 
 (async () => {
     const args = parseArgs(process.argv.slice(2));
+    const config = readProductionWorkflowConfig();
     const result = await runWeeklyProductionWorkflow({
         trigger: args.trigger,
         storeIds: args.storeIds,
@@ -54,9 +56,9 @@ function writeGithubFailureAnnotation(message: string): void {
         weekEndExclusive: args.weekEndExclusive,
     });
     writeGithubOutputs(result);
-    console.log(JSON.stringify(sanitizeSecrets(result), null, 2));
+    console.log(JSON.stringify(buildPublicWorkflowDiagnostics(result, config), null, 2));
     if (!result.success) {
-        writeGithubFailureAnnotation(result.errors.join(' | ') || result.summary);
+        writeGithubFailureAnnotation(`DoorDash workflow failed with category ${result.failureCategory}.`);
         process.exitCode = 1;
     }
 })().catch((error) => {
