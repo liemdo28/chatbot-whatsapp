@@ -48,6 +48,20 @@ data/screenshots/
 **/fix_log*.txt
 **/paddleocr_stdout.txt
 **/paddleocr_stderr.txt
+laptop2-integration-qb/whatsapp-ai-gateway/data/session/
+laptop2-integration-qb/whatsapp-ai-gateway/data/whatsapp/auth/
+laptop2-integration-qb/whatsapp-ai-gateway/data/whatsapp/cache/
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/session/
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/session/**
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/Cookies*
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/Login Data*
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/Web Data*
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/History*
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/Local Storage/**
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/Session Storage/**
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/IndexedDB/**
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/*auth*.json
+laptop2-integration-qb/whatsapp-ai-gateway/data/backup/**/*token*.json
 
 # Local databases and generated evidence
 *.db
