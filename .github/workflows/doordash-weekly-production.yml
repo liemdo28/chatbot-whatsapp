@@ -1,0 +1,222 @@
+name: doordash-weekly-production
+
+on:
+  schedule:
+    - cron: '5 18 * * 0'
+  workflow_dispatch:
+    inputs:
+      run_mode:
+        description: Choose preflight-only validation or a full production run
+        required: true
+        default: preflight
+        type: choice
+        options:
+          - preflight
+          - full
+      store_ids:
+        description: Comma-separated store ids
+        required: false
+        type: string
+      week_start:
+        description: ISO week start override (YYYY-MM-DD)
+        required: false
+        type: string
+      week_end_exclusive:
+        description: ISO week end override (YYYY-MM-DD)
+        required: false
+        type: string
+
+concurrency:
+  group: doordash-weekly-production-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  weekly-production:
+    outputs:
+      pending_external_data: ${{ steps.workflow_run.outputs.pending_external_data }}
+      failure_category: ${{ steps.workflow_run.outputs.failure_category }}
+      failure_summary: ${{ steps.workflow_run.outputs.failure_summary }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
+        working-directory: doordash-campaign-agent
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: doordash-campaign-agent/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Validate production store config
+        run: npm run validate:production-store-config
+
+      - name: Test weekly window
+        run: npm run test:weekly-window
+
+      - name: Test production sanitization
+        run: npm run test:production-sanitization
+
+      - name: Test production storage
+        run: npm run test:production-storage
+
+      - name: Test production OpenAI provider
+        run: npm run test:production-openai
+
+      - name: Test production ingestion
+        run: npm run test:production-ingestion
+
+      - name: Test production Postgres
+        run: npm run test:production-postgres
+
+      - name: Test production runner
+        run: npm run test:production-runner
+
+      - name: Validate workflow definitions
+        run: npm run test:workflow-validation
+
+      - name: Run production preflight
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DD_EXECUTION_ENV: production
+          DD_ANALYSIS_PROVIDER: openai
+          DD_REPORT_SOURCE: imap
+          DD_STORAGE_BACKEND: postgres
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          DATABASE_URL: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}
+          DD_REPORT_ALLOWED_SENDERS: ${{ vars.DD_REPORT_ALLOWED_SENDERS }}
+          IMAP_HOST: ${{ vars.IMAP_HOST }}
+          IMAP_PORT: ${{ vars.IMAP_PORT }}
+          IMAP_SECURE: ${{ vars.IMAP_SECURE }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASS: ${{ secrets.IMAP_PASS }}
+          DD_REPORT_INBOX_LABEL: ${{ vars.DD_REPORT_INBOX_LABEL }}
+          DD_SCHEDULER_TIMEZONE: America/Los_Angeles
+        run: |
+          args=("--trigger" "preflight")
+          if [[ -n "${{ inputs.store_ids }}" ]]; then
+            args+=("--stores" "${{ inputs.store_ids }}")
+          else
+            args+=("--stores" "raw-sushi-bar")
+          fi
+          if [[ -n "${{ inputs.week_start }}" ]]; then
+            args+=("--week-start" "${{ inputs.week_start }}")
+          fi
+          if [[ -n "${{ inputs.week_end_exclusive }}" ]]; then
+            args+=("--week-end-exclusive" "${{ inputs.week_end_exclusive }}")
+          fi
+          npm run preflight:production -- "${args[@]}"
+
+      - name: Execute weekly production workflow
+        id: workflow_run
+        if: github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full'
+        continue-on-error: true
+        env:
+          DD_EXECUTION_ENV: production
+          DD_ANALYSIS_PROVIDER: openai
+          DD_REPORT_SOURCE: imap
+          DD_STORAGE_BACKEND: postgres
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          DATABASE_URL: ${{ secrets.DOORDASH_PRODUCTION_DATABASE_URL }}
+          DD_REPORT_ALLOWED_SENDERS: ${{ vars.DD_REPORT_ALLOWED_SENDERS }}
+          IMAP_HOST: ${{ vars.IMAP_HOST }}
+          IMAP_PORT: ${{ vars.IMAP_PORT }}
+          IMAP_SECURE: ${{ vars.IMAP_SECURE }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASS: ${{ secrets.IMAP_PASS }}
+          DD_REPORT_INBOX_LABEL: ${{ vars.DD_REPORT_INBOX_LABEL }}
+          DD_SCHEDULER_TIMEZONE: America/Los_Angeles
+        run: |
+          args=("--trigger" "${{ github.event_name }}")
+          if [[ -n "${{ inputs.store_ids }}" ]]; then
+            args+=("--stores" "${{ inputs.store_ids }}")
+          fi
+          if [[ -n "${{ inputs.week_start }}" ]]; then
+            args+=("--week-start" "${{ inputs.week_start }}")
+          fi
+          if [[ -n "${{ inputs.week_end_exclusive }}" ]]; then
+            args+=("--week-end-exclusive" "${{ inputs.week_end_exclusive }}")
+          fi
+          npm run automation:weekly:production -- "${args[@]}"
+
+      - name: Upload sanitized diagnostics
+        if: steps.workflow_run.outcome == 'failure'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: doordash-weekly-production-diagnostics
+          path: doordash-campaign-agent/artifacts/weekly-production
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Fail job when required workflow step failed
+        if: steps.workflow_run.outcome == 'failure'
+        run: exit 1
+
+  create-production-issue:
+    if: ${{ always() && needs.weekly-production.result == 'failure' && needs.weekly-production.outputs.pending_external_data != 'true' && (github.event_name != 'workflow_dispatch' || inputs.run_mode == 'full') }}
+    needs:
+      - weekly-production
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        env:
+          FAILURE_CATEGORY: ${{ needs.weekly-production.outputs.failure_category }}
+          FAILURE_SUMMARY: ${{ needs.weekly-production.outputs.failure_summary }}
+        with:
+          script: |
+            const title = 'DoorDash weekly production workflow failed';
+            const runDate = new Date().toISOString().slice(0, 10);
+            const body = [
+              'The GitHub-hosted weekly workflow failed.',
+              '',
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              `Workflow: ${context.workflow}`,
+              `Date: ${runDate}`,
+              `Failure category: ${process.env.FAILURE_CATEGORY || 'hard_failure'}`,
+              `Failure summary: ${process.env.FAILURE_SUMMARY || 'Sanitized diagnostics uploaded.'}`,
+              '',
+              'Sanitized diagnostics were uploaded as a workflow artifact.',
+            ].join('\n');
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'doordash-production',
+              per_page: 100,
+            });
+            const existing = issues.find(issue => issue.title === title);
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['doordash-production'],
+              });
+            }
