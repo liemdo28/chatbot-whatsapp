@@ -11,6 +11,7 @@ const validation = YAML.parse(fs.readFileSync(validationPath, 'utf8')) as any;
 const productionSteps = workflow.jobs['weekly-production'].steps as any[];
 const validationSteps = validation.jobs.validate.steps as any[];
 const productionRunStep = productionSteps.find((step: any) => step.id === 'workflow_run');
+const productionServices = workflow.jobs['weekly-production'].services;
 const validationServices = validation.jobs.validate.services;
 const stepByName = (steps: any[], name: string) => steps.find((step: any) => step.name === name);
 
@@ -20,6 +21,10 @@ assert.equal(workflow.on.workflow_dispatch.inputs.run_mode.default, 'preflight')
 assert.deepEqual(workflow.on.workflow_dispatch.inputs.run_mode.options, ['preflight', 'full']);
 assert.equal(workflow.jobs['weekly-production']['runs-on'], 'ubuntu-latest');
 assert.equal(workflow.jobs['weekly-production']['timeout-minutes'], 30);
+assert.equal(productionServices.postgres.image, 'postgres:16-alpine');
+assert.equal(productionServices.postgres.env.POSTGRES_DB, 'doordash_production_validation');
+assert.equal(productionServices.postgres.env.POSTGRES_USER, 'validator');
+assert.equal(productionServices.postgres.env.POSTGRES_PASSWORD, 'validator_password');
 assert.equal(workflow.jobs['weekly-production'].outputs.failure_summary, '${{ steps.workflow_run.outputs.failure_summary }}');
 assert.equal(workflow.concurrency['cancel-in-progress'], false);
 assert.equal(workflow.permissions.contents, 'read');
@@ -37,6 +42,7 @@ assert.equal(stepByName(productionSteps, 'Test production storage').run.trim(), 
 assert.equal(stepByName(productionSteps, 'Test production OpenAI provider').run.trim(), 'npm run test:production-openai');
 assert.equal(stepByName(productionSteps, 'Test production ingestion').run.trim(), 'npm run test:production-ingestion');
 assert.equal(stepByName(productionSteps, 'Test production Postgres').run.trim(), 'npm run test:production-postgres');
+assert.equal(stepByName(productionSteps, 'Test production Postgres').env.DATABASE_URL, 'postgres://validator:validator_password@127.0.0.1:5432/doordash_production_validation');
 assert.equal(stepByName(productionSteps, 'Test production runner').run.trim(), 'npm run test:production-runner');
 assert.equal(stepByName(productionSteps, 'Validate workflow definitions').run.trim(), 'npm run test:workflow-validation');
 assert.equal(stepByName(productionSteps, 'Run production preflight').run.includes('npm run preflight:production'), true);
